@@ -41,6 +41,7 @@ public class Game extends ApplicationAdapter {
 
 	@Override
 	public void create () {
+		System.out.println("gamecreate");
 		batch = new SpriteBatch();
 		assetManager = new AssetManager();
 		gameObjectManager = new GameObjectManager();
@@ -57,7 +58,7 @@ public class Game extends ApplicationAdapter {
 	}
 
 	@Override
-	public void render () {
+	public void render() {
 		Gdx.gl.glClearColor(1, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		if(screen != null) screen.render(Gdx.graphics.getDeltaTime());
@@ -111,20 +112,14 @@ public class Game extends ApplicationAdapter {
 	}
 
 	@Override
-	public void pause() {
-		if(screen != null) screen.pause();
-	}
+	public void pause() { if(screen != null) screen.pause(); }
 
 	@Override
-	public void resume() {
-		if(screen != null) screen.resume();
-	}
+	public void resume() { if(screen != null) screen.resume(); }
 
 	// Use on any library classes that may be using underlying C++ code that won't be collected by Java's garbage collector.
 	@Override
-	public void dispose() {
-		if(screen != null) screen.hide();
-	}
+	public void dispose() { if(screen != null) screen.hide(); }
 
 	// --- CAMERA UTILITIES --- //
 	public void updateGAMECam() {

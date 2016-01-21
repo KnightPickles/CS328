@@ -36,12 +36,9 @@ public class DynamicGameObject {
         pos.y = body.getPosition().y;	// not neccessary due to interpolation ... only testing difference to fixed timestep
         angle = body.getAngle();	// not neccessary due to interpolation ... only testing difference to fixed timestep
 
-
-        //-- check bottom mapborder ---
-        if(body.getPosition().y + height < GameName.MAPBORDERBOTTOM ) {
-            body.setTransform(body.getPosition().x, GameName.MAPBORDERTOP, 0);
-
-            //--- position des objekt inkl. interpolationsposition ebenfalls angleichen, da sonst artefakte der interpolation auftreten
+        //-- borders ---
+        if(body.getPosition().y + height < GameParameters.MAPBORDERBOTTOM ) {
+            body.setTransform(body.getPosition().x, GameParameters.MAPBORDERTOP, 0);
             posPrev.x = body.getPosition().x;
             posPrev.y = body.getPosition().y;
             pos.x = posPrev.x;
@@ -49,16 +46,13 @@ public class DynamicGameObject {
         }
 
         //-- check top mapborder ---
-        if(body.getPosition().y > GameName.MAPBORDERTOP) {
-            body.setTransform(body.getPosition().x, GameName.MAPBORDERBOTTOM, 0);
-
-            //--- position des objekt inkl. interpolationsposition ebenfalls angleichen, da sonst artefakte der interpolation auftreten
+        if(body.getPosition().y > GameParameters.MAPBORDERTOP) {
+            body.setTransform(body.getPosition().x, GameParameters.MAPBORDERBOTTOM, 0);
             posPrev.x = body.getPosition().x;
             posPrev.y = body.getPosition().y;
             pos.x = posPrev.x;
             pos.y = posPrev.y;
         }
-
 
         //--- check if object is out of playfield and deactivate
         if(body.getPosition().x < -2f || body.getPosition().x > 26f) {

@@ -1,13 +1,11 @@
 package edu.cs328;
 
-import com.badlogic.gdx.*;
 import com.badlogic.gdx.assets.loaders.resolvers.ResolutionFileResolver;
-import com.sun.java.swing.ui.SplashScreen;
 
 /**
  * Created by KnightPickles on 1/20/16.
  */
-public class GameName extends Game {
+public class GameParameters extends edu.cs328.Game {
 
     public static final int VIRTUAL_WIDTH_HUD 		= 800;
     public static final int VIRTUAL_HEIGHT_HUD 		= 480;
@@ -27,19 +25,18 @@ public class GameName extends Game {
     public static final int TILESVIRTUALRESOLUTION 	= 18; //px
 
 
-    //--- hier die spielfeld groesse noch hinterlegen + grenzen rechts links oben unten etzc....
-
     private ResolutionFileResolver.Resolution[] resolutions = {
             new ResolutionFileResolver.Resolution(480, 800, "800x480")
     };
 
     @Override
     public void create() {
+        System.out.printf("paramcreate " + VIRTUAL_WIDTH_HUD + " " + VIRTUAL_WIDTH_GAME);
         super.setHUDCam(VIRTUAL_WIDTH_HUD, VIRTUAL_HEIGHT_HUD);
         super.setGAMECam(VIRTUAL_WIDTH_GAME, VIRTUAL_HEIGHT_GAME);
 
         super.setResolutions(resolutions);
         super.create();
-        //super.setScreen(this);
+        super.setScreen(new SplashScreen(this));
     }
 }
