@@ -29,6 +29,8 @@ public class DynamicGameObject {
         game.getGameObjectManager().addDynamicGameObject(this);
     }
 
+    public void setBox2DWorld(World box2dworld) { this.world = box2dworld; }
+
     public void update(float deltaTime) {
         if(body == null) return;
         //--- update position & angle for ver. TS
@@ -37,8 +39,8 @@ public class DynamicGameObject {
         angle = body.getAngle();	// not neccessary due to interpolation ... only testing difference to fixed timestep
 
         //-- borders ---
-        if(body.getPosition().y + height < GameParameters.MAPBORDERBOTTOM ) {
-            body.setTransform(body.getPosition().x, GameParameters.MAPBORDERTOP, 0);
+        if(body.getPosition().y + height < GameCore.MAPBORDERBOTTOM ) {
+            body.setTransform(body.getPosition().x, GameCore.MAPBORDERTOP, 0);
             posPrev.x = body.getPosition().x;
             posPrev.y = body.getPosition().y;
             pos.x = posPrev.x;
@@ -46,8 +48,8 @@ public class DynamicGameObject {
         }
 
         //-- check top mapborder ---
-        if(body.getPosition().y > GameParameters.MAPBORDERTOP) {
-            body.setTransform(body.getPosition().x, GameParameters.MAPBORDERBOTTOM, 0);
+        if(body.getPosition().y > GameCore.MAPBORDERTOP) {
+            body.setTransform(body.getPosition().x, GameCore.MAPBORDERBOTTOM, 0);
             posPrev.x = body.getPosition().x;
             posPrev.y = body.getPosition().y;
             pos.x = posPrev.x;

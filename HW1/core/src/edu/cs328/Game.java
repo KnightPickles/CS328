@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
-// Add Assets folder to working directory
+// Interpolation implementation taken from Fix Your Timestep
 public class Game extends ApplicationAdapter {
 	// The basics
 	private Screen screen;
@@ -45,6 +45,7 @@ public class Game extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		assetManager = new AssetManager();
 		gameObjectManager = new GameObjectManager();
+
 		HUDCam = new OrthographicCamera(virtWidthHUD, virtHeightHUD);
 		HUDCam.setToOrtho(false, virtWidthHUD, virtHeightHUD);
 
