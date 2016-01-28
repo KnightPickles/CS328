@@ -32,255 +32,96 @@ public class GameScreen implements Screen {
     protected Stage stage;
     protected Skin skin;
 
-    //private final static String MAP_LEVEL1 = "data/maps/solo/level1.tmx";
-    private TmxMapLoader tmxMapLoader;
-    public TiledMap map;
-    public World box2dWorld;
-    public ArrayList<DynamicGameObject> boxes = new ArrayList<DynamicGameObject>();
-    public static final int BOXCOUNT = 60;
-
-    //===== reduce FPS =======================
-    public static final long RENDERER_SLEEP_MS = 0; // 34 -> 30 fps, 30 -> 34 fps, 22 gives ~46 FPS, 20 = 100, 10 = 50
-    private long now2, diff, start;
-
     private Renderer renderer;
-    private boolean fixed;
-    private boolean interpolated;
 
-    private final static int FPSupdateIntervall = 1;  //--- display FPS alle x sekunden
     private long lastRender;
-    private long now;
+    private long render_now;
     public int frameCount = 0;
     public int lastFPS = 0;
 
-    private final static int logic_FPSupdateIntervall = 1;  //--- display FPS alle x sekunden
-    private long logic_lastRender;
+    private long lastStep;
     private long logic_now;
-    public int logic_frameCount = 0;
-    public int logic_lastFPS = 0;
+    public int stepCount = 0;
+    public int lastSPS = 0;
 
     float dt;
     float accumulator;
 
-    private final static String showFixedTimeStepWithInterpolation = "fixed TimeStep & interpolation";
-    private final static String showFixedTimeStepWithoutInterpolation = "fixed TimeStep (no interp.)";
-    private final static String showVariableTimeStep = "variable TimeStep";
-
-    private final static float BUTTONWIDTH = 250f;
-    private final static float BUTTONHEIGHT = 60f;
-
-    protected int i;
-    protected int click_X;
-    protected int click_Y;
-    protected Vector3 touchPoint;
     private Rectangle viewportHUD;
     private Rectangle viewportGAME;
 
-
-
-    //====================================================================================
     public GameScreen(Game game, boolean fixed, boolean interpolated) {
-
         this.game = game;
-        this.fixed = fixed;
-        this.interpolated = interpolated;
-
-        batch 			= game.getSpritebatch();
-        gameCamera 		= game.getGAMECamera();
-        HUDCamera 		= game.getHUDCamera();
+        batch = game.getSpritebatch();
+        gameCamera = game.getGAMECamera();
+        HUDCamera = game.getHUDCamera();
 
         stage = new Stage();
         stage.getViewport().setCamera(HUDCamera);
         Gdx.input.setInputProcessor(stage);
-
-
-        //---- initialize level  ---------------------
-        box2dWorld = new World(new Vector2(0.0f, -10f), true);
-
-        game.getGameObjectManager().clearList();
-        for (int i = 0; i < BOXCOUNT; i++) {
-
-            DynamicGameObject object = new DynamicGameObject(game, 1, GameCore.MAPBORDERLEFT + i/4f, 13f, 0.6f, 0.6f);
-            PhysicsBodyFactory.addDynamicBody(game, object, box2dWorld);
-            PhysicsBodyFactory.addRectangleFixture(1, object, object.width, object.height, 0, 0);
-            object.body.setFixedRotation(false);
-            object.body.getFixtureList().get(0).setRestitution(0.8f);
-            boxes.add(object);
-        }
-
-        //------------ load the tiledMap ---------
-
-        ResolutionFileResolver resolver = new ResolutionFileResolver(new InternalFileHandleResolver(), game.getResolutions());
-        tmxMapLoader = new TmxMapLoader(resolver);
-        //map = tmxMapLoader.load(MAP_LEVEL1);
-
-        PhysicsBodyFactory.convertMap(box2dWorld, map, game.getPPM(),
-                (GameCore.VIRTUAL_WIDTH_GAME - GameCore.PLAYFIELDWIDTH) / 2f,
-                (GameCore.VIRTUAL_HEIGHT_GAME - GameCore.PLAYFIELDHEIGHT) / 2f,
-                2);
-
-
-        //---- initialize renderer ---------------------
         renderer = new Renderer(game, this);
 
-        //---------------------------------------------------------
-
         dt = 0.0133f;	// logic updates approx. @ 75 hz
-
-        setupButtons();
     }
 
-
-
-    //====================================================================================
     @Override
     public void render(float delta) {
-
-        //---------- FPS check ----------------------------
+        // FPS/Timestep data updating according to whatever GDX is doing.
         frameCount ++;
-        now = System.nanoTime();	// zeit loggen
+        render_now = System.nanoTime();
 
-        if ((now - lastRender) >= FPSupdateIntervall * 1000000000)  {
-
-            lastFPS = frameCount / FPSupdateIntervall;
-
+        if ((render_now - lastRender) >= 1000000000)  {
+            lastFPS = frameCount;
             frameCount = 0;
             lastRender = System.nanoTime();
         }
-        //--------------------------------------------------------------
 
-
-        if (fixed) {
-
-            renderFIXEDTIMESTEP(delta);
-        }
-        else renderVARIABLETIMESTEP(delta);
+        fixedInterpolationStep(delta);
     }
 
-
-
-
-    //====================================================================================
-    //	http://gafferongames.com/game-physics/fix-your-timestep/
-    public void renderFIXEDTIMESTEP(float delta) {
-
-        if ( delta > 0.25f ) delta = 0.25f;	  // note: max frame time to avoid spiral of death
-
+    public void fixedInterpolationStep(float delta) {
+        if (delta > 0.25f) delta = 0.25f;	  // note: max frame time to avoid spiral of death
         accumulator += delta;
 
         while (accumulator >= dt) {
-
-            if (interpolated == true) game.getGameObjectManager().savePos();
-
+            game.getGameObjectManager().savePos(); // store interpolation for next frame
             updating(dt);
             accumulator -= dt;
+            game.getGameObjectManager().interpolate(accumulator / dt); // interpolate current position
 
-            if (interpolated == true) game.getGameObjectManager().interpolate(accumulator / dt);
-
-            //---------- FPS check -----------------------------
-
-            logic_frameCount ++;
-            logic_now = System.nanoTime();	// zeit loggen
-
-            if ((logic_now - logic_lastRender) >= logic_FPSupdateIntervall * 1000000000)  {
-
-                logic_lastFPS = logic_frameCount / logic_FPSupdateIntervall;
-                logic_frameCount = 0;
-                logic_lastRender = System.nanoTime();
+            // Throttle/manage logic steps
+            stepCount++;
+            logic_now = System.nanoTime();
+            if ((logic_now - lastStep) >= 1000000000)  {
+                lastSPS = stepCount;
+                stepCount = 0;
+                lastStep = System.nanoTime();
             }
-            //--------------------------------------------------------------
         }
 
         rendering(delta);
     }
 
-
-
-
-    //====================================================================================
-    public void renderVARIABLETIMESTEP(float delta) {
-
-        updating(delta);
-
-        //---------- FPS check -----------------------------
-
-        logic_frameCount ++;
-        logic_now = System.nanoTime();	// zeit loggen
-
-        if ((logic_now - logic_lastRender) >= logic_FPSupdateIntervall * 1000000000)  {
-
-            logic_lastFPS = logic_frameCount / logic_FPSupdateIntervall;
-            logic_frameCount = 0;
-            logic_lastRender = System.nanoTime();
-        }
-        //------------------------------------------------------
-
-        rendering(delta);
-    }
-
-
-
-
-    //====================================================================================
     public void updating(float delta) {
-
-        for (i = 0; i < BOXCOUNT; i++) boxes.get(i).update(delta);
-        box2dWorld.step(delta, 10, 8);
+        //for (i = 0; i < BOXCOUNT; i++) boxes.get(i).update(delta);
+        //box2dWorld.step(delta * 1f, 10, 8);
     }
 
-
-
-
-    //====================================================================================
     public void rendering(float delta) {
-
-        //------- render Tiledmap ---------------------
-        renderer.renderTiledMap();
-
-        //------- render game-stuff ---------------------
-        renderer.renderGamePlay();
-
-        //------- render HUD-stuff ---------------------
         renderer.renderHUD();
-
-        //------- render stage-stuff ---------------------
         game.updateHUDCam();
-
         stage.act();
         stage.draw();
-
-
-
-        //------------- to limit fps ------------------------
-        if (RENDERER_SLEEP_MS > 0) {
-
-            now2 = System.currentTimeMillis();
-            diff = now2 - start;
-
-            if (diff < RENDERER_SLEEP_MS) {
-                try {
-                    Thread.sleep(RENDERER_SLEEP_MS - diff);
-                } catch (InterruptedException e) {
-                }
-            }
-
-            start = System.currentTimeMillis();
-        }
-        //-----------------------------------------------------
     }
 
-
-
-    //====================================================================================
-    public void setupButtons() {
-
-        skin = Assets.getSkin();
+    /*public void setupButtons() {
+        // Table -> stage.addActor(), TextButton -> .addListener(...), tableName.add(textButtonName);
 
         Table menuTable = new Table();
         stage.addActor(menuTable);
         menuTable.setPosition(400, 460);
         menuTable.debug().defaults().space(6);
-
+        skin = Assets.getSkin();
         TextButton btnPlayMenu = new TextButton(showVariableTimeStep, skin);
         btnPlayMenu.addListener(new ActorGestureListener() {
             @Override
@@ -291,86 +132,35 @@ public class GameScreen implements Screen {
             }});
         menuTable.add(btnPlayMenu).width(BUTTONWIDTH).height(BUTTONHEIGHT);
 
-        TextButton btnButton1 = new TextButton(showFixedTimeStepWithInterpolation, skin);
-        btnButton1.addListener(new ActorGestureListener() {
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                super.touchUp(event, x, y, pointer, button);
-
-                game.setScreen(new GameScreen(game, true, true));
-            }});
-        menuTable.add(btnButton1).width(BUTTONWIDTH).height(BUTTONHEIGHT);
-
-        TextButton btnButton2 = new TextButton(showFixedTimeStepWithoutInterpolation, skin);
-        btnButton2.addListener(new ActorGestureListener() {
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                super.touchUp(event, x, y, pointer, button);
-
-                game.setScreen(new GameScreen(game, true, false));
-            }});
-        menuTable.add(btnButton2).width(BUTTONWIDTH).height(BUTTONHEIGHT);
-    }
-
-
-
-    //====================================================================================
-
+    }*/
 
     @Override
     public void resize(int width, int height) {
-        //--- nothing more to do here... evrything is done in Game.java
-
         viewportGAME = game.getViewportGAME();
         viewportHUD = game.getViewportHUD();
 
         if (viewportHUD != null) {
-
             stage.getViewport().setScreenBounds((int)viewportHUD.x, (int)viewportHUD.y, game.getVirtualWidthHUD(), game.getVirtualHeightHUD());
         }
     }
 
-
-
-    /** Called when this screen is no longer the current screen for a {@link Game}. */
     @Override
     public void hide() {
-        // called when current screen changes from this to a different screen
-
         dispose();
     }
 
-
     @Override
     public void dispose() {
-        // called from hide()
         stage.clear();
         stage.dispose();
     }
 
-
+    @Override
+    public void show() {}
 
     @Override
-    public void show() {
-        // TODO Auto-generated method stub
-
-    }
-
-
+    public void pause() {}
 
     @Override
-    public void pause() {
-        // TODO Auto-generated method stub
-
-    }
-
-
-
-    @Override
-    public void resume() {
-        // TODO Auto-generated method stub
-
-    }
-
-
+    public void resume() {}
 }

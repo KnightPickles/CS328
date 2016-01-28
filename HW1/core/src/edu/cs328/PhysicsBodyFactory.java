@@ -29,7 +29,6 @@ public class PhysicsBodyFactory {
         gameObject.body = body;
     }
 
-
     public static void addRectangleFixture(int ID, DynamicGameObject gameObject, float w, float h, float offsetX, float offsetY) {
 
         Vector2 offset = new Vector2();
@@ -44,13 +43,9 @@ public class PhysicsBodyFactory {
 
         gameObject.body.createFixture(characterFixtureDef);
         characterShape.dispose();
-//		body.setMassData(masse);
         Fixture fix = gameObject.body.getFixtureList().get(0);
         fix.setUserData(ID);
     }
-
-
-
 
     public static void addStaticTileBodyAndFixture(int ID, World box2dWorld, float x, float y, float w, float h, float offsetX, float offsetY) {
 
@@ -58,7 +53,6 @@ public class PhysicsBodyFactory {
         characterBodyDef.type = BodyDef.BodyType.StaticBody;
 
         Body body = box2dWorld.createBody(characterBodyDef);
-//		body.setUserData(gameObject);
         body.setTransform(x - w/2f, y - h/2f, 0f);
 
 

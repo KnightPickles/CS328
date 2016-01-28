@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -17,6 +18,7 @@ public class Game extends ApplicationAdapter {
 	// The basics
 	private Screen screen;
 	private SpriteBatch batch;
+	private ShapeRenderer shapeRenderer;
 	private AssetManager assetManager;
 	private GameObjectManager gameObjectManager;
 
@@ -41,8 +43,8 @@ public class Game extends ApplicationAdapter {
 
 	@Override
 	public void create () {
-		System.out.println("gamecreate");
 		batch = new SpriteBatch();
+		shapeRenderer = new ShapeRenderer();
 		assetManager = new AssetManager();
 		gameObjectManager = new GameObjectManager();
 
@@ -56,11 +58,13 @@ public class Game extends ApplicationAdapter {
 
 		touchPointHUD = new Vector3();
 		touchPointGAME = new Vector3();
+
+		Gdx.graphics.setVSync(true);
 	}
 
 	@Override
 	public void render() {
-		Gdx.gl.glClearColor(1, 0, 0, 1);
+		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		if(screen != null) screen.render(Gdx.graphics.getDeltaTime());
 	}
@@ -173,6 +177,7 @@ public class Game extends ApplicationAdapter {
 	}
 
 	public SpriteBatch 			getSpritebatch() 		{ return batch; }
+	public ShapeRenderer 		getShapeRenderer()		{ return shapeRenderer; }
 	public Screen 				getScreen() 			{ return screen; }
 	public AssetManager 		getAssetManager() 		{ return assetManager; }
 	public GameObjectManager 	getGameObjectManager() 	{ return gameObjectManager; }

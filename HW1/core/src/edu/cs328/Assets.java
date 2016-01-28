@@ -22,13 +22,7 @@ public class Assets {
     private final static String FILE_UI_SKIN = "uiskin.json";
     public static Skin skin;
     public static Texture items;
-    public static TextureRegion dummyFire;
     public static BitmapFont font;
-
-
-    //===================================================
-
-
 
     public static Skin getSkin(){
         FileHandle skinFile = Gdx.files.internal(FILE_UI_SKIN);
@@ -36,42 +30,30 @@ public class Assets {
         return skin;
     }
 
-
-
-
     public static void loadResources (Game game, AssetManager m_assetManager) {
-
-        //----- BACKGROUND -------------------------------
+        // Backgrounds
         TextureLoader.TextureParameter param;
         param = new TextureLoader.TextureParameter();
         param.minFilter = Texture.TextureFilter.Linear;
         param.magFilter = Texture.TextureFilter.Linear;
 
-
-        //----- ITEMS (ImageAtlas) -------------------------------
+        // Items
         ResolutionFileResolver resolver = new ResolutionFileResolver(new InternalFileHandleResolver(), game.getResolutions());
-
         System.out.println("Asset path: " + resolver.resolve(FILE_IMAGE_ATLAS).path());
-
         m_assetManager.setLoader(TextureAtlas.class, new TextureAtlasLoader(resolver));
         m_assetManager.load(FILE_IMAGE_ATLAS, TextureAtlas.class);
 
-        //------- FONTS ------------------------------------
-        //m_assetManager.load("font.ttf", BitmapFont.class);
-
+        // Fonts
+        m_assetManager.load("font.fnt", BitmapFont.class);
     }
-
-
 
     public static void assignResources (AssetManager m_assetManager) {
         if (m_assetManager.isLoaded(FILE_IMAGE_ATLAS)) {
             imageAtlasGame = m_assetManager.get(FILE_IMAGE_ATLAS, TextureAtlas.class);
-            dummyFire = imageAtlasGame.findRegion("dummyFire");
         }
 
-        font = new BitmapFont();//m_assetManager.get("uiskin.png", BitmapFont.class);
+        font = new BitmapFont();
         font.setUseIntegerPositions(false);
         font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
     }
-
 }
