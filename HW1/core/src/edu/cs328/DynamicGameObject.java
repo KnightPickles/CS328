@@ -34,9 +34,9 @@ public class DynamicGameObject {
     public void update(float deltaTime) {
         if(body == null) return;
         //--- update position & angle for ver. TS
-        pos.x = body.getPosition().x;	// not neccessary due to interpolation ... only testing difference to fixed timestep
-        pos.y = body.getPosition().y;	// not neccessary due to interpolation ... only testing difference to fixed timestep
-        angle = body.getAngle();	// not neccessary due to interpolation ... only testing difference to fixed timestep
+        //pos.x = body.getPosition().x;	// not neccessary due to interpolation ... only testing difference to fixed timestep
+        //pos.y = body.getPosition().y;	// not neccessary due to interpolation ... only testing difference to fixed timestep
+        //angle = body.getAngle();	// not neccessary due to interpolation ... only testing difference to fixed timestep
 
         //-- borders ---
         if(body.getPosition().y + height < GameCore.MAPBORDERBOTTOM ) {
@@ -64,7 +64,6 @@ public class DynamicGameObject {
         if(body.getPosition().y < -3f) {
             body.setActive(false);
         }
-
     }
 
 }

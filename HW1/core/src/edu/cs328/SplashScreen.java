@@ -11,7 +11,7 @@ public class SplashScreen implements Screen {
 
     SplashScreen(GameCore game) {
         this.game = game;
-        Assets.loadResources(game, game.getAssetManager());
+        //Assets.loadResources(game, game.getAssetManager());
     }
 
     @Override
@@ -21,13 +21,14 @@ public class SplashScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        if(game.getAssetManager().update() == true) {
+        /*if(game.getAssetManager().update() == true) {
             if (isLoaded == false) {
                 Assets.assignResources(game.getAssetManager());
                 isLoaded = true;
             }
             else game.setScreen(new GameScreen(game, false, false));
-        }
+        }*/
+        game.setScreen(new GameScreen(game, false, false));
     }
 
     @Override

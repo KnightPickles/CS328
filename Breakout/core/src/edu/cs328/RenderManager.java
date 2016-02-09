@@ -17,28 +17,23 @@ import java.awt.*;
 /**
  * Created by KnightPickles on 1/22/16.
  */
-public class Renderer {
+public class RenderManager {
     private Game game;
     private GameScreen gameScreen;
-    private World box2dWorld;
-    private TiledMap map;
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
     private OrthographicCamera GAMEcam;
     private OrthographicCamera HUDcam;
-    private OrthogonalTiledMapRenderer mapRenderer;
     private float ppm, PPM;
 
     public StringBuffer stringBuffer;
     public BitmapFont font = new BitmapFont();
 
-    public Renderer(Game game, GameScreen gameScreen) {
+    public RenderManager(Game game, GameScreen gameScreen) {
         this.gameScreen = gameScreen;
         this.game = game;
         this.batch 		= game.getSpritebatch();
         this.shapeRenderer = game.getShapeRenderer();
-        //this.box2dWorld = gameScreen.box2dWorld;
-        //this.map 		= gameScreen.map;
 
         GAMEcam = game.getGAMECamera();
         HUDcam	= game.getHUDCamera();
@@ -47,35 +42,7 @@ public class Renderer {
         PPM = game.getPPM();
         Gdx.app.log("game.getPPM(): " + game.getPPM(), "ppm: " +ppm);
 
-        // load the map, set the unit scale to 1/16 (1 unit == 16 pixels)
-        //mapRenderer = new OrthogonalTiledMapRenderer(map, ppm, batch);
         stringBuffer = new StringBuffer();
-    }
-
-    public void renderGamePlay () {
-        game.updateGAMECam();
-        //batch.begin();
-        //batch.enableBlending();
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(1,0,0,1);
-
-        /*for (i = 0; i < GameScreen.BOXCOUNT; i++) {
-
-            boxObject = gameScreen.boxes.get(i);
-
-            if (boxObject.body.isActive()) {
-                winkel =  (MathUtils.radiansToDegrees * boxObject.angle);
-                //shapeRenderer.circle(boxObject.pos.x + (boxObject.width / 2), boxObject.pos.y + (boxObject.height / 2), boxObject.width);
-                shapeRenderer.circle(boxObject.pos.x * PPM,boxObject.pos.y * PPM, boxObject.width * PPM / 2);
-
-                // draw(box, boxObject.pos.x, boxObject.pos.y, 0, 0, boxObject.width, boxObject.height, 1, 1, winkel);
-            }
-        }
-
-        shapeRenderer.end();*/
-
-        //----- Debugging ---------------------------
-        //if (debugRender) debugRenderer.render(box2dWorld, game.getHUDCamera().combined.scale(game.getPPM(), game.getPPM(), game.getPPM()));*/
     }
 
     public void renderHUD () {
