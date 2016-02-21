@@ -1,0 +1,68 @@
+
+spritesheet.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+spaceman_fly0
+  rotate: false
+  xy: 0, 80
+  size: 16, 20
+  orig: 16, 20
+  offset: 0, 0
+  index: -1
+spaceman_fly1
+  rotate: false
+  xy: 16, 80
+  size: 16, 20
+  orig: 16, 20
+  offset: 0, 0
+  index: -1
+spaceman_jump0
+  rotate: false
+  xy: 0, 60
+  size: 16, 20
+  orig: 16, 20
+  offset: 0, 0
+  index: -1
+spaceman_jump1
+  rotate: false
+  xy: 16, 60
+  size: 16, 20
+  orig: 16, 20
+  offset: 0, 0
+  index: -1
+spaceman_stand0
+  rotate: false
+  xy: 0, 40
+  size: 16, 20
+  orig: 16, 20
+  offset: 0, 0
+  index: -1
+spaceman_stand1
+  rotate: false
+  xy: 16, 40
+  size: 16, 20
+  orig: 16, 20
+  offset: 0, 0
+  index: -1
+spaceman_walk0
+  rotate: false
+  xy: 0, 20
+  size: 16, 20
+  orig: 16, 20
+  offset: 0, 0
+  index: -1
+spaceman_walk1
+  rotate: false
+  xy: 16, 20
+  size: 16, 20
+  orig: 16, 20
+  offset: 0, 0
+  index: -1
+spaceman_walk2
+  rotate: false
+  xy: 0, 0
+  size: 16, 20
+  orig: 16, 20
+  offset: 0, 0
+  index: -1
