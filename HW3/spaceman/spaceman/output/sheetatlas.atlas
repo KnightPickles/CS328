@@ -1,0 +1,146 @@
+
+sheetatlas.png
+size: 1024,512
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+brick_small0
+  rotate: false
+  xy: 46, 54
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+brick_small1
+  rotate: false
+  xy: 260, 232
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+fuel0
+  rotate: false
+  xy: 2, 46
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+fuel1
+  rotate: false
+  xy: 260, 272
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+fuel2
+  rotate: false
+  xy: 294, 306
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+rock0
+  rotate: false
+  xy: 260, 298
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+rock1
+  rotate: false
+  xy: 518, 428
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+space0
+  rotate: false
+  xy: 2, 332
+  size: 256, 128
+  orig: 256, 128
+  offset: 0, 0
+  index: -1
+space1
+  rotate: false
+  xy: 2, 202
+  size: 256, 128
+  orig: 256, 128
+  offset: 0, 0
+  index: -1
+space2
+  rotate: false
+  xy: 260, 332
+  size: 256, 128
+  orig: 256, 128
+  offset: 0, 0
+  index: -1
+space3
+  rotate: false
+  xy: 2, 72
+  size: 256, 128
+  orig: 256, 128
+  offset: 0, 0
+  index: -1
+spaceman_fly0
+  rotate: false
+  xy: 518, 406
+  size: 16, 20
+  orig: 16, 20
+  offset: 0, 0
+  index: -1
+spaceman_fly1
+  rotate: false
+  xy: 552, 440
+  size: 16, 20
+  orig: 16, 20
+  offset: 0, 0
+  index: -1
+spaceman_jump0
+  rotate: false
+  xy: 2, 24
+  size: 16, 20
+  orig: 16, 20
+  offset: 0, 0
+  index: -1
+spaceman_jump1
+  rotate: false
+  xy: 28, 50
+  size: 16, 20
+  orig: 16, 20
+  offset: 0, 0
+  index: -1
+spaceman_stand0
+  rotate: false
+  xy: 260, 250
+  size: 16, 20
+  orig: 16, 20
+  offset: 0, 0
+  index: -1
+spaceman_stand1
+  rotate: false
+  xy: 320, 310
+  size: 16, 20
+  orig: 16, 20
+  offset: 0, 0
+  index: -1
+spaceman_walk0
+  rotate: false
+  xy: 518, 384
+  size: 16, 20
+  orig: 16, 20
+  offset: 0, 0
+  index: -1
+spaceman_walk1
+  rotate: false
+  xy: 570, 440
+  size: 16, 20
+  orig: 16, 20
+  offset: 0, 0
+  index: -1
+spaceman_walk2
+  rotate: false
+  xy: 2, 2
+  size: 16, 20
+  orig: 16, 20
+  offset: 0, 0
+  index: -1

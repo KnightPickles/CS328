@@ -11,16 +11,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 /**
  * Created by KnightPickles on 2/21/2016.
  */
-public class Player extends Actor {
-    Sprite sprite;
-    TextureAtlas atlas;
-    Body body;
-    World world;
+public class Player extends PhysicsGameObject {
     public static boolean isGrounded = false;
     public static boolean isStationary = false;
     int direction = 0;
 
-    int hitboxPadding = 4;
+    int hitboxPadding = 8;
     float torque = 0;
 
     float stateTime = 0;
@@ -29,9 +25,10 @@ public class Player extends Actor {
     Animation landAnimation;
     Animation flyAnimation;
 
-    Player(TextureAtlas atlas, World world, Vector2 pos) {
+    Player(TextureAtlas atlas, World world, float x, float y) {
+        super(atlas, "spaceman_stand0", world, x, y);
         sprite = atlas.createSprite("spaceman_stand0");
-        sprite.flip(true,false);
+        setBody(false, hitboxPadding, 0);
 
         TextureAtlas.AtlasRegion[] frames;
 
@@ -62,67 +59,27 @@ public class Player extends Actor {
         flyAnimation = new Animation(0.25f, frames);
 
         frames = null; // garbage collector
-
-        BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyDef.BodyType.DynamicBody;
-
-        // Positions and stuff
-        sprite.setPosition(pos.x, pos.y);
-        sprite.scale(1);
-
-        bodyDef.position.set((sprite.getX() + sprite.getWidth()/2) / HW3.PPM, (sprite.getY() + sprite.getHeight()/2) / HW3.PPM);
-        body = world.createBody(bodyDef);
-        body.setUserData(this);
-
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox((sprite.getWidth() - hitboxPadding) / HW3.PPM, sprite.getHeight() / HW3.PPM);
-
-        // Does density and other settings
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = shape;
-        fixtureDef.density = 1.0f;
-        Fixture fixture = body.createFixture(fixtureDef);
-        shape.dispose(); // all that was left over
     }
 
-    public void draw(Batch batch) {
-        sprite.draw(batch);
-    }
-
+    @Override
     public void update() {
-        sprite.setPosition((body.getPosition().x * HW3.PPM) - sprite.getWidth()/2 , (body.getPosition().y * HW3.PPM) -sprite.getHeight()/2 );
-        stateTime += Gdx.graphics.getDeltaTime();
+        sprite.setPosition((body.getPosition().x * HW3.PPM) - sprite.getWidth()/2 , (body.getPosition().y * HW3.PPM) - sprite.getHeight()/2);
 
+        if(Math.signum(body.getLinearVelocity().x) == 0)
+            isStationary = true;
+        else isStationary = false;
+
+        stateTime += Gdx.graphics.getDeltaTime();
         if(isGrounded && !isStationary) {
             sprite.setRegion(walkAnimation.getKeyFrame(stateTime, true));
-            sprite.flip(Math.signum(body.getLinearVelocity().x) > 0 ? true : false, false); // flips the animation accordingly
-        }
-
-        if(isGrounded && isStationary) {
+        } else if(isGrounded && isStationary) {
             sprite.setRegion(landAnimation.getKeyFrame(stateTime, true));
-            sprite.flip(Math.signum(body.getLinearVelocity().x) > 0 ? true : false, false); // flips the animation accordingly
-        }
-
-        if(!isGrounded) {
+        } else if(!isGrounded) {
             sprite.setRegion(flyAnimation.getKeyFrame(stateTime, true));
-            sprite.flip(Math.signum(body.getLinearVelocity().x) > 0 ? true : false, false); // flips the animation accordingly
         }
 
-        // Establish direction based off of velocity. Used for sprite animations.
-        float dir = Math.signum(body.getLinearVelocity().x);
-        if(dir > 0) {
-            isStationary = false;
-            if(direction != 0) {
-                direction = 0;
-                sprite.flip(true, false);
-            }
-        } else if(dir < 0) {
-            isStationary = false;
-            if(direction != 1) {
-                direction = 1;
-                sprite.flip(true, false);
-            }
-        } else isStationary = true;
+        // Flips the animation according to their facing direction. Also flips them right when stationary.
+        sprite.flip(MathUtils.round(body.getLinearVelocity().x) >= 0 ? true : false, false);
     }
 
     public static void isGrounded() {
@@ -133,13 +90,7 @@ public class Player extends Actor {
         if(isGrounded) isGrounded = false;
     }
 
-    public void move(Vector2 pos) {
-        sprite.setPosition(pos.x, pos.y);
-        body.setTransform(pos.x, pos.y, 0);
-    }
-
     public void setLVel(float x, float y) {
         body.setLinearVelocity(x,y);
     }
-
 }

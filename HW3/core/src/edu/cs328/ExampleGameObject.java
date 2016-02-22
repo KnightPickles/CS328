@@ -10,15 +10,17 @@ import com.badlogic.gdx.physics.box2d.*;
 /**
  * Created by KnightPickles on 2/21/2016.
  */
-public class StaticGameObject {
+public class ExampleGameObject {
 
     TextureAtlas atlas;
     World world;
     Body body;
+    Sprite sprite;
 
-    StaticGameObject(TextureAtlas atlas, World world, Vector2 pos) {
+    ExampleGameObject(TextureAtlas atlas, World world, Vector2 pos) {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.StaticBody;
+        sprite = new Sprite();
 
         float w = Gdx.graphics.getWidth()/HW3.PPM;
         float h = Gdx.graphics.getHeight()/HW3.PPM - 50/HW3.PPM;
@@ -29,10 +31,16 @@ public class StaticGameObject {
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = edgeShape;
+        fixtureDef.friction = 1.0f;
 
         body = world.createBody(bodyDef);
         body.createFixture(fixtureDef);
         body.setUserData(this);
         edgeShape.dispose();
+        sprite.setPosition((body.getPosition().x * HW3.PPM) - sprite.getWidth()/2, (body.getPosition().y  * HW3.PPM) - sprite.getHeight()/2);
+    }
+
+    public void draw(Batch batch) {
+        sprite.draw(batch);
     }
 }

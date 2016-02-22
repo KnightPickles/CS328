@@ -15,23 +15,18 @@ public class PlayerInputProcessor implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        if(keycode == Input.Keys.RIGHT)
-            player.setLVel(Math.max(player.body.getLinearVelocity().x, 1f), player.body.getLinearVelocity().y);
-        if(keycode == Input.Keys.LEFT)
-            player.setLVel(Math.min(player.body.getLinearVelocity().x, -1f), player.body.getLinearVelocity().y);
-        if(keycode == Input.Keys.SPACE)
-            player.setLVel(player.body.getLinearVelocity().x, Math.max(player.body.getLinearVelocity().y, 1f));
-
         return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
+
         return false;
     }
 
     @Override
     public boolean keyTyped(char character) {
+
         return false;
     }
 

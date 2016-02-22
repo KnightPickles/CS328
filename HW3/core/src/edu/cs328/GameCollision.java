@@ -10,7 +10,7 @@ public class GameCollision implements ContactListener {
     public void beginContact(Contact contact) {
         Body a=contact.getFixtureA().getBody();
         Body b=contact.getFixtureB().getBody();
-        if(a.getUserData() instanceof StaticGameObject && b.getUserData() instanceof Player) {
+        if(a.getUserData() instanceof Player || b.getUserData() instanceof Player) {
             Player.isGrounded();
         }
     }
