@@ -12,6 +12,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
  * Created by KnightPickles on 2/21/2016.
  */
 public class Player extends PhysicsGameObject {
+
+    public static int lives = 3;
+    public static int fuel = 10000;
+    public static final int maxFuel = 10000;
+    public static final int burnRate = 10;
+
     public static boolean isGrounded = false;
     public static boolean isStationary = false;
     int direction = 0;
@@ -28,7 +34,7 @@ public class Player extends PhysicsGameObject {
     Player(TextureAtlas atlas, World world, float x, float y) {
         super(atlas, "spaceman_stand0", world, x, y);
         sprite = atlas.createSprite("spaceman_stand0");
-        setBody(false, hitboxPadding, 0);
+        setBody(false, false, hitboxPadding, 0);
 
         TextureAtlas.AtlasRegion[] frames;
 
@@ -75,11 +81,17 @@ public class Player extends PhysicsGameObject {
         } else if(isGrounded && isStationary) {
             sprite.setRegion(landAnimation.getKeyFrame(stateTime, true));
         } else if(!isGrounded) {
-            sprite.setRegion(flyAnimation.getKeyFrame(stateTime, true));
+            fuel-=burnRate;
+            if(fuel <= 0) {
+                sprite.setRegion(jumpAnimation.getKeyFrame(stateTime, true));
+            } else sprite.setRegion(flyAnimation.getKeyFrame(stateTime, true));
         }
 
         // Flips the animation according to their facing direction. Also flips them right when stationary.
         sprite.flip(MathUtils.round(body.getLinearVelocity().x) >= 0 ? true : false, false);
+
+        if(fuel > maxFuel) fuel = maxFuel;
+        if(fuel <= 0) fuel = 0;
     }
 
     public static void isGrounded() {
@@ -92,5 +104,9 @@ public class Player extends PhysicsGameObject {
 
     public void setLVel(float x, float y) {
         body.setLinearVelocity(x,y);
+    }
+
+    public void move(float x, float y) {
+
     }
 }

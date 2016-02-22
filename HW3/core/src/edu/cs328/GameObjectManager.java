@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 
 import javax.imageio.ImageIO;
+import java.awt.image.AreaAveragingScaleFilter;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -14,12 +15,23 @@ import java.util.ArrayList;
  */
 public class GameObjectManager {
     ArrayList<SimpleGameObject> simpleGO = new ArrayList<SimpleGameObject>();
+    ArrayList<SimpleGameObject> removeGO = new ArrayList<SimpleGameObject>();
+
     BufferedImage level = null;
     int[][] levelData = null;
 
     void update() {
-        for(SimpleGameObject o : simpleGO)
+        for(SimpleGameObject o : simpleGO) {
             o.update();
+            if(o instanceof Fuel) {
+                if(((Fuel) o).collected) removeGO.add(o);
+            }
+        }
+        for(SimpleGameObject o : removeGO) {
+            if(o instanceof PhysicsGameObject) ((PhysicsGameObject) o).destroyBody();
+            simpleGO.remove(o);
+        }
+        removeGO.clear();
     }
 
     void draw(Batch batch) {
@@ -30,6 +42,8 @@ public class GameObjectManager {
     void addObject(SimpleGameObject object) {
         simpleGO.add(object);
     }
+
+    void destroy(SimpleGameObject object) { simpleGO.remove(object); }
 
     void loadGameFromFile(String filename) {
         try {
@@ -46,6 +60,5 @@ public class GameObjectManager {
         } catch(IOException e) {
             e.printStackTrace();
         }
-
     }
 }
