@@ -14,6 +14,7 @@ public class SimpleGameObject {
     SimpleGameObject(TextureAtlas atlas, String atlasRegion, float x, float y) {
         if(atlas != null) {
             sprite = atlas.createSprite(atlasRegion);
+            if(sprite == null) sprite = new Sprite();
         } else sprite = new Sprite();
         this.x = x;
         this.y = y;

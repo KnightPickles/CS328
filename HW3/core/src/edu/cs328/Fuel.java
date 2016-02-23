@@ -18,8 +18,7 @@ public class Fuel extends PhysicsGameObject {
     static int value = 1000;
 
     Fuel(TextureAtlas atlas, World world, float x, float y) {
-        super(atlas, "fuel0", world, x, y);
-        setBody(true, true, 0, 0);
+        super(atlas, "fuel0", world, x, y, true, true);
 
         TextureAtlas.AtlasRegion[] frames;
         frames = new TextureAtlas.AtlasRegion[4];

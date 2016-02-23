@@ -3,11 +3,13 @@ package edu.cs328;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -20,8 +22,12 @@ public class HW3 extends ApplicationAdapter {
 	OrthographicCamera camera;
 	OrthographicCamera cameraBak;
 	BitmapFont font;
+	GlyphLayout layout;
 	World b2dWorld;
-	boolean stop = false;
+
+
+	static boolean stop = false;
+	static boolean win = false;
 
 	GameObjectManager manager;
 	Player player;
@@ -38,18 +44,26 @@ public class HW3 extends ApplicationAdapter {
 
 	@Override
 	public void create() {
+		stop = win = false;
+
 		debugRenderer = new Box2DDebugRenderer();
 		Gdx.input.setInputProcessor(new PlayerInputProcessor(player));
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		cameraBak = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		batch = new SpriteBatch();
 		atlas = new TextureAtlas("spritesheet.atlas");
-		font = new BitmapFont();
-		font.setColor(0, 0, 0, 1);
+
+		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(new FileHandle("font.ttf"));
+		FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+		parameter.size = 120;
+		font = generator.generateFont(parameter); // font size 12 pixels
+		generator.dispose();
+
+		layout = new GlyphLayout();
 		b2dWorld = new World(new Vector2(0, -0.8f), true);
 		b2dWorld.setContactListener(new GameCollision());
 
-		player = new Player(atlas, b2dWorld, -200, camera.viewportHeight / 2 - 30);
+		player = new Player(atlas, b2dWorld, -200, camera.viewportHeight / 2 - 30, 1, 10000);
 
 		meter = new SimpleGameObject(atlas, "meter", -camera.viewportWidth / 2 + 45, -120);
 		meter_fuel = new SimpleGameObject(atlas, "meter_fuel", -camera.viewportWidth / 2 + 52, -159);
@@ -59,11 +73,16 @@ public class HW3 extends ApplicationAdapter {
 		meter_fuel.sprite.scale(2);
 		gameOver.sprite.scale(2);
 		background = new Background(atlas, -120, -80);
+
+
 		manager = new GameObjectManager();
 		manager.addObject(player);
-		manager.addObject(new PhysicsGameObject(atlas, "rock0", b2dWorld, 0, -20, true, false));
-		manager.addObject(new PhysicsGameObject(atlas, "rock1", b2dWorld, 64, -20, true, false));
+		manager.addObject(new Rocket(atlas, b2dWorld, 300, 100));
+		manager.addObject(new Brick(atlas, b2dWorld, 0, -20));
+		manager.addObject(new Brick(atlas, b2dWorld, 64, -20));
 		manager.addObject(new Fuel(atlas, b2dWorld, 300, 0));
+
+		manager.loadGameFromFile("level.png", atlas, b2dWorld);
 	}
 
 	@Override
@@ -82,13 +101,14 @@ public class HW3 extends ApplicationAdapter {
 		// check player bounds
 		if(player.sprite.getY() < camera.position.y - 30 - camera.viewportHeight / 2) {
 			player.lives--;
-			player.destroyBody();
 			manager.destroy(player);
 			if(player.lives > 0) {
-				player = new Player(atlas, b2dWorld, camera.position.x - 200, camera.viewportHeight / 2 - 30);
+				player = new Player(atlas, b2dWorld, camera.position.x - 200, camera.viewportHeight / 2 - 30, player.lives, player.fuel);
 				manager.addObject(player);
+			} else {
+				player.lives = 0;
+				stop = true;
 			}
-			System.out.println(player.lives);
 		}
 
 		// Draw
@@ -127,30 +147,52 @@ public class HW3 extends ApplicationAdapter {
 				player.setLVel(player.body.getLinearVelocity().x, Math.max(player.body.getLinearVelocity().y, 1f));
 			}
 		}
+
+		if((stop || win) && Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+			create();
+			stop = win = false;
+		}
+
+		if(Gdx.input.isKeyJustPressed(Input.Keys.A)) {
+			camera.zoom += 1;
+		}
+		if(Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+			camera.zoom -= 1;
+		}
 	}
 
 	public void drawGUI(Batch batch) {
 		float x = meter_fuel.sprite.getX();
 		float y = meter_fuel.sprite.getY();
-		for(int i = 0; i < player.fuel / 199; i++) {
+		for (int i = 0; i < player.fuel / 199; i++) {
 			meter_fuel.draw(batch);
 			meter_fuel.sprite.setPosition(x, y + i * 4);
 		}
-		meter_fuel.sprite.setPosition(x,y);
+		meter_fuel.sprite.setPosition(x, y);
 		meter_fuel.draw(batch);
 		meter.draw(batch);
 
 		x = lives.sprite.getX();
 		y = lives.sprite.getY();
-		for(int i = 1; i <= player.lives; i++) {
+		for (int i = 1; i <= player.lives; i++) {
 			lives.draw(batch);
 			lives.sprite.setPosition(x + i * 35, y);
 		}
-		lives.sprite.setPosition(x,y);
+		lives.sprite.setPosition(x, y);
 
-		if(player.lives <= 0) {
-			gameOver.draw(batch);
-			stop = true;
+		if (player.lives <= 0 && !win) {
+			drawFont("GAME OVER", 0, 200, true);
+		} else if(win) {
+			drawFont("LEVEL\nCOMPLETE", 0, 300, true);
 		}
+	}
+
+	public void drawFont(String text, int x, int y, boolean center) {
+		layout.setText(font, text);
+		float w = layout.width;
+		float h = layout.height;
+		if (center) {
+			font.draw(batch, text, x - w / 2, y - h / 2);
+		} else font.draw(batch, text, x, y);
 	}
 }

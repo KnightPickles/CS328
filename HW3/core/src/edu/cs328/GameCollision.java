@@ -20,6 +20,9 @@ public class GameCollision implements ContactListener {
                 Fuel.collected = true;
                 Player.fuel += Fuel.value;
             }
+            if(a.getUserData() instanceof Rocket || b.getUserData() instanceof Rocket) {
+                HW3.win = true;
+            }
         }
     }
 

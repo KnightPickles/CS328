@@ -31,8 +31,10 @@ public class Player extends PhysicsGameObject {
     Animation landAnimation;
     Animation flyAnimation;
 
-    Player(TextureAtlas atlas, World world, float x, float y) {
+    Player(TextureAtlas atlas, World world, float x, float y, int lives, int fuel) {
         super(atlas, "spaceman_stand0", world, x, y);
+        this.lives = lives;
+        this.fuel = fuel;
         sprite = atlas.createSprite("spaceman_stand0");
         setBody(false, false, hitboxPadding, 0);
 

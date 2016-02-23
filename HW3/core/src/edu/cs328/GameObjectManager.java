@@ -2,8 +2,12 @@ package edu.cs328;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.physics.box2d.World;
+import sun.plugin2.util.ColorUtil;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.AreaAveragingScaleFilter;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -19,6 +23,7 @@ public class GameObjectManager {
 
     BufferedImage level = null;
     int[][] levelData = null;
+    int scale = 64;
 
     void update() {
         for(SimpleGameObject o : simpleGO) {
@@ -45,16 +50,28 @@ public class GameObjectManager {
 
     void destroy(SimpleGameObject object) { simpleGO.remove(object); }
 
-    void loadGameFromFile(String filename) {
+    void loadGameFromFile(String filename, TextureAtlas atlas, World world) {
         try {
             level = ImageIO.read(new File(filename));
             int width = level.getWidth();
             int height = level.getHeight();
-            levelData = new int[height][width];
+            //levelData = new int[height][width];
 
             for (int row = 0; row < height; row++) {
                 for (int col = 0; col < width; col++) {
-                    levelData[row][col] = level.getRGB(col, row);
+                    //levelData[row][col] = level.getRGB(col, row);
+                    Color c = new Color(level.getRGB(col,row));
+                    //System.out.println(c + " " + Color.BLACK);
+
+                    if(c.equals(Color.BLACK)) {
+                        addObject(new Brick(atlas, world, col * scale, row * scale));
+                    } else if(c.equals(Color.GREEN)) {
+                        addObject(new Rocket(atlas, world, col * scale, row * scale));
+                    } else if(c.equals(Color.RED)) {
+                        addObject(new Fuel(atlas, world, col * scale, row * scale));
+                    } else if(c.equals(Color.BLUE)) {
+
+                    }
                 }
             }
         } catch(IOException e) {
