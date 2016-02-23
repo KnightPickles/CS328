@@ -83,10 +83,14 @@ public class Player extends PhysicsGameObject {
         } else if(isGrounded && isStationary) {
             sprite.setRegion(landAnimation.getKeyFrame(stateTime, true));
         } else if(!isGrounded) {
-            fuel-=burnRate;
             if(fuel <= 0) {
                 sprite.setRegion(jumpAnimation.getKeyFrame(stateTime, true));
             } else sprite.setRegion(flyAnimation.getKeyFrame(stateTime, true));
+            if(body.getLinearVelocity().y > 0) {
+                fuel-=burnRate;
+            } else {
+                sprite.setRegion(jumpAnimation.getKeyFrame(stateTime, true));
+            }
         }
 
         // Flips the animation according to their facing direction. Also flips them right when stationary.

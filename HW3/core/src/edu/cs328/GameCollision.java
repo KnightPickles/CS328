@@ -13,11 +13,12 @@ public class GameCollision implements ContactListener {
         Body a=contact.getFixtureA().getBody();
         Body b=contact.getFixtureB().getBody();
         if(a.getUserData() instanceof Player || b.getUserData() instanceof Player) {
-            if(a.getUserData() instanceof PhysicsGameObject || b.getUserData() instanceof PhysicsGameObject) {
+            if(a.getUserData() instanceof Brick || b.getUserData() instanceof Brick) {
                 Player.isGrounded();
             } else Player.notGrounded();
             if(a.getUserData() instanceof Fuel || b.getUserData() instanceof Fuel) {
-                Fuel.collected = true;
+                if(a.getUserData() instanceof Fuel)((Fuel)a.getUserData()).collected = true;
+                if(b.getUserData() instanceof Fuel)((Fuel)b.getUserData()).collected = true;
                 Player.fuel += Fuel.value;
             }
             if(a.getUserData() instanceof Rocket || b.getUserData() instanceof Rocket) {

@@ -25,7 +25,6 @@ public class HW3 extends ApplicationAdapter {
 	GlyphLayout layout;
 	World b2dWorld;
 
-
 	static boolean stop = false;
 	static boolean win = false;
 
@@ -74,15 +73,8 @@ public class HW3 extends ApplicationAdapter {
 		gameOver.sprite.scale(2);
 		background = new Background(atlas, -120, -80);
 
-
-		manager = new GameObjectManager();
-		manager.addObject(player);
-		manager.addObject(new Rocket(atlas, b2dWorld, 300, 100));
-		manager.addObject(new Brick(atlas, b2dWorld, 0, -20));
-		manager.addObject(new Brick(atlas, b2dWorld, 64, -20));
-		manager.addObject(new Fuel(atlas, b2dWorld, 300, 0));
-
-		manager.loadGameFromFile("level.png", atlas, b2dWorld);
+		manager = new GameObjectManager(atlas, b2dWorld, player, camera);
+		manager.loadGameFromFile("level.png");
 	}
 
 	@Override
@@ -91,25 +83,13 @@ public class HW3 extends ApplicationAdapter {
 		getInput();
 
 		b2dWorld.step(1f/60f, 6, 2);
-		if(player.sprite.getX() >= camera.position.x - 100) camera.position.x = player.sprite.getX() + 100;
 
 		camera.update();
 		cameraBak.update();
 		manager.update();
 		background.update();
 
-		// check player bounds
-		if(player.sprite.getY() < camera.position.y - 30 - camera.viewportHeight / 2) {
-			player.lives--;
-			manager.destroy(player);
-			if(player.lives > 0) {
-				player = new Player(atlas, b2dWorld, camera.position.x - 200, camera.viewportHeight / 2 - 30, player.lives, player.fuel);
-				manager.addObject(player);
-			} else {
-				player.lives = 0;
-				stop = true;
-			}
-		}
+
 
 		// Draw
 		Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -123,7 +103,7 @@ public class HW3 extends ApplicationAdapter {
 
 		batch.setProjectionMatrix(camera.combined);
 		debugMatrix = batch.getProjectionMatrix().cpy().scale(PPM, PPM, 0);
-		debugRenderer.render(b2dWorld, debugMatrix);
+		//debugRenderer.render(b2dWorld, debugMatrix);
 		batch.begin();
 		manager.draw(batch);
 		batch.end();
@@ -136,21 +116,10 @@ public class HW3 extends ApplicationAdapter {
 	}
 
 	public void getInput() {
-		if(Gdx.input.isKeyPressed(Input.Keys.RIGHT))
-			player.setLVel(Math.max(player.body.getLinearVelocity().x, 1f), player.body.getLinearVelocity().y);
-		if(Gdx.input.isKeyPressed(Input.Keys.LEFT))
-			player.setLVel(Math.min(player.body.getLinearVelocity().x, -1f), player.body.getLinearVelocity().y);
-		if(Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-			if (player.fuel > 0) {
-				player.setLVel(player.body.getLinearVelocity().x, Math.max(player.body.getLinearVelocity().y, 1f));
-			} else if(player.isGrounded){
-				player.setLVel(player.body.getLinearVelocity().x, Math.max(player.body.getLinearVelocity().y, 1f));
-			}
-		}
 
 		if((stop || win) && Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-			create();
 			stop = win = false;
+			create();
 		}
 
 		if(Gdx.input.isKeyJustPressed(Input.Keys.A)) {

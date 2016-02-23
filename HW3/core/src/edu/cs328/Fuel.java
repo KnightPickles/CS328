@@ -14,11 +14,13 @@ import javax.xml.soap.Text;
 public class Fuel extends PhysicsGameObject {
     float stateTime = 0;
     Animation floatAnimation;
-    static boolean collected = false;
+    boolean collected = false;
     static int value = 1000;
 
     Fuel(TextureAtlas atlas, World world, float x, float y) {
-        super(atlas, "fuel0", world, x, y, true, true);
+        super(atlas, "fuel0", world, x, y);
+        setBody(true, true, 0, 6);
+        collected = false;
 
         TextureAtlas.AtlasRegion[] frames;
         frames = new TextureAtlas.AtlasRegion[4];
