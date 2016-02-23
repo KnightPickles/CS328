@@ -51,7 +51,7 @@ public class HW3 extends ApplicationAdapter {
 		camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		cameraBak = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		batch = new SpriteBatch();
-		atlas = new TextureAtlas("spritesheet.atlas");
+		atlas = new TextureAtlas("spacemangame.atlas");
 
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(new FileHandle("font.ttf"));
 		FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();

@@ -1,146 +1,180 @@
 
-sheetatlas.png
-size: 1024,512
+spacemangame.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-brick_small0
-  rotate: false
-  xy: 46, 54
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
-brick_small1
-  rotate: false
-  xy: 260, 232
-  size: 16, 16
-  orig: 16, 16
-  offset: 0, 0
-  index: -1
-fuel0
-  rotate: false
-  xy: 2, 46
-  size: 24, 24
-  orig: 24, 24
-  offset: 0, 0
-  index: -1
-fuel1
-  rotate: false
-  xy: 260, 272
-  size: 24, 24
-  orig: 24, 24
-  offset: 0, 0
-  index: -1
-fuel2
-  rotate: false
-  xy: 294, 306
-  size: 24, 24
-  orig: 24, 24
-  offset: 0, 0
-  index: -1
-rock0
-  rotate: false
-  xy: 260, 298
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
-rock1
-  rotate: false
-  xy: 518, 428
-  size: 32, 32
-  orig: 32, 32
-  offset: 0, 0
-  index: -1
 space0
   rotate: false
-  xy: 2, 332
+  xy: 0, 128
   size: 256, 128
   orig: 256, 128
   offset: 0, 0
   index: -1
 space1
   rotate: false
-  xy: 2, 202
+  xy: 0, 0
   size: 256, 128
   orig: 256, 128
   offset: 0, 0
   index: -1
 space2
   rotate: false
-  xy: 260, 332
+  xy: 256, 128
   size: 256, 128
   orig: 256, 128
   offset: 0, 0
   index: -1
 space3
   rotate: false
-  xy: 2, 72
+  xy: 256, 0
   size: 256, 128
   orig: 256, 128
   offset: 0, 0
   index: -1
+meter
+  rotate: false
+  xy: 512, 192
+  size: 20, 64
+  orig: 20, 64
+  offset: 0, 0
+  index: -1
+rock0
+  rotate: false
+  xy: 532, 224
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+rock1
+  rotate: false
+  xy: 532, 192
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+spaceship0
+  rotate: false
+  xy: 512, 155
+  size: 15, 37
+  orig: 15, 37
+  offset: 0, 0
+  index: -1
+spaceship1
+  rotate: false
+  xy: 564, 219
+  size: 15, 37
+  orig: 15, 37
+  offset: 0, 0
+  index: -1
+spaceship2
+  rotate: false
+  xy: 512, 118
+  size: 15, 37
+  orig: 15, 37
+  offset: 0, 0
+  index: -1
+fuel0
+  rotate: false
+  xy: 527, 168
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+fuel1
+  rotate: false
+  xy: 579, 232
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
+fuel2
+  rotate: false
+  xy: 527, 144
+  size: 24, 24
+  orig: 24, 24
+  offset: 0, 0
+  index: -1
 spaceman_fly0
   rotate: false
-  xy: 518, 406
+  xy: 603, 236
   size: 16, 20
   orig: 16, 20
   offset: 0, 0
   index: -1
 spaceman_fly1
   rotate: false
-  xy: 552, 440
+  xy: 527, 124
   size: 16, 20
   orig: 16, 20
   offset: 0, 0
   index: -1
 spaceman_jump0
   rotate: false
-  xy: 2, 24
+  xy: 619, 236
   size: 16, 20
   orig: 16, 20
   offset: 0, 0
   index: -1
 spaceman_jump1
   rotate: false
-  xy: 28, 50
+  xy: 635, 236
   size: 16, 20
   orig: 16, 20
   offset: 0, 0
   index: -1
 spaceman_stand0
   rotate: false
-  xy: 260, 250
+  xy: 651, 236
   size: 16, 20
   orig: 16, 20
   offset: 0, 0
   index: -1
 spaceman_stand1
   rotate: false
-  xy: 320, 310
+  xy: 667, 236
   size: 16, 20
   orig: 16, 20
   offset: 0, 0
   index: -1
 spaceman_walk0
   rotate: false
-  xy: 518, 384
+  xy: 683, 236
   size: 16, 20
   orig: 16, 20
   offset: 0, 0
   index: -1
 spaceman_walk1
   rotate: false
-  xy: 570, 440
+  xy: 699, 236
   size: 16, 20
   orig: 16, 20
   offset: 0, 0
   index: -1
 spaceman_walk2
   rotate: false
-  xy: 2, 2
+  xy: 715, 236
   size: 16, 20
   orig: 16, 20
+  offset: 0, 0
+  index: -1
+brick_small0
+  rotate: false
+  xy: 731, 240
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+brick_small1
+  rotate: false
+  xy: 747, 240
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+meter_fuel
+  rotate: false
+  xy: 564, 218
+  size: 6, 1
+  orig: 6, 1
   offset: 0, 0
   index: -1

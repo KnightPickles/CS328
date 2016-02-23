@@ -1,178 +1,180 @@
 
-spritesheet.png
+spacemangame.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 space0
   rotate: false
-  xy: 1, 111
+  xy: 0, 128
   size: 256, 128
   orig: 256, 128
   offset: 0, 0
   index: -1
 space1
   rotate: false
-  xy: 259, 111
+  xy: 0, 0
   size: 256, 128
   orig: 256, 128
   offset: 0, 0
   index: -1
 space2
   rotate: false
-  xy: 517, 111
+  xy: 256, 128
   size: 256, 128
   orig: 256, 128
   offset: 0, 0
   index: -1
 space3
   rotate: false
-  xy: 775, 111
+  xy: 256, 0
   size: 256, 128
   orig: 256, 128
   offset: 0, 0
   index: -1
-game_over
-  rotate: false
-  xy: 1033, 61
-  size: 178, 178
-  orig: 178, 178
-  offset: 0, 0
-  index: -1
 meter
   rotate: false
-  xy: 1, 45
+  xy: 512, 192
   size: 20, 64
   orig: 20, 64
   offset: 0, 0
   index: -1
 rock0
   rotate: false
-  xy: 1213, 207
+  xy: 532, 224
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 rock1
   rotate: false
-  xy: 23, 77
+  xy: 532, 192
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
+spaceship0
+  rotate: false
+  xy: 512, 155
+  size: 15, 37
+  orig: 15, 37
+  offset: 0, 0
+  index: -1
+spaceship1
+  rotate: false
+  xy: 564, 219
+  size: 15, 37
+  orig: 15, 37
+  offset: 0, 0
+  index: -1
+spaceship2
+  rotate: false
+  xy: 512, 118
+  size: 15, 37
+  orig: 15, 37
+  offset: 0, 0
+  index: -1
 fuel0
   rotate: false
-  xy: 1213, 181
+  xy: 527, 168
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
   index: -1
 fuel1
   rotate: false
-  xy: 1247, 215
+  xy: 579, 232
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
   index: -1
 fuel2
   rotate: false
-  xy: 23, 51
+  xy: 527, 144
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
   index: -1
 spaceman_fly0
   rotate: false
-  xy: 1, 23
+  xy: 603, 236
   size: 16, 20
   orig: 16, 20
   offset: 0, 0
   index: -1
 spaceman_fly1
   rotate: false
-  xy: 57, 89
+  xy: 527, 124
   size: 16, 20
   orig: 16, 20
   offset: 0, 0
   index: -1
 spaceman_jump0
   rotate: false
-  xy: 1213, 159
+  xy: 619, 236
   size: 16, 20
   orig: 16, 20
   offset: 0, 0
   index: -1
 spaceman_jump1
   rotate: false
-  xy: 1273, 219
+  xy: 635, 236
   size: 16, 20
   orig: 16, 20
   offset: 0, 0
   index: -1
 spaceman_stand0
   rotate: false
-  xy: 1, 1
+  xy: 651, 236
   size: 16, 20
   orig: 16, 20
   offset: 0, 0
   index: -1
 spaceman_stand1
   rotate: false
-  xy: 75, 89
+  xy: 667, 236
   size: 16, 20
   orig: 16, 20
   offset: 0, 0
   index: -1
 spaceman_walk0
   rotate: false
-  xy: 1213, 137
+  xy: 683, 236
   size: 16, 20
   orig: 16, 20
   offset: 0, 0
   index: -1
 spaceman_walk1
   rotate: false
-  xy: 1291, 219
+  xy: 699, 236
   size: 16, 20
   orig: 16, 20
   offset: 0, 0
   index: -1
 spaceman_walk2
   rotate: false
-  xy: 93, 89
+  xy: 715, 236
   size: 16, 20
   orig: 16, 20
   offset: 0, 0
   index: -1
 brick_small0
   rotate: false
-  xy: 1213, 119
+  xy: 731, 240
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 brick_small1
   rotate: false
-  xy: 1309, 223
+  xy: 747, 240
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 meter_fuel
   rotate: false
-  xy: 1239, 204
+  xy: 564, 218
   size: 6, 1
   orig: 6, 1
-  offset: 0, 0
-  index: -1
-
-spritesheet2.png
-format: RGBA8888
-filter: Nearest,Nearest
-repeat: none
-output/sheetatlas
-  rotate: false
-  xy: 1, 1
-  size: 1024, 512
-  orig: 1024, 512
   offset: 0, 0
   index: -1
