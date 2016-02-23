@@ -55,14 +55,10 @@ public class GameObjectManager {
             level = ImageIO.read(new File(filename));
             int width = level.getWidth();
             int height = level.getHeight();
-            //levelData = new int[height][width];
 
             for (int row = 0; row < height; row++) {
                 for (int col = 0; col < width; col++) {
-                    //levelData[row][col] = level.getRGB(col, row);
                     Color c = new Color(level.getRGB(col,row));
-                    //System.out.println(c + " " + Color.BLACK);
-
                     if(c.equals(Color.BLACK)) {
                         addObject(new Brick(atlas, world, col * scale, row * scale));
                     } else if(c.equals(Color.GREEN)) {
