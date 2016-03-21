@@ -80,10 +80,11 @@ public class HW4 extends ApplicationAdapter {
 		// pixel coords starting 0,0 in top left corner
 		int mx = Gdx.input.getX() / SCALE;
 		int my = Gdx.input.getY() / SCALE;
-		int threshold = SCALED_H / 18; // for when mouse is within ~%8 of screen bounds
+		int threshold = SCALED_H / 10; // for when mouse is within ~x% of screen bounds
 		int moveSpeed = 2;
 
 		// Move camera if mouse is within threshold bounds of screen border.
+		// First 4 if's for corner bounds. Last 4 for edges.
 		if(mx < threshold && my < threshold) {
 			camera.position.x -= moveSpeed; // slow it a bit
 			camera.position.y += moveSpeed;
