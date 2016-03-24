@@ -14,7 +14,7 @@ import com.badlogic.gdx.physics.box2d.*;
 
 public class HW4 extends ApplicationAdapter {
 	public static final float PPM = 16f; // Pixels per meter. Might be better at 8. Used for sprite coordinates and scaling.
-	public static final int SCALE = 4;
+	public static final int SCALE = 2;
 	public int SCALED_W; // Gdx width / Scale
 	public int SCALED_H;
 
@@ -25,6 +25,8 @@ public class HW4 extends ApplicationAdapter {
 	BitmapFont font;
 	GlyphLayout layout;
 	World world;
+
+	float[][] map;
 
 	Box2DDebugRenderer debugRenderer;
 	Matrix4 debugMatrix;
@@ -51,6 +53,9 @@ public class HW4 extends ApplicationAdapter {
 		// Box2D
 		world = new World(new Vector2(0, 0), true);
 		world.setContactListener(new GameCollision());
+
+		SimplexNoise smpn = new SimplexNoise(0);
+		map = smpn.generateOctavedSimplexNoise(50, 50, 3, 1.0f, 0.015f);
 	}
 
 	@Override
@@ -68,9 +73,18 @@ public class HW4 extends ApplicationAdapter {
 
 		batch.setProjectionMatrix(camera.combined);
 		batch.begin();
-		for(int i = 0; i < 20; i++) {
-			for(int j = 0; j < 20; j++)
-				batch.draw(atlas.findRegion("spaceman_fly0"), i * PPM - SCALED_W, j * PPM - SCALED_H);
+
+		// crude testing of simplex noise
+		for(int i = 0; i < map[0].length; i++) {
+			for(int j = 0; j < map[1].length; j++) {
+				if(map[i][j] <= 0.1) {
+					batch.draw(atlas.findRegion("brick_small0"), i * PPM - SCALED_W, j * PPM - SCALED_H);
+				} else if(map[i][j] > 0.1 && map[i][j] <= 0.3) {
+					batch.draw(atlas.findRegion("brick_small1"), i * PPM - SCALED_W, j * PPM - SCALED_H);
+				} else if(map[i][j] > 0.3) {
+					batch.draw(atlas.findRegion("spaceman_fly0"), i * PPM - SCALED_W, j * PPM - SCALED_H);
+				}
+			}
 		}
 		batch.end();
 	}
