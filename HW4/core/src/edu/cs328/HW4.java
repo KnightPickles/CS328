@@ -13,10 +13,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
 public class HW4 extends ApplicationAdapter {
-	public static final float PPM = 16f; // Pixels per meter. Might be better at 8. Used for sprite coordinates and scaling.
+	public static final float PPM = 8f; // Pixels per meter. Might be better at 8. Used for sprite coordinates and scaling.
 	public static final int SCALE = 2;
 	public int SCALED_W; // Gdx width / Scale
 	public int SCALED_H;
+	public int worldWidth = 100;
+	public int worldHeight = 100;
 
 	Batch batch;
 	TextureAtlas atlas;
@@ -40,7 +42,7 @@ public class HW4 extends ApplicationAdapter {
 		debugRenderer = new Box2DDebugRenderer();
 		camera = new OrthographicCamera(SCALED_W, SCALED_H);
 		batch = new SpriteBatch();
-		atlas = new TextureAtlas("spacemangame.atlas");
+		atlas = new TextureAtlas("rts.atlas");
 
 		// Font
 		layout = new GlyphLayout();
@@ -55,7 +57,7 @@ public class HW4 extends ApplicationAdapter {
 		world.setContactListener(new GameCollision());
 
 		SimplexNoise smpn = new SimplexNoise(0);
-		map = smpn.generateOctavedSimplexNoise(50, 50, 3, 1.0f, 0.015f);
+		map = smpn.generateOctavedSimplexNoise(worldWidth, worldHeight, 3, 1.0f, 0.015f);
 	}
 
 	@Override
@@ -78,11 +80,11 @@ public class HW4 extends ApplicationAdapter {
 		for(int i = 0; i < map[0].length; i++) {
 			for(int j = 0; j < map[1].length; j++) {
 				if(map[i][j] <= 0.1) {
-					batch.draw(atlas.findRegion("brick_small0"), i * PPM - SCALED_W, j * PPM - SCALED_H);
-				} else if(map[i][j] > 0.1 && map[i][j] <= 0.3) {
-					batch.draw(atlas.findRegion("brick_small1"), i * PPM - SCALED_W, j * PPM - SCALED_H);
-				} else if(map[i][j] > 0.3) {
-					batch.draw(atlas.findRegion("spaceman_fly0"), i * PPM - SCALED_W, j * PPM - SCALED_H);
+					batch.draw(atlas.findRegion("aquawater"), i * PPM - SCALED_W / 2, j * PPM - SCALED_H / 2);
+				} else if(map[i][j] > 0.1 && map[i][j] <= 0.4) {
+					batch.draw(atlas.findRegion("dirt"), i * PPM - SCALED_W / 2, j * PPM - SCALED_H / 2);
+				} else if(map[i][j] > 0.4) {
+					batch.draw(atlas.findRegion("sand"), i * PPM - SCALED_W / 2, j * PPM - SCALED_H / 2);
 				}
 			}
 		}
@@ -90,7 +92,6 @@ public class HW4 extends ApplicationAdapter {
 	}
 
 	public void cameraUpdate() {
-		camera.update();
 		// pixel coords starting 0,0 in top left corner
 		int mx = Gdx.input.getX() / SCALE;
 		int my = Gdx.input.getY() / SCALE;
@@ -120,6 +121,14 @@ public class HW4 extends ApplicationAdapter {
 		} else if(my > SCALED_H - threshold) {
 			camera.position.y -= moveSpeed;
 		}
+
+		// Camera bounds set to world size
+		if(camera.position.x <= 0) camera.position.x = 0;
+		if(camera.position.y <= 0) camera.position.y = 0;
+		if(camera.position.x + camera.viewportWidth >= worldWidth * PPM) camera.position.x = worldWidth * PPM - camera.viewportWidth;
+		if(camera.position.y + camera.viewportHeight >= worldHeight * PPM) camera.position.y = worldHeight * PPM - camera.viewportHeight;
+
+		camera.update();
 	}
 
 	public void drawGUI(Batch batch) {

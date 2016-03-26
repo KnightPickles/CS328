@@ -392,6 +392,7 @@ public class SimplexNoise {  // Simplex noise in 2D, 3D and 4D
         }
     }
 
+    // Added to SimplexNoise class for HW4
     public float[][] generateOctavedSimplexNoise(int width, int height, int octaves, float roughness, float scale){
         float[][] totalNoise = new float[width][height];
         float layerFrequency = scale;
