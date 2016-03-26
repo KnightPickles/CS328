@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.utils.ImmutableArray;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
@@ -25,7 +26,7 @@ public class SelectionManager {
 	public SelectionManager() {
 		if (_instance != null) System.out.println("Creating multiple selection managers");
 		_instance = this;			
-		camera = HW4._instance.camera;
+		camera = GameScreen._instance.camera;
 	}
 	
 	void SelectEntity(Entity e) { 
@@ -105,14 +106,14 @@ public class SelectionManager {
 			}
 		}
 		
-		HW4._instance.renderSelectionBox(startDrag, new Vector2(input.x, input.y));
+		GameScreen._instance.renderSelectionBox(startDrag, new Vector2(input.x, input.y));
 	}
 	
 	public void endDragSelect() {
 		//Select whatever is in selected
 		SelectEntities();
-		
-		HW4._instance.stopRenderSelectionBox();
+
+		GameScreen._instance.stopRenderSelectionBox();
 		tempSelected.clear();
 		startDrag = new Vector2(0, 0);
 		dragging = false;
