@@ -7,6 +7,7 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
@@ -86,20 +87,27 @@ public class SelectionManager {
 			if (tempSelected.contains(e))
 				continue;
 			
-			if (!EntityManager._instance.sc.get(e).selectable)
+			if (!EntityManager._instance.sc.get(e).selectable || !EntityManager._instance.sc.get(e).friendly)
 				continue;
 			
-			Box2dComponent b = EntityManager._instance.b2dc.get(e);
+			Box2dComponent b = EntityManager._instance.boxc.get(e);
 			
 			float minX = Math.min(startDrag.x, input.x);
 			float maxX = Math.max(startDrag.x, input.x);
 			float minY = Math.min(startDrag.y, input.y);
 			float maxY = Math.max(startDrag.y, input.y);
 			
+			Rectangle r = new Rectangle();
+			r.width = (maxX - minX);
+			r.height = (maxY - minY);
+			r.setCenter(new Vector2((startDrag.x + input.x)/2, (startDrag.y + input.y)/2));
+			
 			Vector2 spritePos = new Vector2(b.sprite.getX(), b.sprite.getY());
 			
-			if (spritePos.x > minX && spritePos.x < maxX
-					&& spritePos.y > minY && spritePos.y < maxY)
+			float spriteWidth = EntityManager._instance.boxc.get(e).sprite.getWidth()/2;
+			float spriteHeight = EntityManager._instance.boxc.get(e).sprite.getHeight()/2;
+			
+			if (b.sprite.getBoundingRectangle().overlaps(r))
 				tempSelected.add(e);
 			else if (tempSelected.contains(e)) {
 				tempSelected.remove(e);
@@ -129,10 +137,10 @@ public class SelectionManager {
 			if (e == singleSelected)
 				continue;
 			
-			if (!EntityManager._instance.sc.get(e).selectable)
+			if (!EntityManager._instance.sc.get(e).selectable || !EntityManager._instance.sc.get(e).friendly)
 				continue;
 			
-			Box2dComponent b = EntityManager._instance.b2dc.get(e);
+			Box2dComponent b = EntityManager._instance.boxc.get(e);
 			if (b.sprite.getBoundingRectangle().contains(input.x, input.y)) {
 				SelectEntity(e);
 				return;
@@ -141,10 +149,12 @@ public class SelectionManager {
 	}
 	
 	public void rightTouched(int xPos, int yPos) {
+		Entity tar = getObjectUnderCursor();
+		
 		if (singleSelected != null) { 		
 			Vector3 pos = new Vector3(xPos, yPos, 0);
 			camera.unproject(pos);
-			EntityManager._instance.b2dc.get(singleSelected).moveCommand(new Vector2(pos.x, pos.y));
+			EntityManager._instance.gc.get(singleSelected).rightClickCommand(new Vector2(pos.x, pos.y), tar);
 			return;
 		}
 		
@@ -152,9 +162,26 @@ public class SelectionManager {
 			for (Entity e : selected) {
 				Vector3 pos = new Vector3(xPos, yPos, 0);
 				camera.unproject(pos);
-				EntityManager._instance.b2dc.get(e).moveCommand(new Vector2(pos.x, pos.y));
+				EntityManager._instance.gc.get(e).rightClickCommand(new Vector2(pos.x, pos.y), tar);
 			}
 			return;
 		}
+	}
+	
+	public static Entity getObjectUnderCursor() {
+		float xPos = Gdx.input.getX();
+		float yPos = Gdx.input.getY();
+		Vector3 input = new Vector3(xPos, yPos, 0);
+		_instance.camera.unproject(input);
+		
+		ImmutableArray<Entity> selectables = EntityManager._instance.GetListSelectables();
+		for (Entity e : selectables) {			
+			Box2dComponent b = EntityManager._instance.boxc.get(e);
+			if (b.sprite.getBoundingRectangle().contains(input.x, input.y)) {
+				return e;
+			}
+		}
+		
+		return null;
 	}
 }

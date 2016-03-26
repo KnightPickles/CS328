@@ -32,11 +32,11 @@ public class SplashScreen implements Screen {
     }
 
     public void options() {
-        SelectBox resolutions = new SelectBox(skin);
+        /*SelectBox resolutions = new SelectBox(skin);
         resolutions.setHeight(20f);
         resolutions.setWidth(200f);
         resolutions.setItems(new String[] {"1080x1920", "720x1280", "640x480"});
-        resolutions.setPosition(Gdx.graphics.getWidth() /2 - 100f, Gdx.graphics.getHeight()/2 - 70f);
+        resolutions.setPosition(Gdx.graphics.getWidth() /2 - 100f, Gdx.graphics.getHeight()/2 - 70f);*/
 
         final TextButton back = new TextButton("Return", skin, "default");
         back.setWidth(200f);
@@ -62,7 +62,7 @@ public class SplashScreen implements Screen {
         });
 
         stage.clear();
-        stage.addActor(resolutions);
+        //stage.addActor(resolutions);
         stage.addActor(back);
         stage.addActor(setRes);
     }
