@@ -1,51 +1,75 @@
 package edu.cs328;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-public class HW4 extends ApplicationAdapter {
+public class HW4 extends Game {
 
 	public static final float PPM = 8f; // Pixels per meter. Might be better at 8. Used for sprite coordinates and scaling.
 	public static final int SCALE = 3;
-	public int SCALED_W; // Gdx width / Scale
-	public int SCALED_H;
 
-	Screen currentScreen;
+	Batch batch;
+	ShapeRenderer shapeRenderer;
+	TextureAtlas atlas;
+	BitmapFont font;
+	GlyphLayout layout;
 
 	@Override
 	public void create() {
-		currentScreen = new GameScreen();
-		currentScreen.show();
+		// Graphics
+
+		batch = new SpriteBatch();
+		shapeRenderer = new ShapeRenderer();
+		atlas = new TextureAtlas("rts.atlas");
+
+		// Font
+		layout = new GlyphLayout();
+		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(new FileHandle("font.ttf"));
+		FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+		parameter.size = 4;
+		font = generator.generateFont(parameter);
+		generator.dispose();
+
+		// Manage screen
+		setScreen(new SplashScreen(this));
 	}
 
 	@Override
 	public void render() {
-		Gdx.gl.glClearColor(1, 1, 1, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		currentScreen.render(Gdx.graphics.getDeltaTime());
+		super.render();
 	}
 
 	@Override
 	public void pause() {
-		currentScreen.pause();
 	}
 
 	@Override
 	public void resume() {
-		currentScreen.resume();
 	}
 
 	@Override
 	public void dispose() {
-		currentScreen.hide();
-		currentScreen.dispose();
-
+		batch.dispose();
+		shapeRenderer.dispose();
+		atlas.dispose();
+		font.dispose();
 	}
 
 	@Override
 	public void resize(int width, int height) {
 
+	}
+
+	public void drawFont(String text, int x, int y, boolean center) {
+		layout.setText(font, text);
+		float w = layout.width;
+		float h = layout.height;
+		if (center) {
+			font.draw(batch, text, x - w / 2, y - h / 2);
+		} else font.draw(batch, text, x, y);
 	}
 }
