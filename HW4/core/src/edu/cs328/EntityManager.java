@@ -27,6 +27,7 @@ public class EntityManager extends EntitySystem {
             sc.sprite.setPosition(i * HW4.PPM, i * HW4.PPM);
             Entity e = new Entity();
             e.add(sc);
+            engine.addEntity(e);
         }
     }
 
@@ -42,7 +43,9 @@ public class EntityManager extends EntitySystem {
         entities = engine.getEntitiesFor(Family.all(SpriteComponent.class).get());
         for(Entity e : entities) {
             SpriteComponent sc = sm.get(e);
-            if(sc.sprite != null) sc.sprite.draw(batch);
+            if(sc.sprite != null)
+                sc.sprite.draw(batch);
+
         }
     }
 }
