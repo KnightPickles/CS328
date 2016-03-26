@@ -1,5 +1,7 @@
 package edu.cs328;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -8,9 +10,14 @@ import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -19,7 +26,8 @@ public class HW4 extends ApplicationAdapter {
 	public static final int SCALE = 3;
 	public int SCALED_W; // Gdx width / Scale
 	public int SCALED_H;
-
+	public static HW4 _instance;
+	
 	Batch batch;
 	TextureAtlas atlas;
 	OrthographicCamera camera;
@@ -30,24 +38,37 @@ public class HW4 extends ApplicationAdapter {
 	World world;
 	Map map;
 	EntityManager entityManager;
+	SelectionManager selectionManager;
+	ShapeRenderer shapeRenderer;
 
 	Box2DDebugRenderer debugRenderer;
 	Matrix4 debugMatrix;
 
 	@Override
 	public void create() {
+		_instance = this;
+		
 		SCALED_W = Gdx.graphics.getWidth() / SCALE;
 		SCALED_H = Gdx.graphics.getHeight() / SCALE;
 
-		// Graphics
+		// Box2D
+		world = new World(new Vector2(0, 0), true);
+		world.setContactListener(new GameCollision());
 		debugRenderer = new Box2DDebugRenderer();
+		
+		// Graphics		
 		camera = new OrthographicCamera(SCALED_W, SCALED_H);
 		viewport = new FitViewport(SCALED_W, SCALED_H, camera);
 		batch = new SpriteBatch();
 		atlas = new TextureAtlas("rts.atlas");
 		map = new Map(100, 100, atlas, camera);
-		entityManager = new EntityManager(atlas);
-
+		entityManager = new EntityManager(atlas, world);
+		shapeRenderer = new ShapeRenderer();
+		
+		selectionManager = new SelectionManager();
+		MyInputProcessor inputProcessor = new MyInputProcessor();
+		Gdx.input.setInputProcessor(inputProcessor);
+		
 		// Font
 		layout = new GlyphLayout();
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(new FileHandle("font.ttf"));
@@ -55,10 +76,6 @@ public class HW4 extends ApplicationAdapter {
 		parameter.size = 4;
 		font = generator.generateFont(parameter);
 		generator.dispose();
-
-		// Box2D
-		world = new World(new Vector2(0, 0), true);
-		world.setContactListener(new GameCollision());
 	}
 
 	@Override
@@ -81,6 +98,18 @@ public class HW4 extends ApplicationAdapter {
 		map.draw(batch);
 		entityManager.draw(batch);
 		batch.end();
+		
+		if (renderLines.size > 0) {
+			shapeRenderer.setProjectionMatrix(camera.projection);
+			shapeRenderer.setTransformMatrix(camera.view);
+			shapeRenderer.begin(ShapeType.Line);
+			for (int i = 0; i < renderLines.size; i+=2) {
+				shapeRenderer.line(renderLines.get(i), renderLines.get(i+1));
+			}
+			shapeRenderer.end();
+		}
+		
+		debugRenderer.render(world, camera.combined);
 	}
 
 	@Override
@@ -97,9 +126,9 @@ public class HW4 extends ApplicationAdapter {
 		// pixel coords starting 0,0 in top left corner
 		int mx = Gdx.input.getX() / SCALE;
 		int my = Gdx.input.getY() / SCALE;
-		int threshold = SCALED_H / 10; // for when mouse is within ~x% of screen bounds
+		int threshold = SCALED_H / 50; // for when mouse is within ~x% of screen bounds
 		int moveSpeed = 2;
-
+		
 		// Move camera if mouse is within threshold bounds of screen border.
 		// First 4 if's for corner bounds. Last 4 for edges.
 		if(mx < threshold && my < threshold) {
@@ -139,5 +168,30 @@ public class HW4 extends ApplicationAdapter {
 		if (center) {
 			font.draw(batch, text, x - w / 2, y - h / 2);
 		} else font.draw(batch, text, x, y);
+	}
+	
+	public OrthographicCamera GetCamera() {
+		return camera;
+	}
+
+	Array<Vector2> renderLines = new Array<Vector2>();
+	public void renderSelectionBox(Vector2 start, Vector2 end) {
+		
+		renderLines.clear();
+		renderLines.add(new Vector2(start.x, start.y));
+		renderLines.add(new Vector2(end.x, start.y));
+		
+		renderLines.add(new Vector2(start.x, start.y));
+		renderLines.add(new Vector2(start.x, end.y));
+		
+		renderLines.add(new Vector2(start.x, end.y));
+		renderLines.add(new Vector2(end.x, end.y));
+		
+		renderLines.add(new Vector2(end.x, start.y));
+		renderLines.add(new Vector2(end.x, end.y));
+	}
+	
+	public void stopRenderSelectionBox() {
+		renderLines.clear();
 	}
 }
