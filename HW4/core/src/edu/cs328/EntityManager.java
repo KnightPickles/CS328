@@ -31,7 +31,7 @@ public class EntityManager extends EntitySystem {
     
     EntityManager(TextureAtlas atlas, World world) {
     	if (_instance != null) System.out.println("Creating multiple entity managers");
-    	_instance = this;
+        _instance = this;
     	this.atlas = atlas;
     	this.world = world;
     	for (int i = 0; i < 5; i++) {
