@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.sun.org.glassfish.external.statistics.Stats;
 
 /**
  * Created by KnightPickles on 3/26/16.
@@ -24,7 +25,9 @@ public class EntityManager extends EntitySystem {
     private ImmutableArray<Entity> entities;
 
     public ComponentMapper<SelectableComponent> sc = ComponentMapper.getFor(SelectableComponent.class);
-    public ComponentMapper<Box2dComponent> b2dc = ComponentMapper.getFor(Box2dComponent.class);
+    public ComponentMapper<Box2dComponent> boxc = ComponentMapper.getFor(Box2dComponent.class);
+    public ComponentMapper<GhostComponent> gc = ComponentMapper.getFor(GhostComponent.class);
+    public ComponentMapper<BuildingComponent> bc = ComponentMapper.getFor(BuildingComponent.class);
     
     EntityManager(TextureAtlas atlas, World world) {
     	if (_instance != null) System.out.println("Creating multiple entity managers");
@@ -32,39 +35,43 @@ public class EntityManager extends EntitySystem {
     	this.atlas = atlas;
     	this.world = world;
     	for (int i = 0; i < 5; i++) {
-    		addToEngine(new Vector2(i*HW4.PPM, i*HW4.PPM), "redghost5");
+    		UnitStats stats = new UnitStats(true, 15f, 6f, 1f, 4, 24);
+    		createGhost(stats, true, new Vector2(i*10, 4), "greenghost5", true);
     	}
+    
+    	UnitStats stats = new UnitStats(false, 15f, 6f, 1f, 4, 24);
+    	createGhost(stats, false, new Vector2(30, 50), "redghost5", false);
     }
     
     //TODO create diff functions for create unit/buildings with/for different constructors in components
     
-    public void addToEngine(Vector2 position, String spriteName) {
+    public void createGhost(UnitStats stats, boolean pc, Vector2 spawnPosition, String spriteName, boolean friendly) {
     	Entity e = new Entity();
-    	Box2dComponent b2dc = new Box2dComponent(atlas.createSprite(spriteName), position, world, 15f);
+    	Box2dComponent b2dc = new Box2dComponent(pc, e, atlas.createSprite(spriteName), spawnPosition, world);
     	e.add(b2dc);
-    	SelectableComponent sc = new SelectableComponent();
+    	SelectableComponent sc = new SelectableComponent(friendly);
     	e.add(sc);
+    	GhostComponent uc = new GhostComponent(b2dc, stats, e);
+    	e.add(uc);
     	engine.addEntity(e);
     	entities = engine.getEntitiesFor(Family.all(Box2dComponent.class).get());
     }
     
-    public void addToEngine(String spriteName) {
-    	addToEngine(Vector2.Zero, spriteName);
-    }
-    
     public void update() {
-        for(Entity e : entities) {
-        	Box2dComponent b = b2dc.get(e);
-            //sc.sprite.setPosition(10, 10);
+        for(Entity e : engine.getEntitiesFor(Family.one(GhostComponent.class).get())) {
+        	gc.get(e).update();
+        }
+        for (Entity e : engine.getEntitiesFor(Family.one(BuildingComponent.class).get())) {
+        	bc.get(e).update();
         }
     }
 
     public void draw(Batch batch) {
-        for(Entity e : entities) {
-        	Box2dComponent b = b2dc.get(e);
-            if(b.sprite != null)
-                b.draw(batch);
-
+        for(Entity e : engine.getEntitiesFor(Family.one(GhostComponent.class).get())) {
+        	gc.get(e).draw(batch);
+        }
+        for (Entity e : engine.getEntitiesFor(Family.one(BuildingComponent.class).get())) {
+        	bc.get(e).draw(batch);
         }
     }
     
@@ -72,6 +79,10 @@ public class EntityManager extends EntitySystem {
     	ImmutableArray<Entity> entities;
     	entities = engine.getEntitiesFor(Family.all(SelectableComponent.class).get());
     	return entities;
+    }
+    
+    public void KillUnit(Entity e) {
+    	engine.removeEntity(e);
     }
 }
 
