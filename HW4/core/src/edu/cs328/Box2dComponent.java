@@ -1,10 +1,11 @@
 package edu.cs328;
 
 import com.badlogic.ashley.core.Component;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -17,22 +18,15 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class Box2dComponent implements Component {
 
+	Entity myEntity;
 	Sprite sprite;
 	Body body;
 	Vector2 position;
+	boolean playerControlled;
 	
-	//Unit properties
-	float moveSpeed;
-	
-	//Commands
-	Vector2 startMovePosition;
-	Vector2 desiredMovePosition;
-	float timeToPosition = 0;
-	float currTime = 0;
-	
-	public Box2dComponent(Sprite sprite, Vector2 position, World world, float moveSpeed) {
+	public Box2dComponent(boolean playerControlled, Entity e, Sprite sprite, Vector2 position, World world) {
+		myEntity = e;
 		this.sprite = sprite;
-		this.moveSpeed = moveSpeed;
 		
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DynamicBody;
@@ -52,30 +46,19 @@ public class Box2dComponent implements Component {
 		sprite.setPosition(position.x, position.y);
 		body.setTransform(position, 0);
 		this.position = position;
-		desiredMovePosition = position;
 	}
 	
 	public void draw(Batch batch) {
-		if (timeToPosition > 0 && currTime <= timeToPosition) {
-			currTime += Gdx.graphics.getDeltaTime();
-			float progress = currTime/timeToPosition;
-			float x = MathUtils.lerp(startMovePosition.x, desiredMovePosition.x, progress);
-			float y = MathUtils.lerp(startMovePosition.y, desiredMovePosition.y, progress);
-			position = new Vector2(x, y);
-			
-			body.setTransform(position, body.getAngle());
-		}
-		
 		position = new Vector2(body.getPosition().x, body.getPosition().y);
 		sprite.setPosition(position.x - sprite.getWidth()/2, position.y - sprite.getHeight()/2);
 		sprite.draw(batch);
 	}
 	
-	public void moveCommand(Vector2 pos) {
-		float moveLength = pos.dst(position); //How far were going
-		timeToPosition = moveLength/moveSpeed;
-		currTime = 0;
-		startMovePosition = position;
-		desiredMovePosition = pos;
+	public void setPosition(Vector2 position) {
+		body.setTransform(position, body.getAngle());
+	}
+	
+	public void KillUnit() {
+		body.destroyFixture(body.getFixtureList().first());	
 	}
 }
