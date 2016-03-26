@@ -11,24 +11,25 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class HW4 extends ApplicationAdapter {
 	public static final float PPM = 8f; // Pixels per meter. Might be better at 8. Used for sprite coordinates and scaling.
-	public static final int SCALE = 2;
+	public static final int SCALE = 3;
 	public int SCALED_W; // Gdx width / Scale
 	public int SCALED_H;
-	public int worldWidth = 100;
-	public int worldHeight = 100;
 
 	Batch batch;
 	TextureAtlas atlas;
 	OrthographicCamera camera;
 	OrthographicCamera cameraGUI;
+	Viewport viewport;
 	BitmapFont font;
 	GlyphLayout layout;
 	World world;
-
-	float[][] map;
+	Map map;
+	EntityManager entityManager;
 
 	Box2DDebugRenderer debugRenderer;
 	Matrix4 debugMatrix;
@@ -41,8 +42,11 @@ public class HW4 extends ApplicationAdapter {
 		// Graphics
 		debugRenderer = new Box2DDebugRenderer();
 		camera = new OrthographicCamera(SCALED_W, SCALED_H);
+		viewport = new FitViewport(SCALED_W, SCALED_H, camera);
 		batch = new SpriteBatch();
 		atlas = new TextureAtlas("rts.atlas");
+		map = new Map(100, 100, atlas, camera);
+		entityManager = new EntityManager(atlas);
 
 		// Font
 		layout = new GlyphLayout();
@@ -55,14 +59,12 @@ public class HW4 extends ApplicationAdapter {
 		// Box2D
 		world = new World(new Vector2(0, 0), true);
 		world.setContactListener(new GameCollision());
-
-		SimplexNoise smpn = new SimplexNoise(0);
-		map = smpn.generateOctavedSimplexNoise(worldWidth, worldHeight, 3, 1.0f, 0.015f);
 	}
 
 	@Override
 	public void render() {
 		// Update
+		entityManager.update();
 		world.step(1f/60f, 6, 2);
 		cameraUpdate();
 
@@ -73,23 +75,23 @@ public class HW4 extends ApplicationAdapter {
 		//debugMatrix = batch.getProjectionMatrix().cpy().scale(PPM, PPM, 0);
 		//debugRenderer.render(world, debugMatrix);
 
-		batch.setProjectionMatrix(camera.combined);
+		batch.setTransformMatrix(camera.view);
+		batch.setProjectionMatrix(camera.projection);
 		batch.begin();
-
-		// crude testing of simplex noise
-		for(int i = 0; i < map[0].length; i++) {
-			for(int j = 0; j < map[1].length; j++) {
-				if(map[i][j] <= 0.1) {
-					batch.draw(atlas.findRegion("aquawater"), i * PPM - SCALED_W / 2, j * PPM - SCALED_H / 2);
-				} else if(map[i][j] > 0.1 && map[i][j] <= 0.4) {
-					batch.draw(atlas.findRegion("dirt"), i * PPM - SCALED_W / 2, j * PPM - SCALED_H / 2);
-				} else if(map[i][j] > 0.4) {
-					batch.draw(atlas.findRegion("sand"), i * PPM - SCALED_W / 2, j * PPM - SCALED_H / 2);
-				}
-			}
-		}
+		map.draw(batch);
+		entityManager.draw(batch);
 		batch.end();
 	}
+
+	@Override
+	public void resize(int width, int height) {
+		viewport.update(width, height);
+		camera.update();
+
+		SCALED_W = Gdx.graphics.getWidth() / SCALE;
+		SCALED_H = Gdx.graphics.getHeight() / SCALE;
+	}
+
 
 	public void cameraUpdate() {
 		// pixel coords starting 0,0 in top left corner
@@ -122,12 +124,7 @@ public class HW4 extends ApplicationAdapter {
 			camera.position.y -= moveSpeed;
 		}
 
-		// Camera bounds set to world size
-		if(camera.position.x <= 0) camera.position.x = 0;
-		if(camera.position.y <= 0) camera.position.y = 0;
-		if(camera.position.x + camera.viewportWidth >= worldWidth * PPM) camera.position.x = worldWidth * PPM - camera.viewportWidth;
-		if(camera.position.y + camera.viewportHeight >= worldHeight * PPM) camera.position.y = worldHeight * PPM - camera.viewportHeight;
-
+		// Camera bounds set to world size in Map
 		camera.update();
 	}
 
