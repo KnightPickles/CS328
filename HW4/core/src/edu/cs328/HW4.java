@@ -34,7 +34,7 @@ public class HW4 extends Game {
 		font = generator.generateFont(parameter);
 		generator.dispose();
 
-		// Manage screen
+		// Init to menu screen
 		setScreen(new SplashScreen(this));
 	}
 
