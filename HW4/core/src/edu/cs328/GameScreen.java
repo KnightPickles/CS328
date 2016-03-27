@@ -118,7 +118,7 @@ public class GameScreen implements Screen {
         // pixel coords starting 0,0 in top left corner
         int mx = Gdx.input.getX() / game.SCALE;
         int my = Gdx.input.getY() / game.SCALE;
-        int threshold = Gdx.graphics.getHeight() / game.SCALE / 50; // for when mouse is within ~x% of screen bounds
+        int threshold = Gdx.graphics.getHeight() / game.SCALE / 18; // for when mouse is within ~x% of screen bounds
         int moveSpeed = 2;
 
         // Move camera if mouse is within threshold bounds of screen border.
@@ -144,6 +144,14 @@ public class GameScreen implements Screen {
         } else if(my > Gdx.graphics.getHeight() / game.SCALE - threshold) {
             camera.position.y -= moveSpeed;
         }
+        // limit camera bounds
+        if (camera.position.x <= 0) camera.position.x = 0;
+        if (camera.position.y <= 0) camera.position.y = 0;
+        if (camera.position.x + camera.viewportWidth >= map.worldWidth * HW4.PPM)
+            camera.position.x = map.worldWidth * HW4.PPM - camera.viewportWidth;
+        if (camera.position.y + camera.viewportHeight >= map.worldHeight * HW4.PPM)
+            camera.position.y = map.worldHeight * HW4.PPM - camera.viewportHeight;
+
 
         // Camera bounds set to world size in Map
         camera.update();

@@ -28,11 +28,6 @@ public class Map {
     }
 
     public void draw(Batch batch) {
-        // limit camera bounds
-        if(camera.position.x <= 0) camera.position.x = 0;
-        if(camera.position.y <= 0) camera.position.y = 0;
-        if(camera.position.x + camera.viewportWidth >= worldWidth * HW4.PPM) camera.position.x = worldWidth * HW4.PPM - camera.viewportWidth;
-        if(camera.position.y + camera.viewportHeight >= worldHeight * HW4.PPM) camera.position.y = worldHeight * HW4.PPM - camera.viewportHeight;
 
         // crude testing of simplex noise
         for(int i = 0; i < map[0].length; i++) {
