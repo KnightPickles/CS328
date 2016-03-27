@@ -1,6 +1,8 @@
 package edu.cs328;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -31,6 +33,8 @@ public class GameScreen implements Screen {
     Box2DDebugRenderer debugRenderer;
     Matrix4 debugMatrix;
 
+    private GameGUI gui;
+
     public GameScreen(HW4 game) {
         this.game = game;
     }
@@ -39,6 +43,7 @@ public class GameScreen implements Screen {
     public void show() {
         _instance = this;
 
+        gui = new GameGUI(game);
         camera = new OrthographicCamera(Gdx.graphics.getWidth() / HW4.SCALE, Gdx.graphics.getHeight() / HW4.SCALE);
         viewport = new FitViewport(Gdx.graphics.getWidth() / HW4.SCALE, Gdx.graphics.getHeight() / HW4.SCALE, camera);
 
@@ -51,7 +56,11 @@ public class GameScreen implements Screen {
         entityManager = new EntityManager(game.atlas, world);
         selectionManager = new SelectionManager();
         MyInputProcessor inputProcessor = new MyInputProcessor();
-        Gdx.input.setInputProcessor(inputProcessor);
+        InputMultiplexer inputMultiplexer = new InputMultiplexer();
+        inputMultiplexer.addProcessor(gui.stage);
+        inputMultiplexer.addProcessor(inputProcessor);
+        Gdx.input.setInputProcessor(inputMultiplexer);
+
     }
 
     @Override
@@ -84,6 +93,9 @@ public class GameScreen implements Screen {
             }
             game.shapeRenderer.end();
         }
+
+        gui.render();
+
 
         debugRenderer.render(world, camera.combined);
     }
@@ -152,8 +164,6 @@ public class GameScreen implements Screen {
         if (camera.position.y + camera.viewportHeight >= map.worldHeight * HW4.PPM)
             camera.position.y = map.worldHeight * HW4.PPM - camera.viewportHeight;
 
-
-        // Camera bounds set to world size in Map
         camera.update();
     }
 
