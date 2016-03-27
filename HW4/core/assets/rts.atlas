@@ -17,337 +17,374 @@ mainbase
   orig: 32, 32
   offset: 0, 0
   index: -1
-aquawater
+healthbar_structure
   rotate: false
-  xy: 1, 21
-  size: 8, 8
-  orig: 8, 8
+  xy: 1, 28
+  size: 32, 1
+  orig: 32, 1
   offset: 0, 0
   index: -1
-bluewater
+aquawater
   rotate: false
   xy: 69, 55
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-dirt
+bluewater
   rotate: false
-  xy: 1, 11
+  xy: 1, 18
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-flower
-  rotate: false
-  xy: 1, 1
-  size: 8, 8
-  orig: 8, 8
-  offset: 0, 0
-  index: -1
-grass
-  rotate: false
-  xy: 11, 21
-  size: 8, 8
-  orig: 8, 8
-  offset: 0, 0
-  index: -1
-largerock
+blue_indicator
   rotate: false
   xy: 69, 45
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-mud
+dirt
   rotate: false
   xy: 79, 55
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-puddle
+flower
   rotate: false
-  xy: 11, 11
+  xy: 1, 8
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-rocks
+grass
   rotate: false
-  xy: 11, 1
+  xy: 11, 18
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-sand
-  rotate: false
-  xy: 21, 21
-  size: 8, 8
-  orig: 8, 8
-  offset: 0, 0
-  index: -1
-tallgrass
+largerock
   rotate: false
   xy: 69, 35
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
-blueghost1
+mud
   rotate: false
   xy: 79, 45
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+puddle
+  rotate: false
+  xy: 89, 55
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+red_indicator
+  rotate: false
+  xy: 11, 8
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+rocks
+  rotate: false
+  xy: 21, 18
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+sand
+  rotate: false
+  xy: 79, 35
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+tallgrass
+  rotate: false
+  xy: 89, 45
+  size: 8, 8
+  orig: 8, 8
+  offset: 0, 0
+  index: -1
+blueghost1
+  rotate: false
+  xy: 99, 55
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 blueghost2
   rotate: false
-  xy: 89, 55
+  xy: 21, 8
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 blueghost3
   rotate: false
-  xy: 21, 11
+  xy: 89, 35
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 blueghost4
   rotate: false
-  xy: 21, 1
+  xy: 99, 45
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 blueghost5
   rotate: false
-  xy: 31, 21
+  xy: 106, 55
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes1e
   rotate: false
-  xy: 79, 35
+  xy: 96, 35
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes1s
   rotate: false
-  xy: 86, 45
+  xy: 106, 45
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes1w
   rotate: false
-  xy: 96, 55
+  xy: 113, 55
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes2e
   rotate: false
-  xy: 28, 11
+  xy: 103, 35
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes2s
   rotate: false
-  xy: 28, 1
+  xy: 113, 45
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes2w
   rotate: false
-  xy: 38, 21
+  xy: 120, 55
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes3e
   rotate: false
-  xy: 86, 35
+  xy: 110, 35
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes3s
   rotate: false
-  xy: 93, 45
+  xy: 120, 45
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes3w
   rotate: false
-  xy: 103, 55
+  xy: 117, 35
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes4e
   rotate: false
-  xy: 35, 11
+  xy: 31, 18
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes4s
   rotate: false
-  xy: 35, 1
+  xy: 28, 8
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
+healthbar
+  rotate: false
+  xy: 35, 28
+  size: 8, 1
+  orig: 8, 1
+  offset: 0, 0
+  index: -1
 eyes4w
   rotate: false
-  xy: 45, 21
+  xy: 38, 18
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes5e
   rotate: false
-  xy: 93, 35
+  xy: 35, 8
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes5s
   rotate: false
-  xy: 100, 45
+  xy: 45, 21
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes5w
   rotate: false
-  xy: 110, 55
+  xy: 52, 21
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 greenghost1
   rotate: false
-  xy: 42, 11
+  xy: 59, 21
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 greenghost2
   rotate: false
-  xy: 42, 1
+  xy: 42, 8
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 greenghost3
   rotate: false
-  xy: 52, 21
+  xy: 49, 11
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 greenghost4
   rotate: false
-  xy: 100, 35
+  xy: 49, 1
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 greenghost5
   rotate: false
-  xy: 107, 45
+  xy: 56, 11
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 purpleghost1
   rotate: false
-  xy: 117, 55
+  xy: 56, 1
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 purpleghost2
   rotate: false
-  xy: 49, 11
+  xy: 66, 21
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 purpleghost3
   rotate: false
-  xy: 49, 1
+  xy: 63, 11
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 purpleghost4
   rotate: false
-  xy: 59, 21
+  xy: 63, 1
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 purpleghost5
   rotate: false
-  xy: 107, 35
+  xy: 73, 25
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 redghost1
   rotate: false
-  xy: 114, 45
+  xy: 80, 25
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 redghost2
   rotate: false
-  xy: 56, 11
+  xy: 87, 25
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 redghost3
   rotate: false
-  xy: 56, 1
+  xy: 94, 25
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 redghost4
   rotate: false
-  xy: 114, 35
+  xy: 101, 25
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 redghost5
   rotate: false
-  xy: 66, 21
+  xy: 108, 25
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
-
-rts2.png
-format: RGBA8888
-filter: Nearest,Nearest
-repeat: none
-atlas/rts
+health_black
   rotate: false
-  xy: 1, 1
-  size: 128, 32
-  orig: 128, 32
+  xy: 45, 18
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+health_blue
+  rotate: false
+  xy: 124, 42
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: -1
+health_red
+  rotate: false
+  xy: 1, 5
+  size: 1, 1
+  orig: 1, 1
   offset: 0, 0
   index: -1

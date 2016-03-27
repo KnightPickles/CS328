@@ -22,7 +22,7 @@ public class Box2dComponent implements Component {
 	Sprite sprite;
 	Body body;
 	Vector2 position;
-	boolean playerControlled;
+	public boolean playerControlled;
 	
 	public Box2dComponent(boolean playerControlled, Entity e, Sprite sprite, Vector2 position, World world) {
 		myEntity = e;
