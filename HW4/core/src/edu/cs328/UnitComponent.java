@@ -32,7 +32,7 @@ public class UnitComponent implements Component {
 		
 	}
 	
-	public void receiveDamage(int amount) {
+	public void receiveDamage(int amount, Entity source) {
 		stats.health -= amount;
 		if (stats.health <= 0) {
 			KillUnit();

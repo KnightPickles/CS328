@@ -50,8 +50,11 @@ public class Box2dComponent implements Component {
 	
 	public void draw(Batch batch) {
 		position = new Vector2(body.getPosition().x, body.getPosition().y);
-		sprite.setPosition(position.x - sprite.getWidth()/2, position.y - sprite.getHeight()/2);
-		sprite.draw(batch);
+		
+		if (body.isActive()) {
+			sprite.setPosition(position.x - sprite.getWidth()/2, position.y - sprite.getHeight()/2);
+			sprite.draw(batch);
+		}
 	}
 	
 	public void setPosition(Vector2 position) {
@@ -60,5 +63,13 @@ public class Box2dComponent implements Component {
 	
 	public void KillUnit() {
 		body.destroyFixture(body.getFixtureList().first());	
+	}
+	
+	public void HideUnit() {
+		body.setActive(false);
+	}
+	
+	public void StopHideUnit() {
+		body.setActive(true);
 	}
 }
