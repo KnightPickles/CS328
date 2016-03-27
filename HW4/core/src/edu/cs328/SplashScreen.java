@@ -5,12 +5,18 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import com.sun.org.apache.xpath.internal.operations.Or;
 
 /**
  * Created by KnightPickles on 3/26/16.
@@ -20,23 +26,32 @@ public class SplashScreen implements Screen {
     private HW4 game;
     private Stage stage;
     private Skin skin;
-    private Label title;
+    OrthographicCamera camera;
+    private int resInd = 2;
 
     public SplashScreen(HW4 game) {
         this.game = game;
-        stage = new Stage(new ScreenViewport());
+        camera = new OrthographicCamera(Gdx.graphics.getWidth() , Gdx.graphics.getHeight());
         skin = new Skin(Gdx.files.internal("uiskin.json"));
-        stage = new Stage();
+        stage = new Stage(new FitViewport(Gdx.graphics.getWidth() , Gdx.graphics.getHeight(), camera));
         Gdx.input.setInputProcessor(stage);
         mainMenu();
     }
 
+    private Vector2 getRes(SelectBox b) {
+        String[] split = ((String)b.getSelected()).split(" ");
+        if(split != null) {
+            return new Vector2(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
+        } else return null;
+    }
+
     public void options() {
-        /*SelectBox resolutions = new SelectBox(skin);
+        final SelectBox resolutions = new SelectBox(skin);
         resolutions.setHeight(20f);
         resolutions.setWidth(200f);
-        resolutions.setItems(new String[] {"1080x1920", "720x1280", "640x480"});
-        resolutions.setPosition(Gdx.graphics.getWidth() /2 - 100f, Gdx.graphics.getHeight()/2 - 70f);*/
+        resolutions.setItems(new String[] {"1024 576", "1152 648", "1280 720", "1366 768", "1600 900", "1920 1080"});
+        resolutions.setPosition(Gdx.graphics.getWidth() /2 - 100f, Gdx.graphics.getHeight()/2 - 70f);
+        resolutions.setSelectedIndex(2);
 
         final TextButton back = new TextButton("Return", skin, "default");
         back.setWidth(200f);
@@ -53,16 +68,21 @@ public class SplashScreen implements Screen {
         setRes.setWidth(200f);
         setRes.setHeight(20f);
         setRes.setPosition(Gdx.graphics.getWidth() /2 - 100f, Gdx.graphics.getHeight()/2 - 40f);
-        setRes.addListener(new ClickListener(){
+        setRes.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.graphics.setWindowedMode(640, 480);
-                resize(640, 480);
+                Vector2 res = getRes(resolutions);
+                resInd = resolutions.getSelectedIndex();
+                if(res != null) {
+                    Gdx.graphics.setWindowedMode((int) res.x, (int) res.y);
+                    resize((int) res.x, (int) res.y);
+                }
+                options();
             }
         });
 
         stage.clear();
-        //stage.addActor(resolutions);
+        stage.addActor(resolutions);
         stage.addActor(back);
         stage.addActor(setRes);
     }
@@ -135,11 +155,10 @@ public class SplashScreen implements Screen {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Matrix4 matrix = new Matrix4();
+        matrix.setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        game.batch.setProjectionMatrix(matrix);
         stage.act(delta);
-
-        Gdx.gl.glClearColor(1, 1, 1, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         game.batch.begin();
         stage.draw();
         game.batch.end();
@@ -152,7 +171,8 @@ public class SplashScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
-
+        camera.setToOrtho(false);
+        game.batch.setProjectionMatrix(camera.combined);
     }
 
     @Override
