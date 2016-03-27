@@ -37,11 +37,14 @@ public class Map {
                         j * HW4.PPM + HW4.PPM >= camera.position.y &&
                         j * HW4.PPM - HW4.PPM <= camera.position.y + camera.viewportHeight) { // cull tiles for performance - better if an image could be generated
                     if (map[i][j] <= 0.1) {
-                        batch.draw(atlas.findRegion("grass"), i * HW4.PPM - Gdx.graphics.getWidth() / HW4.SCALE/ 2, j * HW4.PPM - Gdx.graphics.getHeight() / HW4.SCALE / 2);
+                        batch.draw(atlas.findRegion("grass"), i * HW4.PPM - Gdx.graphics.getWidth() / HW4.SCALE / 2, j * HW4.PPM - Gdx.graphics.getHeight() / HW4.SCALE / 2);
                     } else if (map[i][j] > 0.1 && map[i][j] <= 0.4) {
-                        batch.draw(atlas.findRegion("dirt"), i * HW4.PPM - Gdx.graphics.getWidth() / HW4.SCALE/ 2, j * HW4.PPM - Gdx.graphics.getHeight() / HW4.SCALE / 2);
+                        batch.draw(atlas.findRegion("dirt"), i * HW4.PPM - Gdx.graphics.getWidth() / HW4.SCALE / 2, j * HW4.PPM - Gdx.graphics.getHeight() / HW4.SCALE / 2);
                     } else if (map[i][j] > 0.4) {
-                        batch.draw(atlas.findRegion("sand"), i * HW4.PPM - Gdx.graphics.getWidth() / HW4.SCALE/ 2, j * HW4.PPM - Gdx.graphics.getHeight() / HW4.SCALE / 2);
+                        batch.draw(atlas.findRegion("sand"), i * HW4.PPM - Gdx.graphics.getWidth() / HW4.SCALE / 2, j * HW4.PPM - Gdx.graphics.getHeight() / HW4.SCALE / 2);
+                    }
+                    if (map[i][j] <= -1.5) {
+                        batch.draw(atlas.findRegion("bluewater"), i * HW4.PPM - Gdx.graphics.getWidth() / HW4.SCALE / 2, j * HW4.PPM - Gdx.graphics.getHeight() / HW4.SCALE / 2);
                     }
                 }
             }
