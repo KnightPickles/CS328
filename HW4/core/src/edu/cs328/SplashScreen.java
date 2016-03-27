@@ -1,8 +1,7 @@
 package edu.cs328;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
+import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -12,11 +11,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.sun.org.apache.xpath.internal.operations.Or;
+
+import java.awt.*;
 
 /**
  * Created by KnightPickles on 3/26/16.
@@ -26,7 +29,7 @@ public class SplashScreen implements Screen {
     private HW4 game;
     private Stage stage;
     private Skin skin;
-    OrthographicCamera camera;
+    private OrthographicCamera camera;
     private int resInd = 2;
 
     public SplashScreen(HW4 game) {
@@ -48,10 +51,18 @@ public class SplashScreen implements Screen {
     public void options() {
         final SelectBox resolutions = new SelectBox(skin);
         resolutions.setHeight(20f);
-        resolutions.setWidth(200f);
+        resolutions.setWidth(100f);
         resolutions.setItems(new String[] {"1024 576", "1152 648", "1280 720", "1366 768", "1600 900", "1920 1080"});
         resolutions.setPosition(Gdx.graphics.getWidth() /2 - 100f, Gdx.graphics.getHeight()/2 - 70f);
-        resolutions.setSelectedIndex(2);
+        resolutions.setSelectedIndex(resInd);
+
+        CheckBox windowed = new CheckBox(" Windowed", skin);
+        windowed.setPosition(Gdx.graphics.getWidth() /2 + 10, Gdx.graphics.getHeight()/2 - 72f);
+        if(windowed.isChecked()) {
+            Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+        } else {
+            Gdx.graphics.setWindowedMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        }
 
         final TextButton back = new TextButton("Return", skin, "default");
         back.setWidth(200f);
@@ -73,18 +84,19 @@ public class SplashScreen implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 Vector2 res = getRes(resolutions);
                 resInd = resolutions.getSelectedIndex();
-                if(res != null) {
-                    Gdx.graphics.setWindowedMode((int) res.x, (int) res.y);
-                    resize((int) res.x, (int) res.y);
-                }
+                Gdx.graphics.setWindowedMode((int) res.x, (int) res.y);
+                resize((int) res.x, (int) res.y);
                 options();
             }
         });
+
+
 
         stage.clear();
         stage.addActor(resolutions);
         stage.addActor(back);
         stage.addActor(setRes);
+        stage.addActor(windowed);
     }
 
     public void instructions() {
@@ -99,8 +111,14 @@ public class SplashScreen implements Screen {
             }
         });
 
+        Label title = new Label("How to play: Do it just like Warcraft 3", skin);
+        title.setWidth(300);
+        title.setAlignment(Align.center);
+        title.setPosition(Gdx.graphics.getWidth() /2 - 150f, Gdx.graphics.getHeight()/2 - 40f);
+
         stage.clear();
         stage.addActor(back);
+        stage.addActor(title);
     }
 
     public void mainMenu() {
