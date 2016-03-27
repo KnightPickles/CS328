@@ -3,6 +3,20 @@ rts.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+hauntedmansion
+  rotate: false
+  xy: 1, 31
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+mainbase
+  rotate: false
+  xy: 35, 31
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 aquawater
   rotate: false
   xy: 1, 21
@@ -12,14 +26,14 @@ aquawater
   index: -1
 bluewater
   rotate: false
-  xy: 1, 11
+  xy: 69, 55
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
 dirt
   rotate: false
-  xy: 11, 21
+  xy: 1, 11
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
@@ -33,295 +47,307 @@ flower
   index: -1
 grass
   rotate: false
-  xy: 11, 11
+  xy: 11, 21
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
 largerock
   rotate: false
-  xy: 21, 21
+  xy: 69, 45
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
 mud
   rotate: false
-  xy: 11, 1
+  xy: 79, 55
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
 puddle
   rotate: false
-  xy: 21, 11
+  xy: 11, 11
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
 rocks
   rotate: false
-  xy: 31, 21
+  xy: 11, 1
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
 sand
   rotate: false
-  xy: 21, 1
+  xy: 21, 21
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
 tallgrass
   rotate: false
-  xy: 31, 11
+  xy: 69, 35
   size: 8, 8
   orig: 8, 8
   offset: 0, 0
   index: -1
 blueghost1
   rotate: false
-  xy: 41, 21
+  xy: 79, 45
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 blueghost2
   rotate: false
-  xy: 31, 1
+  xy: 89, 55
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 blueghost3
   rotate: false
-  xy: 41, 11
+  xy: 21, 11
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 blueghost4
   rotate: false
-  xy: 48, 21
+  xy: 21, 1
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 blueghost5
   rotate: false
-  xy: 38, 1
+  xy: 31, 21
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes1e
   rotate: false
-  xy: 48, 11
+  xy: 79, 35
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes1s
   rotate: false
-  xy: 55, 21
+  xy: 86, 45
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes1w
   rotate: false
-  xy: 45, 1
+  xy: 96, 55
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes2e
   rotate: false
-  xy: 55, 11
+  xy: 28, 11
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes2s
   rotate: false
-  xy: 62, 21
+  xy: 28, 1
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes2w
   rotate: false
-  xy: 52, 1
+  xy: 38, 21
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes3e
   rotate: false
-  xy: 62, 11
+  xy: 86, 35
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes3s
   rotate: false
-  xy: 69, 21
+  xy: 93, 45
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes3w
   rotate: false
-  xy: 59, 1
+  xy: 103, 55
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes4e
   rotate: false
-  xy: 69, 11
+  xy: 35, 11
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes4s
   rotate: false
-  xy: 76, 21
+  xy: 35, 1
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes4w
   rotate: false
-  xy: 66, 1
+  xy: 45, 21
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes5e
   rotate: false
-  xy: 76, 11
+  xy: 93, 35
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes5s
   rotate: false
-  xy: 83, 21
+  xy: 100, 45
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 eyes5w
   rotate: false
-  xy: 73, 1
+  xy: 110, 55
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 greenghost1
   rotate: false
-  xy: 83, 11
+  xy: 42, 11
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 greenghost2
   rotate: false
-  xy: 90, 21
+  xy: 42, 1
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 greenghost3
   rotate: false
-  xy: 80, 1
+  xy: 52, 21
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 greenghost4
   rotate: false
-  xy: 90, 11
+  xy: 100, 35
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 greenghost5
   rotate: false
-  xy: 97, 21
+  xy: 107, 45
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 purpleghost1
   rotate: false
-  xy: 87, 1
+  xy: 117, 55
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 purpleghost2
   rotate: false
-  xy: 97, 11
+  xy: 49, 11
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 purpleghost3
   rotate: false
-  xy: 104, 21
+  xy: 49, 1
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 purpleghost4
   rotate: false
-  xy: 94, 1
+  xy: 59, 21
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 purpleghost5
   rotate: false
-  xy: 104, 11
+  xy: 107, 35
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 redghost1
   rotate: false
-  xy: 111, 21
+  xy: 114, 45
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 redghost2
   rotate: false
-  xy: 101, 1
+  xy: 56, 11
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 redghost3
   rotate: false
-  xy: 111, 11
+  xy: 56, 1
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 redghost4
   rotate: false
-  xy: 118, 21
+  xy: 114, 35
   size: 5, 8
   orig: 5, 8
   offset: 0, 0
   index: -1
 redghost5
   rotate: false
-  xy: 108, 1
+  xy: 66, 21
   size: 5, 8
   orig: 5, 8
+  offset: 0, 0
+  index: -1
+
+rts2.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+atlas/rts
+  rotate: false
+  xy: 1, 1
+  size: 128, 32
+  orig: 128, 32
   offset: 0, 0
   index: -1

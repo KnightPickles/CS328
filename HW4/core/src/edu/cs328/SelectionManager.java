@@ -65,8 +65,10 @@ public class SelectionManager {
 		
 		//Select new units
 		for (Entity e : tempSelected) {
-			EntityManager._instance.sc.get(e).selected = true;
-			selected.add(e);
+			if (!EntityManager._instance.GetListBuildings().contains(e, true)) {
+				EntityManager._instance.sc.get(e).selected = true;
+				selected.add(e);
+			}
 		}
 	}
 	
@@ -154,7 +156,10 @@ public class SelectionManager {
 		if (singleSelected != null) { 		
 			Vector3 pos = new Vector3(xPos, yPos, 0);
 			camera.unproject(pos);
-			EntityManager._instance.gc.get(singleSelected).rightClickCommand(new Vector2(pos.x, pos.y), tar);
+			if (EntityManager._instance.GetListBuildings().contains(singleSelected, true)) 
+				EntityManager._instance.bc.get(singleSelected).rightClickCommand(new Vector2(pos.x, pos.y), tar);
+			else
+				EntityManager._instance.gc.get(singleSelected).rightClickCommand(new Vector2(pos.x, pos.y), tar);
 			return;
 		}
 		

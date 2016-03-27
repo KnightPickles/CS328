@@ -34,24 +34,42 @@ public class EntityManager extends EntitySystem {
         _instance = this;
     	this.atlas = atlas;
     	this.world = world;
-    	for (int i = 0; i < 5; i++) {
-    		UnitStats stats = new UnitStats(true, 15f, 6f, 1f, 4, 24);
-    		createGhost(stats, true, new Vector2(i*10, 4), "greenghost5", true);
+    	UnitStats stats = new UnitStats(true, 15f, 6f, 1f, 4, 24);
+    	for (int i = 0; i < 5; i++) {    		
+    		createGhost(stats, true, new Vector2(i*10, 4), "greenghost5", true, GhostComponent.UnitType.MeleeFighter);
     	}
-    
-    	UnitStats stats = new UnitStats(false, 15f, 6f, 1f, 4, 24);
-    	createGhost(stats, false, new Vector2(30, 50), "redghost5", false);
+    	createGhost(stats, true, new Vector2(60, 4), "greenghost2", true, GhostComponent.UnitType.Worker);
+    	
+    	stats = new UnitStats(false, 15f, 6f, 1f, 4, 24);
+    	createGhost(stats, false, new Vector2(30, 50), "redghost5", false, GhostComponent.UnitType.MeleeFighter);
+    	
+    	stats = new UnitStats(true, 0, 0, 0, 0, 80);
+    	createBuilding(stats, true, new Vector2(-50, -50), "mainbase", true, BuildingComponent.BuildingType.MainBase);
+    	createBuilding(stats, false, new Vector2(100, 100), "mainbase", false, BuildingComponent.BuildingType.MainBase);
+    	
+    	createBuilding(stats, false, new Vector2(-50, 100), "hauntedmansion", true, BuildingComponent.BuildingType.HauntedMansion);
     }
-    
-    //TODO create diff functions for create unit/buildings with/for different constructors in components
-    
-    public void createGhost(UnitStats stats, boolean pc, Vector2 spawnPosition, String spriteName, boolean friendly) {
+
+
+    public void createBuilding(UnitStats stats, boolean pc, Vector2 spawnPosition, String spriteName, boolean friendly, BuildingComponent.BuildingType buildingType) {
     	Entity e = new Entity();
     	Box2dComponent b2dc = new Box2dComponent(pc, e, atlas.createSprite(spriteName), spawnPosition, world);
     	e.add(b2dc);
     	SelectableComponent sc = new SelectableComponent(friendly);
     	e.add(sc);
-    	GhostComponent uc = new GhostComponent(b2dc, stats, e);
+    	BuildingComponent uc = new BuildingComponent(b2dc, stats, e, buildingType);
+    	e.add(uc);
+    	engine.addEntity(e);
+    	entities = engine.getEntitiesFor(Family.all(Box2dComponent.class).get());
+    }
+    
+    public void createGhost(UnitStats stats, boolean pc, Vector2 spawnPosition, String spriteName, boolean friendly, GhostComponent.UnitType unitType) {
+    	Entity e = new Entity();
+    	Box2dComponent b2dc = new Box2dComponent(pc, e, atlas.createSprite(spriteName), spawnPosition, world);
+    	e.add(b2dc);
+    	SelectableComponent sc = new SelectableComponent(friendly);
+    	e.add(sc);
+    	GhostComponent uc = new GhostComponent(b2dc, stats, e, unitType);
     	e.add(uc);
     	engine.addEntity(e);
     	entities = engine.getEntitiesFor(Family.all(Box2dComponent.class).get());
@@ -78,6 +96,12 @@ public class EntityManager extends EntitySystem {
     public ImmutableArray<Entity> GetListSelectables() {
     	ImmutableArray<Entity> entities;
     	entities = engine.getEntitiesFor(Family.all(SelectableComponent.class).get());
+    	return entities;
+    }
+    
+    public ImmutableArray<Entity> GetListBuildings() {
+    	ImmutableArray<Entity> entities;
+    	entities = engine.getEntitiesFor(Family.all(BuildingComponent.class).get());
     	return entities;
     }
     

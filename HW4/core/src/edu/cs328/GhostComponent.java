@@ -1,11 +1,15 @@
 package edu.cs328;
 
+import java.util.Random;
+
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+
+import edu.cs328.BuildingComponent.BuildingType;
 
 public class GhostComponent extends UnitComponent {
 	
@@ -23,18 +27,27 @@ public class GhostComponent extends UnitComponent {
 	float leashDist = 25f;
 	Entity target;
 	
+	public enum UnitType {
+		Worker,
+		MeleeFighter,
+		RangedFighter
+	}
+	UnitType unitType;
+	
 	//States
 	public enum behaviour {
 		Stop,
 		Move,
 		Attack,
 		Follow,
+		Haunting,
 		AttackMove
 	}
 	behaviour currBehaviour = behaviour.Stop;
 	
-	public GhostComponent(Box2dComponent b2dc, UnitStats stats, Entity myEntity) {
+	public GhostComponent(Box2dComponent b2dc, UnitStats stats, Entity myEntity, UnitType type) {
 		super (b2dc, stats, myEntity);
+		unitType = type;
 	}
 	
 	@Override
@@ -55,6 +68,7 @@ public class GhostComponent extends UnitComponent {
 		case Move: Move(); break;
 		case Attack: Attack(); break;
 		case Follow: Follow(); break;
+		case Haunting: Haunt(); break;
 		case AttackMove: AttackMove(); break;
 		}
 		
@@ -79,10 +93,11 @@ public class GhostComponent extends UnitComponent {
 	}
 	
 	public void Attack() {
-		if (!EntityManager._instance.gc.get(target).alive) {
+		if (!EntityManager._instance.GetListSelectables().contains(target, true)) {
 			SetStopState();
 			return;
 		}
+		
 		
 		Box2dComponent tar = EntityManager._instance.boxc.get(target);
 		float dist = tar.position.dst(position);
@@ -91,7 +106,11 @@ public class GhostComponent extends UnitComponent {
 		if (dist <= stats.attackDistance) {
 			
 			if (timeUntilAttack <= 0) {
-				EntityManager._instance.gc.get(target).receiveDamage(stats.attackDamage);
+				if (EntityManager._instance.GetListBuildings().contains(target, true)) {
+					EntityManager._instance.bc.get(target).receiveDamage(stats.attackDamage, myEntity);
+				} else {
+					EntityManager._instance.gc.get(target).receiveDamage(stats.attackDamage, myEntity);
+				}
 				timeUntilAttack = stats.attackCooldown; //Attacked so reset attack CD
 			} else {
 				timeUntilAttack -= Gdx.graphics.getDeltaTime();
@@ -123,6 +142,9 @@ public class GhostComponent extends UnitComponent {
 	}
 	
 	public void Stop() {
+		if (unitType == UnitType.Worker) //Don't seek combat if we are a worker 
+			return;
+		
 		//Check for enemies 
 		ImmutableArray<Entity> entities = EntityManager._instance.GetListSelectables();
 		for (Entity e : entities) {
@@ -186,7 +208,8 @@ public class GhostComponent extends UnitComponent {
 	@Override
 	public void rightClickCommand(Vector2 pos, Entity target) {
 		this.target = target;
-
+		leashedAttack = false;
+		
 		//Regular movement command
 		if (target == null) {
 			currBehaviour = behaviour.Move;
@@ -197,13 +220,89 @@ public class GhostComponent extends UnitComponent {
 			desiredMovePosition = pos;
 			return;
 		}
-		
-		if (EntityManager._instance.sc.get(target).friendly) { //Follow friendly unit
-			currBehaviour = behaviour.Follow;
-			return;
-		} else { //Attack enemy unit
-			currBehaviour = behaviour.Attack;
-			return;
+
+		if (EntityManager._instance.GetListBuildings().contains(target, true)) { //Target building
+			if (unitType == UnitType.Worker) {
+				if (EntityManager._instance.bc.get(target).buildingType == BuildingType.HauntedMansion) {
+					startHaunting(target);
+					return;
+				}
+			}
+			
+			if (EntityManager._instance.sc.get(target).friendly) { //Friendly building
+				SetMove(pos);
+			} else { //Enemy building
+				AttackTarget(target, false);
+			}
+			
+		} else { //Target unit
+			if (EntityManager._instance.sc.get(target).friendly) { //Follow friendly unit
+				currBehaviour = behaviour.Follow;
+				return;
+			} else { //Attack enemy unit
+				currBehaviour = behaviour.Attack;
+				return;
+			}
+		}
+	}
+	
+	Entity mainBase;
+	Entity targetMansion;
+	public void startHaunting(Entity target) {
+		if (mainBase == null) {
+			ImmutableArray<Entity> buildings = EntityManager._instance.GetListBuildings();
+			for (Entity e : buildings) {
+				if (EntityManager._instance.bc.get(e).buildingType == BuildingType.MainBase
+						&& EntityManager._instance.bc.get(e).stats.playerControlled) {
+					mainBase = e;
+					break;
+				}
+			}
+		}
+
+		targetMansion = target;
+		currBehaviour = behaviour.Haunting;
+		hauntStep = 0;	
+		currHideTime = 0;
+	}
+	
+	public static int money = 200; //if we get enough reason to make a new class then put this in there
+	float currHideTime = 0;
+	float hideTime = 3;
+	int hauntStep; //0 move to hauntedmansion 1 sit for few sec 2 run back to base
+	public void Haunt() {
+		if (hauntStep == 0) {
+			Box2dComponent tar = EntityManager._instance.boxc.get(targetMansion);
+			float dist = tar.position.dst(position);
+			float timeToTarget = dist/stats.moveSpeed;
+			float x = MathUtils.lerp(position.x, tar.position.x, Gdx.graphics.getDeltaTime()/(timeToTarget));
+			float y = MathUtils.lerp(position.y, tar.position.y, Gdx.graphics.getDeltaTime()/(timeToTarget));
+			position = new Vector2(x, y);
+			bc.setPosition(position);
+			if (position.dst(tar.position) < .25f) 
+				hauntStep = 1;
+		}
+		if (hauntStep == 1) {
+			bc.HideUnit();
+			currHideTime += Gdx.graphics.getDeltaTime();
+			if (currHideTime > hideTime) {
+				bc.StopHideUnit();
+				hauntStep = 2;
+				currHideTime = 0;
+			}
+		}
+		if (hauntStep == 2) {
+			Box2dComponent tar = EntityManager._instance.boxc.get(mainBase);
+			float dist = tar.position.dst(position);
+			float timeToTarget = dist/stats.moveSpeed;
+			float x = MathUtils.lerp(position.x, tar.position.x, Gdx.graphics.getDeltaTime()/(timeToTarget));
+			float y = MathUtils.lerp(position.y, tar.position.y, Gdx.graphics.getDeltaTime()/(timeToTarget));
+			position = new Vector2(x, y);
+			bc.setPosition(position);
+			if (position.dst(tar.position) < .25f) {
+				hauntStep = 0;
+				money += 50;
+			}
 		}
 	}
 	
@@ -217,5 +316,18 @@ public class GhostComponent extends UnitComponent {
 	public void SetStopState() {
 		currBehaviour = behaviour.Stop;
 		target = null;
+	}
+	
+	@Override
+	public void receiveDamage(int amount, Entity source) {
+		super.receiveDamage(amount, source);
+
+		if (unitType == UnitType.Worker && currBehaviour == behaviour.Stop) { //If we are hit as a worker we run away
+			Box2dComponent b = EntityManager._instance.boxc.get(source);
+			Vector2 negV = new Vector2(-(b.position.x - position.x), -(b.position.y - position.y));
+			negV = negV.nor();
+			
+			SetMove(new Vector2(position.x + (negV.x)*30, position.y + (negV.y)*30));
+		}
 	}
 }
