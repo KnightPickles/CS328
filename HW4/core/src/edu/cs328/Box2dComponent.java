@@ -49,6 +49,13 @@ public class Box2dComponent implements Component {
 		this.position = position;
 	}
 	
+	public void upgrade(int level) {
+		if (playerControlled) {
+			sprite = HW4._instance.atlas.createSprite("greenghost" + level);
+			sprite.setPosition(position.x, position.y);
+		}		
+	}
+	
 	public void draw(Batch batch) {
 		position = new Vector2(body.getPosition().x, body.getPosition().y);
 		
