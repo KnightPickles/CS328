@@ -15,12 +15,12 @@ public class BuildingComponent extends UnitComponent {
 		super(b2dc, stats, myEntity);
 		buildingType = type;
 		healthBarBackground = atlas.createSprite("healthbar_structure");
-		if(bc.playerControlled) {
+		if (bc.playerControlled) {
 			healthBarLevel = atlas.createSprite("health_blue");
-			playerIndicator = atlas.createSprite("blue_indicator");
+			if(type == BuildingType.MainBase) playerIndicator = atlas.createSprite("blue_indicator");
 		} else {
 			healthBarLevel = atlas.createSprite("health_red");
-			playerIndicator = atlas.createSprite("red_indicator");
+			if(type == BuildingType.MainBase) playerIndicator = atlas.createSprite("red_indicator");
 		}
 	}
 	
@@ -40,8 +40,10 @@ public class BuildingComponent extends UnitComponent {
 		healthBarBackground.setPosition(bc.sprite.getX(), bc.sprite.getY() + bc.sprite.getHeight() - 2);
 		healthBarBackground.draw(batch);
 
-		playerIndicator.setPosition(bc.sprite.getX(), bc.sprite.getY());
-		playerIndicator.draw(batch);
+		if(playerIndicator != null) {
+			playerIndicator.setPosition(bc.sprite.getX(), bc.sprite.getY());
+			playerIndicator.draw(batch);
+		}
 
 		for(int i = 0; i < healthBarBackground.getWidth(); i++) {
 			if (i * stats.maxHealth / healthBarBackground.getWidth() <= stats.health) {

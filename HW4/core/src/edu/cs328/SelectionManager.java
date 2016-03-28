@@ -70,13 +70,25 @@ public class SelectionManager {
 	public void render(ShapeRenderer sh, Batch batch) {
 		for(Entity e : selected) {
 			GhostComponent gc = e.getComponent(GhostComponent.class);
-			if(!targets.contains(gc.desiredMovePosition) && gc.desiredMovePosition != null){
+			if(gc.alive && !targets.contains(gc.desiredMovePosition) && gc.desiredMovePosition != null){
+				targets.add(gc.desiredMovePosition);
+			}
+		}
+		if(singleSelected != null) {
+			GhostComponent gc = singleSelected.getComponent(GhostComponent.class);
+			if(gc.alive && !targets.contains(gc.desiredMovePosition) && gc.desiredMovePosition != null){
 				targets.add(gc.desiredMovePosition);
 			}
 		}
 		for(Entity e : selected) {
 			GhostComponent gc = e.getComponent(GhostComponent.class);
-			if(gc.position != null && gc.desiredMovePosition != null) {
+			if(gc.alive && gc.position != null && gc.desiredMovePosition != null) {
+				drawDashedLine(sh, new Vector2(2, 1), gc.position, gc.desiredMovePosition, 1);
+			}
+		}
+		if(singleSelected != null) {
+			GhostComponent gc = singleSelected.getComponent(GhostComponent.class);
+			if(gc.alive && gc.position != null && gc.desiredMovePosition != null) {
 				drawDashedLine(sh, new Vector2(2, 1), gc.position, gc.desiredMovePosition, 1);
 			}
 		}
