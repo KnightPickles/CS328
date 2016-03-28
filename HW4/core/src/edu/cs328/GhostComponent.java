@@ -59,11 +59,12 @@ public class GhostComponent extends UnitComponent {
 		super (b2dc, stats, myEntity);
 		unitType = type;
 
-		for(int i = 0; i < 5; i++) {
-			eyes[i] = atlas.createSprite("eyes" + i + 1 + "e");
-			eyes[i + 5] = atlas.createSprite("eyes" + i + 1 + "s");
-			eyes[i + 10] = atlas.createSprite("eyes" + i + 1 + "w");
+		for(int i = 0; i < 15; i+=3) {
+			eyes[i] = atlas.createSprite("eyes" + (i / 3 + 1) + "e");
+			eyes[i + 1] = atlas.createSprite("eyes" + (i / 3 + 1) + "s");
+			eyes[i + 2] = atlas.createSprite("eyes" + (i / 3 + 1) + "w");
 		}
+
 		healthBarBackground = atlas.createSprite("healthbar");
 		healthBarBackground = atlas.createSprite("healthbar");
 		if(bc.playerControlled) {
@@ -105,7 +106,7 @@ public class GhostComponent extends UnitComponent {
 			}
 		}
 
-		/*if(dir == 1) {
+		if(dir == 1) {
 			eyes[0].setPosition(bc.sprite.getX(), bc.sprite.getY());
 			eyes[0].draw(batch);
 		} else if(dir == 2) {
@@ -114,7 +115,7 @@ public class GhostComponent extends UnitComponent {
 		} else if(dir == 3) {
 			eyes[2].setPosition(bc.sprite.getX(), bc.sprite.getY());
 			eyes[2].draw(batch);
-		}*/
+		}
 	}
 	
 	@Override
