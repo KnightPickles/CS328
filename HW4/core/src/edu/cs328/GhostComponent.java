@@ -5,6 +5,7 @@ import java.util.Random;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -18,6 +19,7 @@ public class GhostComponent extends UnitComponent {
 	
 	//Unit properties
 	float timeUntilAttack = 0;
+	int upgradeLevel = 2;
 	
 	//Command stuff
 	Vector2 startMovePosition;
@@ -59,6 +61,23 @@ public class GhostComponent extends UnitComponent {
 		if(bc.playerControlled) {
 			healthBarLevel = atlas.createSprite("health_blue");
 		} else healthBarLevel = atlas.createSprite("health_red");
+		
+		while (upgradeLevel < BuildingComponent.alliedUpgradeLevel)
+			upgrade();
+	}
+	
+	public void upgrade() {
+		if (unitType == UnitType.Worker)
+			return;
+		
+		if (upgradeLevel >= 5)
+			return;
+		
+		upgradeLevel++;
+		stats.maxHealth += 10;
+		stats.health += 10;
+		stats.attackDamage += 1;
+		bc.upgrade(upgradeLevel);
 	}
 	
 	@Override
@@ -127,12 +146,15 @@ public class GhostComponent extends UnitComponent {
 		desiredMovePosition = tar.position;
 		
 		if (dist <= stats.attackDistance) {
-			
 			if (timeUntilAttack <= 0) {
-				if (EntityManager._instance.GetListBuildings().contains(target, true)) {
-					EntityManager._instance.bc.get(target).receiveDamage(stats.attackDamage, myEntity);
+				if (unitType == UnitType.RangedFighter) { 
+					EntityManager._instance.createProjectile(myEntity, target, stats.attackDamage);
 				} else {
-					EntityManager._instance.gc.get(target).receiveDamage(stats.attackDamage, myEntity);
+					if (EntityManager._instance.GetListBuildings().contains(target, true)) {
+						EntityManager._instance.bc.get(target).receiveDamage(stats.attackDamage, myEntity);
+					} else {
+						EntityManager._instance.gc.get(target).receiveDamage(stats.attackDamage, myEntity);
+					}
 				}
 				timeUntilAttack = stats.attackCooldown; //Attacked so reset attack CD
 			} else {
@@ -181,6 +203,7 @@ public class GhostComponent extends UnitComponent {
 		}
 	}
 	
+	//Hasn't been tested or used yet, needs to be checked/debugged before use
 	public void AttackMove() {
 		//Check for enemies 
 		ImmutableArray<Entity> entities = EntityManager._instance.GetListSelectables();
@@ -231,6 +254,7 @@ public class GhostComponent extends UnitComponent {
 	
 	@Override
 	public void rightClickCommand(Vector2 pos, Entity target) {
+		super.rightClickCommand(pos, target);
 		this.target = target;
 		leashedAttack = false;
 		
