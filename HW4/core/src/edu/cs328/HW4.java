@@ -10,8 +10,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
  * Add title screen graphics
  * Change GUI appearance
  *
- * Seperate buttons for buildings and units; building -> set rally, train unit melee/ranged
  * Add unit information in GUI
+ * Ghost eyes
  */
 
 public class HW4 extends Game {
