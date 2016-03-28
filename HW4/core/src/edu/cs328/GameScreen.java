@@ -43,7 +43,6 @@ public class GameScreen implements Screen {
     public void show() {
         _instance = this;
 
-        gui = new GameGUI(game);
         camera = new OrthographicCamera(Gdx.graphics.getWidth() / HW4.SCALE, Gdx.graphics.getHeight() / HW4.SCALE);
         viewport = new FitViewport(Gdx.graphics.getWidth() / HW4.SCALE, Gdx.graphics.getHeight() / HW4.SCALE, camera);
 
@@ -55,18 +54,19 @@ public class GameScreen implements Screen {
         map = new Map(100, 100, game.atlas, camera, 1);
         entityManager = new EntityManager(game.atlas, world);
         selectionManager = new SelectionManager(game);
+        gui = new GameGUI(game, selectionManager);
         MyInputProcessor inputProcessor = new MyInputProcessor();
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
         inputMultiplexer.addProcessor(gui.stage);
         inputMultiplexer.addProcessor(inputProcessor);
         Gdx.input.setInputProcessor(inputMultiplexer);
-
     }
 
     @Override
     public void render(float delta) {
         // Update
         entityManager.update();
+        gui.update();
         world.step(1f/60f, 6, 2);
         cameraUpdate();
 

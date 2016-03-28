@@ -13,7 +13,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 
+// Search for EDITED -- buildings are now included in the selected list
 public class SelectionManager {
 
 	private HW4 game;
@@ -70,25 +72,25 @@ public class SelectionManager {
 	public void render(ShapeRenderer sh, Batch batch) {
 		for(Entity e : selected) {
 			GhostComponent gc = e.getComponent(GhostComponent.class);
-			if(gc.alive && !targets.contains(gc.desiredMovePosition) && gc.desiredMovePosition != null){
+			if(gc != null && gc.alive && !targets.contains(gc.desiredMovePosition) && gc.desiredMovePosition != null){
 				targets.add(gc.desiredMovePosition);
 			}
 		}
 		if(singleSelected != null) {
 			GhostComponent gc = singleSelected.getComponent(GhostComponent.class);
-			if(gc.alive && !targets.contains(gc.desiredMovePosition) && gc.desiredMovePosition != null){
+			if(gc != null && gc.alive && !targets.contains(gc.desiredMovePosition) && gc.desiredMovePosition != null){
 				targets.add(gc.desiredMovePosition);
 			}
 		}
 		for(Entity e : selected) {
 			GhostComponent gc = e.getComponent(GhostComponent.class);
-			if(gc.alive && gc.position != null && gc.desiredMovePosition != null) {
+			if(gc != null && gc.alive && gc.position != null && gc.desiredMovePosition != null) {
 				drawDashedLine(sh, new Vector2(2, 1), gc.position, gc.desiredMovePosition, 1);
 			}
 		}
 		if(singleSelected != null) {
 			GhostComponent gc = singleSelected.getComponent(GhostComponent.class);
-			if(gc.alive && gc.position != null && gc.desiredMovePosition != null) {
+			if(gc != null && gc.alive && gc.position != null && gc.desiredMovePosition != null) {
 				drawDashedLine(sh, new Vector2(2, 1), gc.position, gc.desiredMovePosition, 1);
 			}
 		}
@@ -136,10 +138,11 @@ public class SelectionManager {
 		
 		//Select new units
 		for (Entity e : tempSelected) {
-			if (!EntityManager._instance.GetListBuildings().contains(e, true)) {
+			// EDITED
+			//if (!EntityManager._instance.GetListBuildings().contains(e, true)) {
 				EntityManager._instance.sc.get(e).selected = true;
 				selected.add(e);
-			}
+			//}
 		}
 	}
 	
@@ -227,7 +230,8 @@ public class SelectionManager {
 		if (singleSelected != null) { 		
 			Vector3 pos = new Vector3(xPos, yPos, 0);
 			camera.unproject(pos);
-			if (EntityManager._instance.GetListBuildings().contains(singleSelected, true)) 
+			// EDITED
+			if (EntityManager._instance.GetListBuildings().contains(singleSelected, true))
 				EntityManager._instance.bc.get(singleSelected).rightClickCommand(new Vector2(pos.x, pos.y), tar);
 			else
 				EntityManager._instance.gc.get(singleSelected).rightClickCommand(new Vector2(pos.x, pos.y), tar);
@@ -238,7 +242,10 @@ public class SelectionManager {
 			for (Entity e : selected) {
 				Vector3 pos = new Vector3(xPos, yPos, 0);
 				camera.unproject(pos);
-				EntityManager._instance.gc.get(e).rightClickCommand(new Vector2(pos.x, pos.y), tar);
+				if (EntityManager._instance.GetListBuildings().contains(e, true))
+					EntityManager._instance.bc.get(e).rightClickCommand(new Vector2(pos.x, pos.y), tar);
+				else
+					EntityManager._instance.gc.get(e).rightClickCommand(new Vector2(pos.x, pos.y), tar);
 			}
 			return;
 		}

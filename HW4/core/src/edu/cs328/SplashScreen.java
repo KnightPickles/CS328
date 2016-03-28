@@ -2,6 +2,7 @@ package edu.cs328;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -25,6 +26,7 @@ public class SplashScreen implements Screen {
     private int resInd = 2;
     private boolean fullScreen = false;
     private Map map;
+    private Sprite title;
 
     public SplashScreen(HW4 game) {
         this.game = game;
@@ -34,6 +36,9 @@ public class SplashScreen implements Screen {
         map = new Map(60, 60, game.atlas, cambak, 2);
         skin = new Skin(Gdx.files.internal("uiskin.json"));
         stage = new Stage(new FitViewport(Gdx.graphics.getWidth() , Gdx.graphics.getHeight(), camera));
+
+        title = game.atlas.createSprite("titlescreen");
+        title.scale(HW4.SCALE);
         Gdx.input.setInputProcessor(stage);
         mainMenu();
     }
@@ -192,10 +197,15 @@ public class SplashScreen implements Screen {
         camera.update();
         cambak.update();
         stage.act(delta);
-
+        title.setPosition(cambak.viewportWidth / 2 / HW4.SCALE - title.getWidth() / 2 * HW4.SCALE, cambak.viewportHeight / 2 / HW4.SCALE - title.getHeight() / 2 * HW4.SCALE);
 
         game.batch.setProjectionMatrix(cambak.combined);
         map.draw(game.batch);
+        game.batch.begin();
+
+        title.draw(game.batch);
+        game.batch.end();
+
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
         stage.draw();

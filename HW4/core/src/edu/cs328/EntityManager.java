@@ -48,7 +48,8 @@ public class EntityManager extends EntitySystem {
 
 		stats = new UnitStats(true, 0, 0, 0, 0, 80);
     	createBuilding(new UnitStats(true, 0, 0, 0, 0, 80), true, new Vector2(-50, -50), "mainbase", true, BuildingComponent.BuildingType.MainBase);
-    	createBuilding(new UnitStats(true, 0, 0, 0, 0, 80), false, new Vector2(100, 100), "mainbase", false, BuildingComponent.BuildingType.MainBase);
+		createBuilding(new UnitStats(true, 0, 0, 0, 0, 80), true, new Vector2(-20, -50), "mainbase", true, BuildingComponent.BuildingType.MainBase);
+		createBuilding(new UnitStats(true, 0, 0, 0, 0, 80), false, new Vector2(100, 100), "mainbase", false, BuildingComponent.BuildingType.MainBase);
     	
     	createBuilding(new UnitStats(true, 0, 0, 0, 0, 80), false, new Vector2(-50, 100), "hauntedmansion", true, BuildingComponent.BuildingType.HauntedMansion);
     }
