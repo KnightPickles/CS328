@@ -52,9 +52,9 @@ public class GameScreen implements Screen {
         world.setContactListener(new GameCollision());
         debugRenderer = new Box2DDebugRenderer();
 
-        map = new Map(100, 100, game.atlas, camera);
+        map = new Map(100, 100, game.atlas, camera, 1);
         entityManager = new EntityManager(game.atlas, world);
-        selectionManager = new SelectionManager();
+        selectionManager = new SelectionManager(game);
         MyInputProcessor inputProcessor = new MyInputProcessor();
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
         inputMultiplexer.addProcessor(gui.stage);
@@ -79,10 +79,11 @@ public class GameScreen implements Screen {
 
         game.batch.setTransformMatrix(camera.view);
         game.batch.setProjectionMatrix(camera.projection);
-        game.batch.begin();
+        game.shapeRenderer.setTransformMatrix(camera.view);
+        game.shapeRenderer.setProjectionMatrix(camera.projection);
         map.draw(game.batch);
         entityManager.draw(game.batch);
-        game.batch.end();
+        selectionManager.render(game.shapeRenderer, game.batch);
 
         if (renderLines.size > 0) {
             game.shapeRenderer.setProjectionMatrix(camera.projection);
@@ -95,7 +96,6 @@ public class GameScreen implements Screen {
         }
 
         gui.render();
-
 
         debugRenderer.render(world, camera.combined);
     }

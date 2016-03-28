@@ -2,10 +2,17 @@ package edu.cs328;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+
+/* To Do:
+ * Add title screen graphics
+ * Change GUI appearance
+ *
+ * Seperate buttons for buildings and units; building -> set rally, train unit melee/ranged
+ * Add unit information in GUI
+ */
 
 public class HW4 extends Game {
 

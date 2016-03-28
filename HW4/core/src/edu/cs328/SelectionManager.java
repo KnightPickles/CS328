@@ -7,30 +7,101 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 public class SelectionManager {
 
+	private HW4 game;
 	public static SelectionManager _instance;
 	OrthographicCamera camera;
 	
 	public Entity singleSelected; //If we are selecting one Entity, this is that Entity
 	public ArrayList<Entity> tempSelected = new ArrayList<Entity>();
 	public ArrayList<Entity> selected = new ArrayList<Entity>();
+	public ArrayList<Vector2> targets = new ArrayList<Vector2>();
+
+	Sprite targetIndicator;
 	
 	//Drag select stuff
 	Vector2 startDrag = new Vector2(0, 0);
 	boolean dragging = false;
 	
-	public SelectionManager() {
+	public SelectionManager(HW4 game) {
+		this.game = game;
 		if (_instance != null) System.out.println("Creating multiple selection managers");
 		_instance = this;			
 		camera = GameScreen._instance.camera;
+		targetIndicator = game.atlas.createSprite("blue_indicator");
+	}
+
+	public static void drawDashedLine(ShapeRenderer renderer, Vector2 dashes, Vector2 start, Vector2 end, float width) {
+		if (dashes.x == 0) {
+			return ;
+		}
+		float dirX = end.x - start.x;
+		float dirY = end.y - start.y;
+
+		float length = Vector2.len(dirX, dirY);
+		dirX /= length;
+		dirY /= length;
+
+		float curLen = 0;
+		float curX = 0;
+		float curY = 0;
+
+		renderer.begin(ShapeRenderer.ShapeType.Filled);
+		renderer.setColor(0, 0, 0, 1);
+
+		while (curLen <= length) {
+			curX = (start.x+dirX*curLen);
+			curY = (start.y+dirY*curLen);
+			renderer.rectLine(curX,curY , curX+dirX*dashes.x, curY+dirY*dashes.x, width);
+			curLen += (dashes.x + dashes.y);
+
+		}
+		renderer.end();
+	}
+
+	public void render(ShapeRenderer sh, Batch batch) {
+		for(Entity e : selected) {
+			GhostComponent gc = e.getComponent(GhostComponent.class);
+			if(gc.alive && !targets.contains(gc.desiredMovePosition) && gc.desiredMovePosition != null){
+				targets.add(gc.desiredMovePosition);
+			}
+		}
+		if(singleSelected != null) {
+			GhostComponent gc = singleSelected.getComponent(GhostComponent.class);
+			if(gc.alive && !targets.contains(gc.desiredMovePosition) && gc.desiredMovePosition != null){
+				targets.add(gc.desiredMovePosition);
+			}
+		}
+		for(Entity e : selected) {
+			GhostComponent gc = e.getComponent(GhostComponent.class);
+			if(gc.alive && gc.position != null && gc.desiredMovePosition != null) {
+				drawDashedLine(sh, new Vector2(2, 1), gc.position, gc.desiredMovePosition, 1);
+			}
+		}
+		if(singleSelected != null) {
+			GhostComponent gc = singleSelected.getComponent(GhostComponent.class);
+			if(gc.alive && gc.position != null && gc.desiredMovePosition != null) {
+				drawDashedLine(sh, new Vector2(2, 1), gc.position, gc.desiredMovePosition, 1);
+			}
+		}
+		batch.begin();
+		for(Vector2 vec : targets) {
+			targetIndicator.setPosition(vec.x - targetIndicator.getWidth() / 2, vec.y - targetIndicator.getHeight() / 2);
+			targetIndicator.draw(batch);
+		}
+		batch.end();
+		targets.clear();
 	}
 	
-	void SelectEntity(Entity e) { 
+	void SelectEntity(Entity e) {
 		//Deselection
 		//Deselect single unit
 		if (singleSelected != null)  {

@@ -6,9 +6,12 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import edu.cs328.BuildingComponent.BuildingType;
 
 public class GhostComponent extends UnitComponent {
@@ -26,6 +29,9 @@ public class GhostComponent extends UnitComponent {
 	Vector2 leashStartPos;
 	float leashDist = 25f;
 	Entity target;
+
+	Sprite healthBarBackground;
+	Sprite healthBarLevel;
 	
 	public enum UnitType {
 		Worker,
@@ -45,9 +51,14 @@ public class GhostComponent extends UnitComponent {
 	}
 	behaviour currBehaviour = behaviour.Stop;
 	
-	public GhostComponent(Box2dComponent b2dc, UnitStats stats, Entity myEntity, UnitType type) {
+	public GhostComponent(Box2dComponent b2dc, UnitStats stats, Entity myEntity, UnitType type, TextureAtlas atlas) {
 		super (b2dc, stats, myEntity);
 		unitType = type;
+
+		healthBarBackground = atlas.createSprite("healthbar");
+		if(bc.playerControlled) {
+			healthBarLevel = atlas.createSprite("health_blue");
+		} else healthBarLevel = atlas.createSprite("health_red");
 	}
 	
 	@Override
@@ -56,6 +67,16 @@ public class GhostComponent extends UnitComponent {
 			return;
 		
 		super.draw(batch);
+
+		healthBarBackground.setPosition(bc.sprite.getX() - 1, bc.sprite.getY() + bc.sprite.getHeight() + 1);
+		healthBarBackground.draw(batch);
+		healthBarLevel.draw(batch);
+		for(int i = 0; i < healthBarBackground.getWidth(); i++) {
+			if (i * stats.maxHealth / healthBarBackground.getWidth() <= stats.health) {
+				healthBarLevel.setPosition(bc.sprite.getX() - 1 + i, bc.sprite.getY() + bc.sprite.getHeight() + 1);
+				healthBarLevel.draw(batch);
+			}
+		}
 	}
 	
 	@Override
@@ -82,6 +103,7 @@ public class GhostComponent extends UnitComponent {
 		}
 		
 		Box2dComponent tar = EntityManager._instance.boxc.get(target);
+		desiredMovePosition = tar.position;
 		float dist = tar.position.dst(position);
 		float timeToTarget = dist/stats.moveSpeed;
 		if (dist < bc.sprite.getWidth())
@@ -102,6 +124,7 @@ public class GhostComponent extends UnitComponent {
 		Box2dComponent tar = EntityManager._instance.boxc.get(target);
 		float dist = tar.position.dst(position);
 		float timeToTarget = dist/stats.moveSpeed;
+		desiredMovePosition = tar.position;
 		
 		if (dist <= stats.attackDistance) {
 			
@@ -202,7 +225,8 @@ public class GhostComponent extends UnitComponent {
 		if (Math.abs(position.dst(desiredMovePosition)) < .25f) { //.25 is a lot of room for error, but in testing sometimes it stopped as close as .2 from its destination 
 			SetStopState();
 			return;
-		} 
+		}
+
 	}
 	
 	@Override
@@ -260,9 +284,12 @@ public class GhostComponent extends UnitComponent {
 			}
 		}
 
+		Box2dComponent tar = EntityManager._instance.boxc.get(target);
+		desiredMovePosition = tar.position;
+
 		targetMansion = target;
 		currBehaviour = behaviour.Haunting;
-		hauntStep = 0;	
+		hauntStep = 0;
 		currHideTime = 0;
 	}
 	
@@ -316,6 +343,7 @@ public class GhostComponent extends UnitComponent {
 	public void SetStopState() {
 		currBehaviour = behaviour.Stop;
 		target = null;
+		desiredMovePosition = null;
 	}
 	
 	@Override
