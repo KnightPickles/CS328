@@ -88,12 +88,14 @@ public class EntityManager extends EntitySystem {
     }
 
     public void draw(Batch batch) {
+		batch.begin();
         for(Entity e : engine.getEntitiesFor(Family.one(GhostComponent.class).get())) {
         	gc.get(e).draw(batch);
         }
         for (Entity e : engine.getEntitiesFor(Family.one(BuildingComponent.class).get())) {
         	bc.get(e).draw(batch);
         }
+		batch.end();
     }
     
     public ImmutableArray<Entity> GetListSelectables() {

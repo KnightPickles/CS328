@@ -68,12 +68,12 @@ public class GhostComponent extends UnitComponent {
 		
 		super.draw(batch);
 
-		healthBarBackground.setPosition(bc.sprite.getX() - 1, bc.sprite.getY() - 2);
+		healthBarBackground.setPosition(bc.sprite.getX() - 1, bc.sprite.getY() + bc.sprite.getHeight() + 1);
 		healthBarBackground.draw(batch);
 		healthBarLevel.draw(batch);
 		for(int i = 0; i < healthBarBackground.getWidth(); i++) {
 			if (i * stats.maxHealth / healthBarBackground.getWidth() <= stats.health) {
-				healthBarLevel.setPosition(bc.sprite.getX() - 1 + i, bc.sprite.getY() - 2);
+				healthBarLevel.setPosition(bc.sprite.getX() - 1 + i, bc.sprite.getY() + bc.sprite.getHeight() + 1);
 				healthBarLevel.draw(batch);
 			}
 		}
@@ -103,6 +103,7 @@ public class GhostComponent extends UnitComponent {
 		}
 		
 		Box2dComponent tar = EntityManager._instance.boxc.get(target);
+		desiredMovePosition = tar.position;
 		float dist = tar.position.dst(position);
 		float timeToTarget = dist/stats.moveSpeed;
 		if (dist < bc.sprite.getWidth())
@@ -123,6 +124,7 @@ public class GhostComponent extends UnitComponent {
 		Box2dComponent tar = EntityManager._instance.boxc.get(target);
 		float dist = tar.position.dst(position);
 		float timeToTarget = dist/stats.moveSpeed;
+		desiredMovePosition = tar.position;
 		
 		if (dist <= stats.attackDistance) {
 			
@@ -223,7 +225,8 @@ public class GhostComponent extends UnitComponent {
 		if (Math.abs(position.dst(desiredMovePosition)) < .25f) { //.25 is a lot of room for error, but in testing sometimes it stopped as close as .2 from its destination 
 			SetStopState();
 			return;
-		} 
+		}
+
 	}
 	
 	@Override
@@ -281,9 +284,12 @@ public class GhostComponent extends UnitComponent {
 			}
 		}
 
+		Box2dComponent tar = EntityManager._instance.boxc.get(target);
+		desiredMovePosition = tar.position;
+
 		targetMansion = target;
 		currBehaviour = behaviour.Haunting;
-		hauntStep = 0;	
+		hauntStep = 0;
 		currHideTime = 0;
 	}
 	
@@ -337,6 +343,7 @@ public class GhostComponent extends UnitComponent {
 	public void SetStopState() {
 		currBehaviour = behaviour.Stop;
 		target = null;
+		desiredMovePosition = null;
 	}
 	
 	@Override
