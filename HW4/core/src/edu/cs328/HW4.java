@@ -18,8 +18,7 @@ public class HW4 extends Game {
 
 	public static final float PPM = 8f; // Pixels per meter. Might be better at 8. Used for sprite coordinates and scaling.
 	public static final int SCALE = 3;
-	public static HW4 _instance;
-	
+
 	Batch batch;
 	ShapeRenderer shapeRenderer;
 	TextureAtlas atlas;
@@ -28,8 +27,6 @@ public class HW4 extends Game {
 
 	@Override
 	public void create() {
-		_instance = this;
-		
 		// Graphics
 
 		batch = new SpriteBatch();

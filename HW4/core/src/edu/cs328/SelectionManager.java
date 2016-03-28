@@ -81,10 +81,6 @@ public class SelectionManager {
 			if(gc != null && gc.alive && !targets.contains(gc.desiredMovePosition) && gc.desiredMovePosition != null){
 				targets.add(gc.desiredMovePosition);
 			}
-			BuildingComponent bc = singleSelected.getComponent(BuildingComponent.class);
-			if (bc != null && bc.alive && !targets.contains(bc.rallyPoint) && bc.rallyPoint != null) {
-				targets.add(bc.rallyPoint);
-			}
 		}
 		for(Entity e : selected) {
 			GhostComponent gc = e.getComponent(GhostComponent.class);
@@ -96,10 +92,6 @@ public class SelectionManager {
 			GhostComponent gc = singleSelected.getComponent(GhostComponent.class);
 			if(gc != null && gc.alive && gc.position != null && gc.desiredMovePosition != null) {
 				drawDashedLine(sh, new Vector2(2, 1), gc.position, gc.desiredMovePosition, 1);
-			}
-			BuildingComponent bc = singleSelected.getComponent(BuildingComponent.class);
-			if (bc != null && bc.alive && bc.position != null && bc.rallyPoint != null) {
-				drawDashedLine(sh, new Vector2(2, 1), bc.position, bc.rallyPoint, 1);
 			}
 		}
 		batch.begin();
