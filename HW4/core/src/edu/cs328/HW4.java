@@ -2,10 +2,15 @@ package edu.cs328;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+
+/* To Do:
+ * Add unit information in GUI
+ * Add title screen graphics
+ * Change GUI appearance
+ */
 
 public class HW4 extends Game {
 
