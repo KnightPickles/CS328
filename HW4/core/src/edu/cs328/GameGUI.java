@@ -150,7 +150,6 @@ public class GameGUI {
                 dispMux = false;
             }
         }
-        System.out.println(gcl.size() + " " + bcl.size());
     }
 
     public void render() {

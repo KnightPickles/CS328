@@ -22,6 +22,7 @@ public class GhostComponent extends UnitComponent {
 	//Command stuff
 	Vector2 startMovePosition;
 	Vector2 desiredMovePosition;
+	int dir = 2;
 	float timeToPosition = 0;
 	float currTime = 0;
 	
@@ -32,6 +33,7 @@ public class GhostComponent extends UnitComponent {
 
 	Sprite healthBarBackground;
 	Sprite healthBarLevel;
+	Sprite[] eyes = new Sprite[15];
 	
 	public enum UnitType {
 		Worker,
@@ -55,6 +57,12 @@ public class GhostComponent extends UnitComponent {
 		super (b2dc, stats, myEntity);
 		unitType = type;
 
+		for(int i = 0; i < 5; i++) {
+			eyes[i] = atlas.createSprite("eyes" + i + 1 + "e");
+			eyes[i + 5] = atlas.createSprite("eyes" + i + 1 + "s");
+			eyes[i + 10] = atlas.createSprite("eyes" + i + 1 + "w");
+		}
+		healthBarBackground = atlas.createSprite("healthbar");
 		healthBarBackground = atlas.createSprite("healthbar");
 		if(bc.playerControlled) {
 			healthBarLevel = atlas.createSprite("health_blue");
@@ -77,6 +85,17 @@ public class GhostComponent extends UnitComponent {
 				healthBarLevel.draw(batch);
 			}
 		}
+
+		/*if(dir == 1) {
+			eyes[0].setPosition(bc.sprite.getX(), bc.sprite.getY());
+			eyes[0].draw(batch);
+		} else if(dir == 2) {
+			eyes[1].setPosition(bc.sprite.getX(), bc.sprite.getY());
+			eyes[1].draw(batch);
+		} else if(dir == 3) {
+			eyes[2].setPosition(bc.sprite.getX(), bc.sprite.getY());
+			eyes[2].draw(batch);
+		}*/
 	}
 	
 	@Override
@@ -94,6 +113,23 @@ public class GhostComponent extends UnitComponent {
 		}
 		
 		super.update();
+
+		if(startMovePosition != null && desiredMovePosition != null && startMovePosition != desiredMovePosition) {
+			float angle = (float) Math.toDegrees(Math.atan2(startMovePosition.x - desiredMovePosition.x, startMovePosition.y - desiredMovePosition.y));
+			if(angle < 0){
+				angle += 360;
+			}
+			//System.out.println(angle);
+			if(angle >= 0 && angle < 45 || angle > 315) {
+				dir = 2;
+			} else if(angle >= 45 && angle < 135) {
+				dir = 3;
+			} else if(angle >= 135 && angle < 225) {
+				dir = 0;
+			} else {
+				dir = 1;
+			}
+		}
 	}
 	
 	public void Follow() {
