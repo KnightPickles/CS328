@@ -28,6 +28,8 @@ public class GameGUI {
     private SelectionManager sm;
     private ArrayList<BuildingComponent> bcl = new ArrayList<BuildingComponent>();
     private ArrayList<GhostComponent> gcl = new ArrayList<GhostComponent>();
+    private boolean dispG = false;
+    private boolean dispB = false;
     private boolean dispMux = false;
 
     GameGUI(HW4 game, SelectionManager manager) {
@@ -41,7 +43,10 @@ public class GameGUI {
     }
 
     public void structurePanel() {
-        if(!dispMux) return;
+        if(dispB) return;
+        dispB = true;
+        dispG = false;
+
         float offset = 100;
 
         final TextButton ral = new TextButton("Rally Point", skin, "default");
@@ -74,7 +79,10 @@ public class GameGUI {
     }
 
     public void ghostPanel() {
-        if(dispMux) return;
+        if(dispG) return;
+        dispG = true;
+        dispB = false;
+
         float offset = 100;
 
         final TextButton atk = new TextButton("Action", skin, "default");
@@ -144,10 +152,8 @@ public class GameGUI {
             }
             if(gcl.size() > 0) {
                 ghostPanel();
-                dispMux = true;
             } else {
                 structurePanel();
-                dispMux = false;
             }
         }
     }
