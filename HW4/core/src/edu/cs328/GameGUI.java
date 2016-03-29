@@ -39,6 +39,13 @@ public class GameGUI {
     private boolean display = false;
     private Sprite victory;
 
+    public enum commandType {
+    	None,
+    	Rally,
+    	Action,
+    	Patrol
+    }
+    
     GameGUI(HW4 game, SelectionManager manager) {
         this.game = game;
         sm = manager;
@@ -119,6 +126,7 @@ public class GameGUI {
         ral.addListener(new InputListener() {
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 ral.setColor(Color.DARK_GRAY); // set to white to get color back
+                SelectionManager._instance.setCurrCommand(commandType.Rally, ral);
                 return true;
             }
         });
@@ -149,7 +157,7 @@ public class GameGUI {
             }
         });
         final TextButton worker = new TextButton("Manifest Worker Unit", skin, "default");
-        ranged.addListener(new ClickListener() {
+        worker.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 EntityManager._instance.alliedBase.getComponent(BuildingComponent.class).trainWorkerUnit();
@@ -187,32 +195,40 @@ public class GameGUI {
         float offset = 100;
 
         final TextButton atk = new TextButton("Action", skin, "default");
+        final TextButton pat = new TextButton("Patrol", skin, "default");
+        final TextButton def = new TextButton("Defend", skin, "default");
+        final TextButton upg = new TextButton("Flee", skin, "default");
+        
         atk.addListener(new InputListener() {
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 atk.setColor(Color.DARK_GRAY);// set to white to get color back
+                pat.setColor(Color.WHITE);
+                SelectionManager._instance.setCurrCommand(commandType.Action, atk);
                 // waitForLeftMouse(atk);
                 return true;
             }
         });
-        final TextButton def = new TextButton("Defend", skin, "default");
+
         def.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
-                // for glist: defendState()
+                SelectionManager._instance.issueDefendCommand();
             }
         });
-        final TextButton pat = new TextButton("Patrol", skin, "default");
+
         pat.addListener(new InputListener() {
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 pat.setColor(Color.DARK_GRAY); // set to white to get color back
+                atk.setColor(Color.WHITE);
+                SelectionManager._instance.setCurrCommand(commandType.Patrol, pat);
                 return true;
             }
         });
-        final TextButton upg = new TextButton("Flee", skin, "default");
-        upg.addListener(new ClickListener(){
+ 
+        upg.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y){
-
+            	SelectionManager._instance.issueFleeCommand();
             }
         });
 

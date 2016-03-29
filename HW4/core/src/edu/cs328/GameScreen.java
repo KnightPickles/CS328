@@ -102,7 +102,7 @@ public class GameScreen implements Screen {
 
         gui.render();
 
-        debugRenderer.render(world, camera.combined);
+        //debugRenderer.render(world, camera.combined);
     }
 
     @Override

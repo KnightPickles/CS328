@@ -40,7 +40,9 @@ public class Box2dComponent implements Component {
 			
 			sprite = HW4._instance.atlas.createSprite(spriteName);
 		} else {
-			sprite = HW4._instance.atlas.createSprite("redghost5");
+			if (unitType != GhostComponent.UnitType.Worker)
+				sprite = HW4._instance.atlas.createSprite("redghost5");
+			else sprite = HW4._instance.atlas.createSprite("redghost1");
 		}
 		
 		Init(playerControlled, e, position, world);
