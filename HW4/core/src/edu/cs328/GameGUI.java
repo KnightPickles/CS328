@@ -8,6 +8,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
@@ -36,11 +37,14 @@ public class GameGUI {
     private boolean dispB = false;
     private boolean dispMux = false;
     private boolean display = false;
-    boolean selected = false;
+    private Sprite victory;
 
     GameGUI(HW4 game, SelectionManager manager) {
         this.game = game;
         sm = manager;
+        victory = game.atlas.createSprite("victory");
+        victory.setSize(victory.getWidth() * (HW4.SCALE + 1), victory.getHeight() * (HW4.SCALE + 1));
+        victory.setPosition(-victory.getWidth() / 2, -victory.getHeight() / 2 + 50);
         camera = new OrthographicCamera(Gdx.graphics.getWidth() , Gdx.graphics.getHeight());
         gameEnd = new OrthographicCamera(Gdx.graphics.getWidth() / HW4.SCALE, Gdx.graphics.getHeight() / HW4.SCALE);
         viewport = new FitViewport(Gdx.graphics.getWidth() / HW4.SCALE, Gdx.graphics.getHeight() / HW4.SCALE, gameEnd);
@@ -51,6 +55,9 @@ public class GameGUI {
     }
 
     public void victory() {
+        game.batch.begin();
+        victory.draw(game.batch);
+        game.batch.end();
         returnScreen();
     }
 
@@ -88,7 +95,7 @@ public class GameGUI {
         final Window win = new Window("Return Menu", skin);
         win.setWidth(200);
         win.setHeight(90);
-        win.setPosition(Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() / 2 - win.getHeight() / 2 -100);
+        win.setPosition(Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() / 2 - win.getHeight() / 2);
         win.defaults().space(5);
         win.row().fill().expandX();
         win.add(ts);
@@ -100,6 +107,7 @@ public class GameGUI {
     }
 
     public void structurePanel() {
+        if(HW4.stop) return;
         if(dispB) return;
         dispB = true;
         dispG = false;
@@ -170,6 +178,8 @@ public class GameGUI {
     }
 
     public void ghostPanel() {
+        if(HW4.stop) return;
+
         if(dispG) return;
         dispG = true;
         dispB = false;
