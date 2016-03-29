@@ -46,6 +46,7 @@ public class BuildingComponent extends UnitComponent {
 	public void increaseUpgradeLevel() {
 		if (bc.playerControlled) {
 			if (GhostComponent.money >= 100) {
+				GhostComponent.money -= 100;
 				alliedUpgradeLevel++;
 				ImmutableArray<Entity> entities = EntityManager._instance.engine.getEntitiesFor(Family.one(GhostComponent.class).get());
 				for (Entity e : entities) {

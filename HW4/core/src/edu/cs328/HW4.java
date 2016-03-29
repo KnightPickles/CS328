@@ -7,10 +7,14 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 /* To Do:
- * Add title screen graphics
  * Change GUI appearance
  *
- * Add unit information in GUI
+ * Show Currency
+ ** Show icons for each selected/single entity specific stats
+ * Buttons held down instead of clicked
+ *
+ * Building buttons: Set rally, manifest worker, ranged, melee, and upgrade.
+ * Remove building highlight selection
  */
 
 public class HW4 extends Game {

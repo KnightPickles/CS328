@@ -75,7 +75,7 @@ public class SplashScreen implements Screen {
         resolutions.setPosition(Gdx.graphics.getWidth() /2 - 100f, Gdx.graphics.getHeight()/2 - 70f);
 
 
-        final CheckBox windowed = new CheckBox(" Windowed", skin);
+        final CheckBox windowed = new CheckBox("Fullscreen", skin);
         windowed.setPosition(Gdx.graphics.getWidth() /2 + 10, Gdx.graphics.getHeight()/2 - 72f);
         windowed.setChecked(fullScreen);
 

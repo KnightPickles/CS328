@@ -26,7 +26,6 @@ public class GameGUI {
     private Skin skin;
     private OrthographicCamera camera;
     private SelectionManager sm;
-    private ArrayList<BuildingComponent> bcl = new ArrayList<BuildingComponent>();
     private ArrayList<GhostComponent> gcl = new ArrayList<GhostComponent>();
     private boolean dispG = false;
     private boolean dispB = false;
@@ -49,30 +48,54 @@ public class GameGUI {
 
         float offset = 100;
 
-        final TextButton ral = new TextButton("Rally Point", skin, "default");
+        final TextButton ral = new TextButton("Set Rally", skin, "default");
         ral.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
                 // for blist: rally();
             }
         });
-        final TextButton train = new TextButton("Manifest Ghost", skin, "default");
+        final TextButton train = new TextButton("Upgrade Units", skin, "default");
         train.addListener(new ClickListener(){
             @Override
-            public void clicked(InputEvent event, float x, float y){
-                // for blist: trainUnit();
+            public void clicked(InputEvent event, float x, float y) {
+                EntityManager._instance.alliedBase.getComponent(BuildingComponent.class).increaseUpgradeLevel();
+            }
+        });
+        final TextButton melee = new TextButton("Manifest Melee Unit", skin, "default");
+        melee.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                EntityManager._instance.alliedBase.getComponent(BuildingComponent.class).trainMeleeUnit();
+            }
+        });
+        final TextButton ranged = new TextButton("Manifest Ranged Unit", skin, "default");
+        ranged.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                EntityManager._instance.alliedBase.getComponent(BuildingComponent.class).trainRangedUnit();
+            }
+        });
+        final TextButton worker = new TextButton("Manifest Worker Unit", skin, "default");
+        ranged.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                EntityManager._instance.alliedBase.getComponent(BuildingComponent.class).trainWorkerUnit();
             }
         });
 
         final Window win = new Window("Unit Actions", skin);
-        win.setPosition(Gdx.graphics.getWidth() /2 + offset - 5, 0);
-        win.setWidth(225);
+        win.setWidth(500);
         win.setHeight(90);
+        win.setPosition(Gdx.graphics.getWidth() / 2 - win.getPrefWidth() / 2, 0);
         win.defaults().space(5);
         win.row().fill().expandX();
         win.add(ral);
+        win.add(melee);
+        win.add(ranged);
         win.row().fill();
         win.add(train);
+        win.add(worker);
 
         stage.clear();
         stage.addActor(win);
@@ -106,7 +129,7 @@ public class GameGUI {
 
             }
         });
-        final TextButton upg = new TextButton("Upgrade", skin, "default");
+        final TextButton upg = new TextButton("Flee", skin, "default");
         upg.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y){
@@ -129,13 +152,11 @@ public class GameGUI {
     }
 
     public void update() {
-        bcl = new ArrayList<BuildingComponent>();
         gcl = new ArrayList<GhostComponent>();
         if(sm.singleSelected != null) {
             BuildingComponent bc = sm.singleSelected.getComponent(BuildingComponent.class);
             GhostComponent gc = sm.singleSelected.getComponent(GhostComponent.class);
             if(bc != null && bc.bc.playerControlled) {
-                bcl.add(bc);
                 structurePanel();
             } else if(gc != null && gc.bc.playerControlled) {
                 gcl.add(gc);
@@ -143,18 +164,14 @@ public class GameGUI {
             }
         } else if(sm.tempSelected != null) {
             for(Entity e : sm.selected) {
-                BuildingComponent bc = e.getComponent(BuildingComponent.class);
                 GhostComponent gc = e.getComponent(GhostComponent.class);
-                if (bc != null)
-                    bcl.add(bc);
                 if (gc != null)
                     gcl.add(gc);
             }
-            if(gcl.size() > 0) {
+            //if(gcl.size() > 0) {
                 ghostPanel();
-            } else {
-                structurePanel();
-            }
+              //  structurePanel();
+           // }
         }
     }
 

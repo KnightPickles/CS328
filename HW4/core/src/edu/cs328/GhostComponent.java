@@ -107,14 +107,14 @@ public class GhostComponent extends UnitComponent {
 		}
 
 		if(dir == 1) {
-			eyes[0].setPosition(bc.sprite.getX(), bc.sprite.getY());
-			eyes[0].draw(batch);
+			eyes[0 + (upgradeLevel-1) * 3].setPosition(bc.sprite.getX(), bc.sprite.getY());
+			eyes[0 + (upgradeLevel-1) * 3].draw(batch);
 		} else if(dir == 2) {
-			eyes[1].setPosition(bc.sprite.getX(), bc.sprite.getY());
-			eyes[1].draw(batch);
+			eyes[1 + (upgradeLevel-1) * 3].setPosition(bc.sprite.getX(), bc.sprite.getY());
+			eyes[1 + (upgradeLevel-1) * 3].draw(batch);
 		} else if(dir == 3) {
-			eyes[2].setPosition(bc.sprite.getX(), bc.sprite.getY());
-			eyes[2].draw(batch);
+			eyes[2 + (upgradeLevel-1) * 3].setPosition(bc.sprite.getX(), bc.sprite.getY());
+			eyes[2 + (upgradeLevel-1) * 3].draw(batch);
 		}
 	}
 	
