@@ -90,9 +90,9 @@ public class EntityManager extends EntitySystem {
     
     public void update() {
     	if (!alliedBase.getComponent(BuildingComponent.class).alive) {
-    		//TODO Defeat
+    		//TODO Defeat - Massive "Defeat" with a clickable prompt "Return to Title Screen" and "Quit Game"
     	} else if (!enemyBase.getComponent(BuildingComponent.class).alive) {
-    		//TODO Victory
+    		//TODO Victory - Same as defeat but with "Victory"
     	}
     	
         for(Entity e : engine.getEntitiesFor(Family.one(GhostComponent.class).get())) {

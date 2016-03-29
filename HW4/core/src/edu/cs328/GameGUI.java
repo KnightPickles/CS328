@@ -4,15 +4,16 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class GameGUI {
     private boolean dispG = false;
     private boolean dispB = false;
     private boolean dispMux = false;
+    boolean selected = false;
 
     GameGUI(HW4 game, SelectionManager manager) {
         this.game = game;
@@ -49,19 +51,25 @@ public class GameGUI {
         float offset = 100;
 
         final TextButton ral = new TextButton("Set Rally", skin, "default");
-        ral.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y){
-                // for blist: rally();
+        final Color c = ral.getColor();
+        ral.addListener(new InputListener() {
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                ral.setColor(Color.DARK_GRAY); // set to white to get color back
+                return true;
             }
         });
+
+        ral.setChecked(true);
+
         final TextButton train = new TextButton("Upgrade Units", skin, "default");
         train.addListener(new ClickListener(){
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                ral.setColor(Color.WHITE);
                 EntityManager._instance.alliedBase.getComponent(BuildingComponent.class).increaseUpgradeLevel();
             }
         });
+
         final TextButton melee = new TextButton("Manifest Melee Unit", skin, "default");
         melee.addListener(new ClickListener() {
             @Override
@@ -101,6 +109,10 @@ public class GameGUI {
         stage.addActor(win);
     }
 
+    public void resetColor(TextButton button) {
+        if(button != null) button.setColor(Color.WHITE);
+    }
+
     public void ghostPanel() {
         if(dispG) return;
         dispG = true;
@@ -109,10 +121,11 @@ public class GameGUI {
         float offset = 100;
 
         final TextButton atk = new TextButton("Action", skin, "default");
-        atk.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y){
-                // for glist: attackState()
+        atk.addListener(new InputListener() {
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                atk.setColor(Color.DARK_GRAY);// set to white to get color back
+                // waitForLeftMouse(atk);
+                return true;
             }
         });
         final TextButton def = new TextButton("Defend", skin, "default");
@@ -123,10 +136,10 @@ public class GameGUI {
             }
         });
         final TextButton pat = new TextButton("Patrol", skin, "default");
-        pat.addListener(new ClickListener(){
-            @Override
-            public void clicked(InputEvent event, float x, float y){
-
+        pat.addListener(new InputListener() {
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                pat.setColor(Color.DARK_GRAY); // set to white to get color back
+                return true;
             }
         });
         final TextButton upg = new TextButton("Flee", skin, "default");
