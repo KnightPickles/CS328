@@ -19,7 +19,7 @@ public class BuildingComponent extends UnitComponent {
 	Sprite playerIndicator;
 	
 	public static int alliedUpgradeLevel = 2;
-	public static int enemyUpgradeLevel = 2;
+	public static int enemyUpgradeLevel = 5;
 
 	public BuildingComponent(Box2dComponent b2dc, UnitStats stats, Entity myEntity, BuildingType type, TextureAtlas atlas) {
 		super(b2dc, stats, myEntity);
@@ -35,6 +35,8 @@ public class BuildingComponent extends UnitComponent {
 		
 		if (buildingType == BuildingType.MainBase)
 			rallyPoint = new Vector2(position.x + bc.sprite.getWidth()/2, position.y);
+		if (!bc.playerControlled)
+			rallyPoint = new Vector2(125, 0);
 	}
 	
 	public enum BuildingType {
@@ -59,24 +61,38 @@ public class BuildingComponent extends UnitComponent {
 	}
 	
 	public void trainWorkerUnit() {
-		if (GhostComponent.money >= 50) {
-			Entity e = EntityManager._instance.createGhost(new UnitStats(true, 16f, 6f, 1f, 1, 16), true, position, "greenghost1", true, GhostComponent.UnitType.Worker);
-			e.getComponent(GhostComponent.class).rightClickCommand(rallyPoint, null);
-			GhostComponent.money -= 50;
-		}
+		if (bc.playerControlled) {
+			if (GhostComponent.money >= 50) {
+				Entity e = EntityManager._instance.createGhost(new UnitStats(true, 16f, 6f, 1f, 1, 16), true, position, true, GhostComponent.UnitType.Worker);
+				e.getComponent(GhostComponent.class).rightClickCommand(rallyPoint, null);
+				GhostComponent.money -= 50;
+			}
+	 	}
 	}
 	
 	public void trainMeleeUnit() {
-		if (GhostComponent.money >= 100) {
-			Entity e = EntityManager._instance.createGhost(new UnitStats(true, 15f, 6f, 1f, 4, 24), true, position, "greenghost2", true, GhostComponent.UnitType.MeleeFighter);
-			e.getComponent(GhostComponent.class).rightClickCommand(rallyPoint, null);
-			GhostComponent.money -= 100;
-		}
+		if (bc.playerControlled) {
+			if (GhostComponent.money >= 100) {
+				
+				Entity e = EntityManager._instance.createGhost(new UnitStats(true, 15f, 6f, 1f, 4, 24), true, position, true, GhostComponent.UnitType.MeleeFighter);
+				e.getComponent(GhostComponent.class).rightClickCommand(rallyPoint, null);
+				GhostComponent.money -= 100;
+			}
+		} else {
+			if (GhostComponent.enemyMoney >= 100) {
+				Entity e = EntityManager._instance.createGhost(new UnitStats(false, 15f, 6f, 1f, 4, 24), false, position, false, GhostComponent.UnitType.MeleeFighter);
+				e.getComponent(GhostComponent.class).rightClickCommand(rallyPoint, null);
+				GhostComponent.enemyMoney -= 100;
+				rallyPoint.x += 10;
+				if (rallyPoint.x > 160)
+					rallyPoint.x = 100;
+			}
+	 	}
 	}
 	
 	public void trainRangedUnit() {
 		if (GhostComponent.money >= 150) {
-			Entity e = EntityManager._instance.createGhost(new UnitStats(true, 15f, 16f, 1f, 4, 24), true, position, "greenghost2", true, GhostComponent.UnitType.RangedFighter);
+			Entity e = EntityManager._instance.createGhost(new UnitStats(true, 15f, 16f, 1f, 4, 24), true, position, true, GhostComponent.UnitType.RangedFighter);
 			e.getComponent(GhostComponent.class).rightClickCommand(rallyPoint, null);
 			GhostComponent.money -= 150;
 		}
@@ -89,6 +105,10 @@ public class BuildingComponent extends UnitComponent {
 		
 		super.draw(batch);
 
+		if (!bc.playerControlled && GhostComponent.enemyMoney >= 100) {
+			trainMeleeUnit();
+		}
+		
 		healthBarBackground.setPosition(bc.sprite.getX(), bc.sprite.getY() + bc.sprite.getHeight() - 2);
 		healthBarBackground.draw(batch);
 
