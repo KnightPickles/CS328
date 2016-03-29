@@ -179,7 +179,7 @@ public class GhostComponent extends UnitComponent {
 		}
 	}
 	
-	public void SetMove(Vector2 pos) {
+	public void SetMove(Vector2 pos) {.
 		target = null;
 		currBehaviour = behaviour.Move;
 		float moveLength = pos.dst(position); //How far were going
