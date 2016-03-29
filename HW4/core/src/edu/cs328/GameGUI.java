@@ -69,11 +69,11 @@ public class GameGUI {
         gameEnd.begin();
         victory.draw(gameEnd);
         gameEnd.end();
-        returnScreen();
+        if(rs.getStage() == null) stage.addActor(rs);
     }
 
     public void defeat() {
-        returnScreen();
+        if(rs.getStage() == null) stage.addActor(rs);
     }
 
     public Window currencyScreen() {
@@ -271,15 +271,17 @@ public class GameGUI {
                 stage.clear();
                 stage.addActor(gp);
             }
-        } else {
-            stage.clear();
+        } else if(!HW4.stop){
+            if(rs.getStage() == null || !display) stage.clear();
         }
         f.setText("Souls: " + GhostComponent.money);
         if(cw.getStage() == null) stage.addActor(cw);
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             display = !display;
         }
-        if(HW4.win && rs.getStage() == null) stage.addActor(rs);
+        if((HW4.win || display) && rs.getStage() == null) {
+            stage.addActor(rs);
+        }
     }
 
     public void render() {
@@ -288,7 +290,6 @@ public class GameGUI {
             else defeat();
         }
 
-        //returnScreen();
         game.batch.setProjectionMatrix(camera.combined);
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
