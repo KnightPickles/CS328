@@ -9,13 +9,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.*;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Slider;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -39,6 +37,8 @@ public class GameGUI {
     private boolean dispMux = false;
     private boolean display = false;
     private Sprite victory;
+    private Window gp, bp, cw;
+    private TextField f;
 
     GameGUI(HW4 game, SelectionManager manager) {
         this.game = game;
@@ -50,7 +50,10 @@ public class GameGUI {
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         stage = new Stage(new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera), game.batch);
         Gdx.input.setInputProcessor(stage);
-        ghostPanel();
+        gp = ghostPanel();
+        bp = structurePanel();
+        f = new TextField("Souls: " + GhostComponent.money, skin);
+        cw = currencyScreen();
     }
 
     public void victory() {
@@ -63,6 +66,18 @@ public class GameGUI {
 
     public void defeat() {
         returnScreen();
+    }
+
+    public Window currencyScreen() {
+        Window win = new Window("Information", skin);
+        win.setWidth(200);
+        win.setHeight(40);
+        win.setMovable(true);
+        win.setPosition(0, 0);
+        win.defaults().space(5);
+        win.row().fill().expandX();
+        win.add(f);
+        return win;
     }
 
     public void returnScreen() {
@@ -102,15 +117,13 @@ public class GameGUI {
         win.row().fill();
         win.add(qd);
 
+
         stage.clear();
         stage.addActor(win);
     }
 
-    public void structurePanel() {
-        if(HW4.stop) return;
-        if(dispB) return;
-        dispB = true;
-        dispG = false;
+    public Window structurePanel() {
+        if(HW4.stop) return null;
 
         float offset = 100;
 
@@ -170,20 +183,15 @@ public class GameGUI {
         win.add(train);
         win.add(worker);
 
-        //stage.clear();
-        stage.addActor(win);
+        return win;
     }
 
     public void resetColor(TextButton button) {
         if(button != null) button.setColor(Color.WHITE);
     }
 
-    public void ghostPanel() {
-        if(HW4.stop) return;
-
-        if(dispG) return;
-        dispG = true;
-        dispB = false;
+    public Window ghostPanel() {
+        if(HW4.stop) return null;
 
         float offset = 100;
 
@@ -228,29 +236,40 @@ public class GameGUI {
         win.row().fill();
         win.add(pat, upg);
 
-        stage.clear();
-        stage.addActor(win);
+        return win;
     }
 
     public void update() {
         gcl = new ArrayList<GhostComponent>();
-        if(sm.singleSelected != null) {
+        if(SelectionManager._instance.singleSelected != null) {
             BuildingComponent bc = sm.singleSelected.getComponent(BuildingComponent.class);
             GhostComponent gc = sm.singleSelected.getComponent(GhostComponent.class);
             if(bc != null && bc.bc.playerControlled) {
-                structurePanel();
+                if(bp.getStage() == null) {
+                    stage.clear();
+                    stage.addActor(bp);
+                }
             } else if(gc != null && gc.bc.playerControlled) {
                 gcl.add(gc);
-                ghostPanel();
+                if(gp.getStage() == null) {
+                    stage.clear();
+                    stage.addActor(gp);
+                }
             }
-        } else if(sm.tempSelected != null) {
+        } else if(SelectionManager._instance.selected.size() > 0) {
             for(Entity e : sm.selected) {
                 GhostComponent gc = e.getComponent(GhostComponent.class);
                 if (gc != null)
                     gcl.add(gc);
             }
-            ghostPanel();
+            if(gp.getStage() == null) {
+                stage.clear();
+                stage.addActor(gp);
+            }
+        } else {
+            stage.clear();
         }
+        f.setText("Souls: " + GhostComponent.money);
     }
 
     public void render() {
@@ -264,6 +283,7 @@ public class GameGUI {
             returnScreen();
         }
 
+        if(cw.getStage() == null) stage.addActor(cw);
         //returnScreen();
         game.batch.setProjectionMatrix(camera.combined);
         stage.act(Gdx.graphics.getDeltaTime());

@@ -6,6 +6,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -69,6 +70,13 @@ public class SelectionManager {
 		renderer.end();
 	}
 
+	public void drawOutline(ShapeRenderer sr, Sprite sp) {
+		sr.begin(ShapeRenderer.ShapeType.Line);
+		sr.setColor(new Color(0,0,0,1));
+		sr.rect(sp.getX(), sp.getY(), sp.getWidth(), sp.getHeight());
+		sr.end();
+	}
+
 	public void render(ShapeRenderer sh, Batch batch) {
 		for(Entity e : selected) {
 			GhostComponent gc = e.getComponent(GhostComponent.class);
@@ -78,18 +86,27 @@ public class SelectionManager {
 		}
 		if(singleSelected != null) {
 			GhostComponent gc = singleSelected.getComponent(GhostComponent.class);
-			if(gc != null && gc.alive && !targets.contains(gc.desiredMovePosition) && gc.desiredMovePosition != null){
-				targets.add(gc.desiredMovePosition);
+			if(gc != null && gc.alive) {
+				drawOutline(sh, gc.bc.sprite);
+				if(!targets.contains(gc.desiredMovePosition) && gc.desiredMovePosition != null) {
+					targets.add(gc.desiredMovePosition);
+				}
 			}
 			BuildingComponent bc = singleSelected.getComponent(BuildingComponent.class);
-			if (bc != null && bc.alive && !targets.contains(bc.rallyPoint) && bc.rallyPoint != null) {
-				targets.add(bc.rallyPoint);
+			if (bc != null && bc.alive){
+				drawOutline(sh, bc.bc.sprite);
+				if(!targets.contains(bc.rallyPoint) && bc.rallyPoint != null) {
+					targets.add(bc.rallyPoint);
+				}
 			}
 		}
 		for(Entity e : selected) {
 			GhostComponent gc = e.getComponent(GhostComponent.class);
-			if(gc != null && gc.alive && gc.position != null && gc.desiredMovePosition != null) {
-				drawDashedLine(sh, new Vector2(2, 1), gc.position, gc.desiredMovePosition, 1);
+			if(gc != null && gc.alive) {
+				drawOutline(sh, gc.bc.sprite);
+				if(gc.position != null && gc.desiredMovePosition != null) {
+					drawDashedLine(sh, new Vector2(2, 1), gc.position, gc.desiredMovePosition, 1);
+				}
 			}
 		}
 		if(singleSelected != null) {
@@ -241,8 +258,8 @@ public class SelectionManager {
 			// EDITED
 			if (EntityManager._instance.GetListBuildings().contains(singleSelected, true))
 				EntityManager._instance.bc.get(singleSelected).rightClickCommand(new Vector2(pos.x, pos.y), tar);
-			//else
-			//	EntityManager._instance.gc.get(singleSelected).rightClickCommand(new Vector2(pos.x, pos.y), tar);
+			else
+				EntityManager._instance.gc.get(singleSelected).rightClickCommand(new Vector2(pos.x, pos.y), tar);
 			return;
 		}
 		
