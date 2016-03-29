@@ -28,6 +28,9 @@ public class HW4 extends Game {
 	BitmapFont font;
 	GlyphLayout layout;
 
+	public static boolean stop = false;
+	public static boolean win = false;
+
 	@Override
 	public void create() {
 		_instance = this;

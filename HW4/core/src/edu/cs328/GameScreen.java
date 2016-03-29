@@ -42,6 +42,7 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
         _instance = this;
+        HW4.stop = HW4.win = false;
 
         camera = new OrthographicCamera(Gdx.graphics.getWidth() / HW4.SCALE, Gdx.graphics.getHeight() / HW4.SCALE);
         viewport = new FitViewport(Gdx.graphics.getWidth() / HW4.SCALE, Gdx.graphics.getHeight() / HW4.SCALE, camera);
@@ -65,10 +66,14 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         // Update
-        entityManager.update();
+        if(!HW4.stop) {
+            entityManager.update();
+            world.step(1f / 60f, 6, 2);
+            cameraUpdate();
+        }
+
         gui.update();
-        world.step(1f/60f, 6, 2);
-        cameraUpdate();
+
 
         // Draw
         Gdx.gl.glClearColor(0, 0, 0, 1);
