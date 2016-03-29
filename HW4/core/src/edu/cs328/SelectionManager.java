@@ -75,10 +75,6 @@ public class SelectionManager {
 			if(gc != null && gc.alive && !targets.contains(gc.desiredMovePosition) && gc.desiredMovePosition != null){
 				targets.add(gc.desiredMovePosition);
 			}
-			BuildingComponent bc = e.getComponent(BuildingComponent.class);
-			if (bc != null && bc.alive && !targets.contains(bc.rallyPoint) && bc.rallyPoint != null) {
-				targets.add(bc.rallyPoint);
-			}
 		}
 		if(singleSelected != null) {
 			GhostComponent gc = singleSelected.getComponent(GhostComponent.class);
@@ -94,10 +90,6 @@ public class SelectionManager {
 			GhostComponent gc = e.getComponent(GhostComponent.class);
 			if(gc != null && gc.alive && gc.position != null && gc.desiredMovePosition != null) {
 				drawDashedLine(sh, new Vector2(2, 1), gc.position, gc.desiredMovePosition, 1);
-			}
-			BuildingComponent bc = e.getComponent(BuildingComponent.class);
-			if (bc != null && bc.alive && bc.position != null && bc.rallyPoint != null) {
-				drawDashedLine(sh, new Vector2(2, 1), bc.position, bc.rallyPoint, 1);
 			}
 		}
 		if(singleSelected != null) {
@@ -155,10 +147,10 @@ public class SelectionManager {
 		//Select new units
 		for (Entity e : tempSelected) {
 			// EDITED
-			//if (!EntityManager._instance.GetListBuildings().contains(e, true)) {
+			if (!EntityManager._instance.GetListBuildings().contains(e, true)) {
 				EntityManager._instance.sc.get(e).selected = true;
 				selected.add(e);
-			//}
+			}
 		}
 	}
 	
@@ -249,8 +241,8 @@ public class SelectionManager {
 			// EDITED
 			if (EntityManager._instance.GetListBuildings().contains(singleSelected, true))
 				EntityManager._instance.bc.get(singleSelected).rightClickCommand(new Vector2(pos.x, pos.y), tar);
-			else
-				EntityManager._instance.gc.get(singleSelected).rightClickCommand(new Vector2(pos.x, pos.y), tar);
+			//else
+			//	EntityManager._instance.gc.get(singleSelected).rightClickCommand(new Vector2(pos.x, pos.y), tar);
 			return;
 		}
 		
