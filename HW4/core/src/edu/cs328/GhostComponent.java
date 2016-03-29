@@ -51,7 +51,8 @@ public class GhostComponent extends UnitComponent {
 		Attack,
 		Follow,
 		Haunting,
-		AttackMove
+		AttackMove,
+		Patrol
 	}
 	behaviour currBehaviour = behaviour.Stop;
 	
@@ -71,8 +72,14 @@ public class GhostComponent extends UnitComponent {
 			healthBarLevel = atlas.createSprite("health_blue");
 		} else healthBarLevel = atlas.createSprite("health_red");
 		
-		while (upgradeLevel < BuildingComponent.alliedUpgradeLevel)
-			upgrade();
+		if (bc.playerControlled) {
+			while (upgradeLevel < BuildingComponent.alliedUpgradeLevel)
+				upgrade();
+		} else upgradeLevel = BuildingComponent.enemyUpgradeLevel;
+		
+		if (type == UnitType.Worker) {
+			upgradeLevel = 1;
+		}
 	}
 	
 	public void upgrade() {
@@ -86,7 +93,13 @@ public class GhostComponent extends UnitComponent {
 		stats.maxHealth += 10;
 		stats.health += 10;
 		stats.attackDamage += 1;
-		bc.upgrade(upgradeLevel);
+		bc.upgrade(upgradeLevel, unitType);
+	}
+	
+	public void setPatrol(Vector2 position) {
+		currBehaviour = behaviour.Patrol;
+		startMovePosition = this.position;
+		desiredMovePosition = position;
 	}
 	
 	@Override
@@ -118,6 +131,35 @@ public class GhostComponent extends UnitComponent {
 		}
 	}
 	
+	void Patrol() {
+		//Check for enemies 
+		ImmutableArray<Entity> entities = EntityManager._instance.GetListSelectables();
+		for (Entity e : entities) {
+			if (EntityManager._instance.sc.get(e).friendly == !stats.playerControlled) {
+				Box2dComponent b2dc = EntityManager._instance.boxc.get(e);
+				if (position.dst(b2dc.position) < 30) {
+					if (EntityManager._instance.GetListBuildings().contains(e, true) && EntityManager._instance.bc.get(e).buildingType == BuildingComponent.BuildingType.HauntedMansion)
+						continue;
+					
+					AttackTarget(e, true);
+					return;
+				}
+			}
+		}
+		
+		float dist = position.dst(desiredMovePosition);
+		float timeToTarget = dist/stats.moveSpeed;
+		float x = MathUtils.lerp(position.x, desiredMovePosition.x, Gdx.graphics.getDeltaTime()/(timeToTarget));
+		float y = MathUtils.lerp(position.y, desiredMovePosition.y, Gdx.graphics.getDeltaTime()/(timeToTarget));
+		position = new Vector2(x, y);
+		bc.setPosition(position);
+		if (position.dst(desiredMovePosition) < .25f) {
+			Vector2 temp = desiredMovePosition;
+			desiredMovePosition = startMovePosition;
+			startMovePosition = temp;
+		}			
+	}
+	
 	@Override
 	public void update() {
 		if (!alive)
@@ -130,6 +172,7 @@ public class GhostComponent extends UnitComponent {
 		case Follow: Follow(); break;
 		case Haunting: Haunt(); break;
 		case AttackMove: AttackMove(); break;
+		case Patrol: Patrol(); break;
 		}
 		
 		super.update();
@@ -150,6 +193,10 @@ public class GhostComponent extends UnitComponent {
 				dir = 1;
 			}
 		}
+	}
+	
+	public void SetFlee() {
+		SetMove(EntityManager._instance.alliedBase.getComponent(BuildingComponent.class).rallyPoint);
 	}
 	
 	public void Follow() {
@@ -231,8 +278,11 @@ public class GhostComponent extends UnitComponent {
 		ImmutableArray<Entity> entities = EntityManager._instance.GetListSelectables();
 		for (Entity e : entities) {
 			if (EntityManager._instance.sc.get(e).friendly == !stats.playerControlled) {
+				if (EntityManager._instance.GetListBuildings().contains(e, true) && EntityManager._instance.bc.get(e).buildingType == BuildingComponent.BuildingType.HauntedMansion)
+					continue;
+					
 				Box2dComponent b2dc = EntityManager._instance.boxc.get(e);
-				if (position.dst(b2dc.position) < 30) {
+				if (position.dst(b2dc.position) < 35) {
 					AttackTarget(e, true);
 					return;
 				}
@@ -248,6 +298,9 @@ public class GhostComponent extends UnitComponent {
 			if (!EntityManager._instance.sc.get(e).friendly) {
 				Box2dComponent b2dc = EntityManager._instance.boxc.get(e);
 				if (position.dst(b2dc.position) < 30) {
+					if (EntityManager._instance.GetListBuildings().contains(e, true) && EntityManager._instance.bc.get(e).buildingType == BuildingComponent.BuildingType.HauntedMansion)
+						continue;
+					
 					AttackTarget(e, false);
 					return;
 				}
@@ -321,11 +374,12 @@ public class GhostComponent extends UnitComponent {
 			}
 			
 		} else { //Target unit
-			if (EntityManager._instance.sc.get(target).friendly) { //Follow friendly unit
+			if (EntityManager._instance.sc.get(target).friendly && target != myEntity) { //Follow friendly unit
 				currBehaviour = behaviour.Follow;
 				return;
 			} else { //Attack enemy unit
-				currBehaviour = behaviour.Attack;
+				if (!EntityManager._instance.sc.get(target).friendly)
+					currBehaviour = behaviour.Attack;
 				return;
 			}
 		}
@@ -355,6 +409,7 @@ public class GhostComponent extends UnitComponent {
 	}
 	
 	public static int money = 200; //if we get enough reason to make a new class then put this in there
+	public static int enemyMoney = 100;
 	float currHideTime = 0;
 	float hideTime = 3;
 	int hauntStep; //0 move to hauntedmansion 1 sit for few sec 2 run back to base
@@ -380,7 +435,10 @@ public class GhostComponent extends UnitComponent {
 			}
 		}
 		if (hauntStep == 2) {
-			Box2dComponent tar = EntityManager._instance.boxc.get(mainBase);
+			Box2dComponent tar;
+			if (bc.playerControlled)
+				tar = EntityManager._instance.boxc.get(mainBase);
+			else tar = EntityManager._instance.boxc.get(EntityManager._instance.enemyBase);
 			float dist = tar.position.dst(position);
 			float timeToTarget = dist/stats.moveSpeed;
 			float x = MathUtils.lerp(position.x, tar.position.x, Gdx.graphics.getDeltaTime()/(timeToTarget));
@@ -389,7 +447,9 @@ public class GhostComponent extends UnitComponent {
 			bc.setPosition(position);
 			if (position.dst(tar.position) < .25f) {
 				hauntStep = 0;
-				money += 50;
+				if (bc.playerControlled)
+					money += 50;
+				else enemyMoney += 50;
 			}
 		}
 	}

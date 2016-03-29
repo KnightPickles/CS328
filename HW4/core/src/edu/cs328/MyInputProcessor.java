@@ -60,7 +60,7 @@ public class MyInputProcessor implements InputProcessor {
 			SelectionManager._instance.endDragSelect();
 			return true;
 		}
-
+		
 		return false;
 	}
 

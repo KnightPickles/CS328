@@ -25,10 +25,32 @@ public class Box2dComponent implements Component {
 	public boolean playerControlled;
 	
 	public Box2dComponent(boolean playerControlled, Entity e, Sprite sprite, Vector2 position, World world) {
+		this.sprite = sprite;		
+		Init(playerControlled, e, position, world);
+	}
+	
+	public Box2dComponent(boolean playerControlled, Entity e, Vector2 position, World world, GhostComponent.UnitType unitType) {
+		if (playerControlled) {
+			String spriteName = "greenghost1";
+			switch (unitType) {
+			case MeleeFighter: spriteName = "greenghost" + BuildingComponent.alliedUpgradeLevel; break;
+			case RangedFighter: spriteName = "purpleghost" + BuildingComponent.alliedUpgradeLevel; break;
+			case Worker: spriteName = "blueghost1"; break;
+			}
+			
+			sprite = HW4._instance.atlas.createSprite(spriteName);
+		} else {
+			if (unitType != GhostComponent.UnitType.Worker)
+				sprite = HW4._instance.atlas.createSprite("redghost5");
+			else sprite = HW4._instance.atlas.createSprite("redghost1");
+		}
+		
+		Init(playerControlled, e, position, world);
+	}
+	
+	void Init(boolean playerControlled, Entity e, Vector2 position, World world) {
 		this.playerControlled = playerControlled;
 		myEntity = e;
-		this.sprite = sprite;
-		
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DynamicBody;
 		bodyDef.position.set(position);
@@ -43,15 +65,21 @@ public class Box2dComponent implements Component {
 		
 		fixtureDef.shape = shape;
 		Fixture fixture = body.createFixture(fixtureDef);
-		
-		sprite.setPosition(position.x, position.y);
 		body.setTransform(position, 0);
 		this.position = position;
+		sprite.setPosition(position.x, position.y);
 	}
 	
-	public void upgrade(int level) {
+	public void upgrade(int level, GhostComponent.UnitType type) {
 		if (playerControlled) {
-			sprite = HW4._instance.atlas.createSprite("greenghost" + level);
+			String spriteName = "greenghost1";
+			switch (type) {
+			case MeleeFighter: spriteName = "greenghost" + level; break;
+			case RangedFighter: spriteName = "purpleghost" + level; break;
+			case Worker: spriteName = "blueghost1"; break;
+			}
+			
+			sprite = HW4._instance.atlas.createSprite(spriteName);
 			sprite.setPosition(position.x, position.y);
 		}		
 	}

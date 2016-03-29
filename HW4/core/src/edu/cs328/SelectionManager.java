@@ -14,7 +14,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 // Search for EDITED -- buildings are now included in the selected list
 public class SelectionManager {
@@ -27,7 +29,9 @@ public class SelectionManager {
 	public ArrayList<Entity> tempSelected = new ArrayList<Entity>();
 	public ArrayList<Entity> selected = new ArrayList<Entity>();
 	public ArrayList<Vector2> targets = new ArrayList<Vector2>();
-
+	GameGUI.commandType currCommandType = GameGUI.commandType.None;
+	TextButton commandButton;
+	
 	Sprite targetIndicator;
 	
 	//Drag select stuff
@@ -41,7 +45,69 @@ public class SelectionManager {
 		camera = GameScreen._instance.camera;
 		targetIndicator = game.atlas.createSprite("blue_indicator");
 	}
+	
+	public void setCurrCommand(GameGUI.commandType command, TextButton button) {
+		currCommandType = command;
+		commandButton = button;
+	}
+	
+	public void issueCommand(int xPos, int yPos) {
+		Vector3 input = new Vector3(xPos, yPos, 0);
+		camera.unproject(input);
+		Vector2 v = new Vector2(input.x, input.y);
+		
+		commandButton.setColor(Color.WHITE);
+		switch (currCommandType) {
+		case Rally: 
+			if (singleSelected != null) {
+				singleSelected.getComponent(BuildingComponent.class).rallyPoint = v;
+			}
+			break;
+		case Action: 
+			if (singleSelected != null) {
+				//System.out.println("command for single");
+				singleSelected.getComponent(GhostComponent.class).rightClickCommand(v, getObjectUnderCursor());
+			} else {
+				//System.out.println("command for multi");
+				for (Entity e : selected) {
+					e.getComponent(GhostComponent.class).rightClickCommand(v, getObjectUnderCursor());
+				}
+			}
+			break;
+		case Patrol:
+			if (singleSelected != null) {
+				singleSelected.getComponent(GhostComponent.class).setPatrol(v);
+			} else {
+				for (Entity e : selected) {
+					e.getComponent(GhostComponent.class).setPatrol(v);
+				}
+			}
+			break;
+		}
+		
+		currCommandType = GameGUI.commandType.None;
+	}
+	
+	public void issueDefendCommand() {
+		if (singleSelected != null) {
+			singleSelected.getComponent(GhostComponent.class).SetStopState();
+		} else {
+			for (Entity e : selected) {
+				e.getComponent(GhostComponent.class).SetStopState();
+			}
+		}
+	}
 
+	public void issueFleeCommand() {
+		if (singleSelected != null) {
+			singleSelected.getComponent(GhostComponent.class).SetFlee();
+		} else {
+			for (Entity e : selected) {
+				e.getComponent(GhostComponent.class).SetFlee();
+			}
+		}
+	}
+	
 	public static void drawDashedLine(ShapeRenderer renderer, Vector2 dashes, Vector2 start, Vector2 end, float width) {
 		if (dashes.x == 0) {
 			return ;
@@ -78,6 +144,8 @@ public class SelectionManager {
 	}
 
 	public void render(ShapeRenderer sh, Batch batch) {
+		//System.out.println(currCommandType.toString());
+		
 		for(Entity e : selected) {
 			GhostComponent gc = e.getComponent(GhostComponent.class);
 			if(gc != null && gc.alive && !targets.contains(gc.desiredMovePosition) && gc.desiredMovePosition != null){
@@ -145,6 +213,12 @@ public class SelectionManager {
 		//Select new object
 		singleSelected = e;
 		EntityManager._instance.sc.get(e).selected = true;
+		
+		if (commandButton != null) {
+			currCommandType = GameGUI.commandType.None;
+			commandButton.setColor(Color.WHITE);
+			commandButton = null;
+		}
 	}
 	
 	void SelectEntities() {
@@ -153,6 +227,7 @@ public class SelectionManager {
 		if (singleSelected != null) {
 			EntityManager._instance.sc.get(singleSelected).selected = false;
 			singleSelected = null;
+			//System.out.println("deselect");
 		}
 		
 		//Deselect multiple units
@@ -169,6 +244,11 @@ public class SelectionManager {
 				selected.add(e);
 			}
 		}
+		if (commandButton != null) {
+			currCommandType = GameGUI.commandType.None;
+			commandButton.setColor(Color.WHITE);
+			commandButton = null;
+		}
 	}
 	
 	public void dragSelect(float xPos, float yPos) {
@@ -179,6 +259,8 @@ public class SelectionManager {
 			startDrag = new Vector2(v.x, v.y);
 			dragging = true;
 		}
+		
+		//System.out.println("drag end");
 		
 		ImmutableArray<Entity> selectables = EntityManager._instance.GetListSelectables();
 		Vector3 input = new Vector3(xPos, yPos, 0);
@@ -230,6 +312,12 @@ public class SelectionManager {
 	
 	//Left click select
 	public void leftTouched(int xPos, int yPos) {
+		if (currCommandType != GameGUI.commandType.None) {
+			//System.out.println("issue command to point " + xPos + " " + yPos);
+			issueCommand(xPos, yPos);
+			return;
+		}
+
 		ImmutableArray<Entity> selectables = EntityManager._instance.GetListSelectables();
 		Vector3 input = new Vector3(xPos, yPos, 0);
 		camera.unproject(input);
@@ -250,12 +338,18 @@ public class SelectionManager {
 	}
 	
 	public void rightTouched(int xPos, int yPos) {
+		if (currCommandType != GameGUI.commandType.None) {
+			currCommandType = GameGUI.commandType.None;
+			commandButton.setColor(Color.WHITE);
+			commandButton = null;
+		}
+		
 		Entity tar = getObjectUnderCursor();
 		
 		if (singleSelected != null) { 		
 			Vector3 pos = new Vector3(xPos, yPos, 0);
 			camera.unproject(pos);
-			// EDITED
+
 			if (EntityManager._instance.GetListBuildings().contains(singleSelected, true))
 				EntityManager._instance.bc.get(singleSelected).rightClickCommand(new Vector2(pos.x, pos.y), tar);
 			else
