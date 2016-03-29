@@ -37,7 +37,7 @@ public class GameGUI {
     private boolean dispMux = false;
     private boolean display = false;
     private Sprite victory;
-    private Window gp, bp, cw;
+    private Window gp, bp, cw, rs;
     private TextField f;
 
     public enum commandType {
@@ -61,6 +61,7 @@ public class GameGUI {
         bp = structurePanel();
         f = new TextField("Souls: " + GhostComponent.money, skin);
         cw = currencyScreen();
+        rs = returnScreen();
     }
 
     public void victory() {
@@ -87,17 +88,7 @@ public class GameGUI {
         return win;
     }
 
-    public void returnScreen() {
-        if(!display) {
-            stage.clear();
-            dispMux = false;
-            dispB = false;
-            dispG = false;
-            if(HW4.stop) display = true;
-            return;
-        }
-        if(dispMux) return;
-        dispMux = true;
+    public Window returnScreen() {
         final TextButton ts = new TextButton("Return to Title Screen", skin, "default");
         ts.addListener(new ClickListener(){
             @Override
@@ -117,16 +108,14 @@ public class GameGUI {
         final Window win = new Window("Return Menu", skin);
         win.setWidth(200);
         win.setHeight(90);
+        win.setMovable(true);
         win.setPosition(Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() / 2 - win.getHeight() / 2);
         win.defaults().space(5);
         win.row().fill().expandX();
         win.add(ts);
         win.row().fill();
         win.add(qd);
-
-
-        stage.clear();
-        stage.addActor(win);
+        return win;
     }
 
     public Window structurePanel() {
@@ -286,6 +275,11 @@ public class GameGUI {
             stage.clear();
         }
         f.setText("Souls: " + GhostComponent.money);
+        if(cw.getStage() == null) stage.addActor(cw);
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            display = !display;
+        }
+        if(HW4.win && rs.getStage() == null) stage.addActor(rs);
     }
 
     public void render() {
@@ -294,12 +288,6 @@ public class GameGUI {
             else defeat();
         }
 
-        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            display = !display;
-            returnScreen();
-        }
-
-        if(cw.getStage() == null) stage.addActor(cw);
         //returnScreen();
         game.batch.setProjectionMatrix(camera.combined);
         stage.act(Gdx.graphics.getDeltaTime());

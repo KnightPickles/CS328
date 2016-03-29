@@ -33,10 +33,11 @@ public class BuildingComponent extends UnitComponent {
 			if(type == BuildingType.MainBase) playerIndicator = atlas.createSprite("red_indicator");
 		}
 		
-		if (buildingType == BuildingType.MainBase)
-			rallyPoint = new Vector2(position.x + bc.sprite.getWidth()/2, position.y);
-		if (!bc.playerControlled)
-			rallyPoint = new Vector2(125, 0);
+		if (buildingType == BuildingType.MainBase) {
+			rallyPoint = new Vector2(position.x + bc.sprite.getWidth() / 2, position.y);
+			if (!bc.playerControlled)
+				rallyPoint = new Vector2(125, 0);
+		}
 	}
 	
 	public enum BuildingType {
