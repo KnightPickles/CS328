@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
  * Change GUI appearance
  *
  * Add unit information in GUI
- * Ghost eyes
  */
 
 public class HW4 extends Game {
