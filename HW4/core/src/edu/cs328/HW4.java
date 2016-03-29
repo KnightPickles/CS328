@@ -7,13 +7,10 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 /* To Do:
- * Change GUI appearance
  *
  * Show Currency
  ** Show icons for each selected/single entity specific stats
- * Buttons held down instead of clicked
  *
- * Action/Patrol/Set rally need to be clicked, held, and released when a position is selected
  */
 
 public class HW4 extends Game {
