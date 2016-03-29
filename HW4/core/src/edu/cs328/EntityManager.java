@@ -24,7 +24,7 @@ public class EntityManager extends EntitySystem {
     Engine engine = new Engine();
     TextureAtlas atlas;
     World world;
-    
+
     private ImmutableArray<Entity> entities;
 
     public ComponentMapper<SelectableComponent> sc = ComponentMapper.getFor(SelectableComponent.class);
@@ -91,9 +91,12 @@ public class EntityManager extends EntitySystem {
     public void update() {
     	if (!alliedBase.getComponent(BuildingComponent.class).alive) {
     		//TODO Defeat - Massive "Defeat" with a clickable prompt "Return to Title Screen" and "Quit Game"
+			HW4.win = false;
+			HW4.stop = true;
     	} else if (!enemyBase.getComponent(BuildingComponent.class).alive) {
     		//TODO Victory - Same as defeat but with "Victory"
-    	}
+			HW4.win = HW4.stop = true;
+		}
     	
         for(Entity e : engine.getEntitiesFor(Family.one(GhostComponent.class).get())) {
         	gc.get(e).update();

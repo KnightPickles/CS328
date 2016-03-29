@@ -2,11 +2,13 @@ package edu.cs328;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
@@ -15,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.FocusListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.ArrayList;
 
@@ -26,24 +29,85 @@ public class GameGUI {
     public Stage stage;
     private Skin skin;
     private OrthographicCamera camera;
+    private Viewport viewport;
+    private OrthographicCamera gameEnd;
     private SelectionManager sm;
     private ArrayList<GhostComponent> gcl = new ArrayList<GhostComponent>();
     private boolean dispG = false;
     private boolean dispB = false;
     private boolean dispMux = false;
-    boolean selected = false;
+    private boolean display = false;
+    private Sprite victory;
 
     GameGUI(HW4 game, SelectionManager manager) {
         this.game = game;
         sm = manager;
+        victory = game.atlas.createSprite("victory");
+        victory.setSize(victory.getWidth() * (HW4.SCALE + 1), victory.getHeight() * (HW4.SCALE + 1));
+        victory.setPosition(-victory.getWidth() / 2, -victory.getHeight() / 2 + 50);
         camera = new OrthographicCamera(Gdx.graphics.getWidth() , Gdx.graphics.getHeight());
+        gameEnd = new OrthographicCamera(Gdx.graphics.getWidth() / HW4.SCALE, Gdx.graphics.getHeight() / HW4.SCALE);
+        viewport = new FitViewport(Gdx.graphics.getWidth() / HW4.SCALE, Gdx.graphics.getHeight() / HW4.SCALE, gameEnd);
         skin = new Skin(Gdx.files.internal("uiskin.json"));
         stage = new Stage(new FitViewport(Gdx.graphics.getWidth() , Gdx.graphics.getHeight(), camera), game.batch);
         Gdx.input.setInputProcessor(stage);
         ghostPanel();
     }
 
+    public void victory() {
+        game.batch.begin();
+        victory.draw(game.batch);
+        game.batch.end();
+        returnScreen();
+    }
+
+    public void defeat() {
+        returnScreen();
+    }
+
+    public void returnScreen() {
+        if(!display) {
+            stage.clear();
+            dispMux = false;
+            dispB = false;
+            dispG = false;
+            if(HW4.stop) display = true;
+            return;
+        }
+        if(dispMux) return;
+        dispMux = true;
+        final TextButton ts = new TextButton("Return to Title Screen", skin, "default");
+        ts.addListener(new ClickListener(){
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new SplashScreen(game));
+            }
+        });
+
+        final TextButton qd = new TextButton("Quit to Desktop", skin, "default");
+        qd.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.app.exit();
+            }
+        });
+
+        final Window win = new Window("Return Menu", skin);
+        win.setWidth(200);
+        win.setHeight(90);
+        win.setPosition(Gdx.graphics.getWidth() / 2 - 100, Gdx.graphics.getHeight() / 2 - win.getHeight() / 2);
+        win.defaults().space(5);
+        win.row().fill().expandX();
+        win.add(ts);
+        win.row().fill();
+        win.add(qd);
+
+        stage.clear();
+        stage.addActor(win);
+    }
+
     public void structurePanel() {
+        if(HW4.stop) return;
         if(dispB) return;
         dispB = true;
         dispG = false;
@@ -105,7 +169,7 @@ public class GameGUI {
         win.add(train);
         win.add(worker);
 
-        stage.clear();
+        //stage.clear();
         stage.addActor(win);
     }
 
@@ -114,6 +178,8 @@ public class GameGUI {
     }
 
     public void ghostPanel() {
+        if(HW4.stop) return;
+
         if(dispG) return;
         dispG = true;
         dispB = false;
@@ -181,14 +247,22 @@ public class GameGUI {
                 if (gc != null)
                     gcl.add(gc);
             }
-            //if(gcl.size() > 0) {
-                ghostPanel();
-              //  structurePanel();
-           // }
+            ghostPanel();
         }
     }
 
     public void render() {
+        if(HW4.stop) {
+            if(HW4.win) victory();
+            else defeat();
+        }
+
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            display = !display;
+            returnScreen();
+        }
+
+        //returnScreen();
         game.batch.setProjectionMatrix(camera.combined);
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
