@@ -24,7 +24,7 @@ public class EntityManager extends EntitySystem {
     Engine engine = new Engine();
     TextureAtlas atlas;
     World world;
-    
+
     private ImmutableArray<Entity> entities;
 
     public ComponentMapper<SelectableComponent> sc = ComponentMapper.getFor(SelectableComponent.class);
@@ -38,10 +38,10 @@ public class EntityManager extends EntitySystem {
         _instance = this;
     	this.atlas = atlas;
     	this.world = world;
-    	UnitStats stats = new UnitStats(true, 15f, 6f, 1f, 4, 24);
     	for (int i = 0; i < 5; i++) {
     		createGhost(new UnitStats(true, 15f, 6f, 1f, 4, 24), true, new Vector2(i*10, 4), true, GhostComponent.UnitType.MeleeFighter);
     	}
+		
     	createGhost(new UnitStats(true, 16f, 6f, 1f, 1, 16), true, new Vector2(60, 4), true, GhostComponent.UnitType.Worker);
     	createGhost(new UnitStats(true, 15f, 44f, 1f, 4, 24), true, new Vector2(80, 4), true, GhostComponent.UnitType.RangedFighter);
     	
@@ -50,8 +50,6 @@ public class EntityManager extends EntitySystem {
 		createGhost(new UnitStats(false, 15f, 6f, 1f, 4, 24), false, new Vector2(50, 50), false, GhostComponent.UnitType.MeleeFighter);
 		createGhost(new UnitStats(false, 15f, 6f, 1f, 4, 24), false, new Vector2(70, 50), false, GhostComponent.UnitType.MeleeFighter);
 
-
-		stats = new UnitStats(true, 0, 0, 0, 0, 80);
     	alliedBase = createBuilding(new UnitStats(true, 0, 0, 0, 0, 80), true, new Vector2(-50, -50), "mainbase", true, BuildingComponent.BuildingType.MainBase);
     	enemyBase = createBuilding(new UnitStats(true, 0, 0, 0, 0, 80), false, new Vector2(100, 100), "mainbase", false, BuildingComponent.BuildingType.MainBase);
     	
@@ -94,10 +92,13 @@ public class EntityManager extends EntitySystem {
     
     public void update() {
     	if (!alliedBase.getComponent(BuildingComponent.class).alive) {
-    		//TODO Defeat
+    		//TODO Defeat - Massive "Defeat" with a clickable prompt "Return to Title Screen" and "Quit Game"
+			HW4.win = false;
+			HW4.stop = true;
     	} else if (!enemyBase.getComponent(BuildingComponent.class).alive) {
-    		//TODO Victory
-    	}
+    		//TODO Victory - Same as defeat but with "Victory"
+			HW4.win = HW4.stop = true;
+		}
     	
         for(Entity e : engine.getEntitiesFor(Family.one(GhostComponent.class).get())) {
         	gc.get(e).update();

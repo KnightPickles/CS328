@@ -7,11 +7,13 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 /* To Do:
- * Add title screen graphics
  * Change GUI appearance
  *
- * Seperate buttons for buildings and units; building -> set rally, train unit melee/ranged
- * Add unit information in GUI
+ * Show Currency
+ ** Show icons for each selected/single entity specific stats
+ * Buttons held down instead of clicked
+ *
+ * Action/Patrol/Set rally need to be clicked, held, and released when a position is selected
  */
 
 public class HW4 extends Game {
@@ -26,10 +28,13 @@ public class HW4 extends Game {
 	BitmapFont font;
 	GlyphLayout layout;
 
+	public static boolean stop = false;
+	public static boolean win = false;
+
 	@Override
 	public void create() {
 		_instance = this;
-		
+
 		// Graphics
 
 		batch = new SpriteBatch();

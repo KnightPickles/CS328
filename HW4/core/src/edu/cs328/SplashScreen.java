@@ -2,9 +2,13 @@ package edu.cs328;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -25,6 +29,7 @@ public class SplashScreen implements Screen {
     private int resInd = 2;
     private boolean fullScreen = false;
     private Map map;
+    private Sprite title;
 
     public SplashScreen(HW4 game) {
         this.game = game;
@@ -34,6 +39,10 @@ public class SplashScreen implements Screen {
         map = new Map(60, 60, game.atlas, cambak, 2);
         skin = new Skin(Gdx.files.internal("uiskin.json"));
         stage = new Stage(new FitViewport(Gdx.graphics.getWidth() , Gdx.graphics.getHeight(), camera));
+
+        title = game.atlas.createSprite("titlescreen");
+        title.setSize(title.getWidth() * (HW4.SCALE + 1), title.getHeight() * (HW4.SCALE + 1));
+
         Gdx.input.setInputProcessor(stage);
         mainMenu();
     }
@@ -45,6 +54,15 @@ public class SplashScreen implements Screen {
         if(split != null) {
             return new Vector2(Integer.parseInt(split[0]), Integer.parseInt(split[1]));
         } else return null;
+    }
+
+    public Actor window() {
+        final Window w = new Window("", skin, "default");
+        w.setPosition(camera.viewportWidth / 2 - 350, camera.viewportHeight / 2 - 110);
+        w.setHeight(400);
+        w.setWidth(700);
+        w.setTouchable(Touchable.disabled);
+        return w;
     }
 
     public void options() {
@@ -59,7 +77,7 @@ public class SplashScreen implements Screen {
         resolutions.setPosition(Gdx.graphics.getWidth() /2 - 100f, Gdx.graphics.getHeight()/2 - 70f);
 
 
-        final CheckBox windowed = new CheckBox(" Windowed", skin);
+        final CheckBox windowed = new CheckBox("Fullscreen", skin);
         windowed.setPosition(Gdx.graphics.getWidth() /2 + 10, Gdx.graphics.getHeight()/2 - 72f);
         windowed.setChecked(fullScreen);
 
@@ -96,7 +114,9 @@ public class SplashScreen implements Screen {
             }
         });
 
+
         stage.clear();
+        stage.addActor(window());
         stage.addActor(resolutions);
         stage.addActor(back);
         stage.addActor(setRes);
@@ -116,20 +136,17 @@ public class SplashScreen implements Screen {
         });
 
         Label htp1 = new Label("How to play:", skin);
-        Label htp2 = new Label(
-            "- Select Units with left mouse\n" +
-            "- Command units with right mouse\n" +
-            "- Haunt mansions for more souls\n" +
-            "- Spend souls on upgrades or more units\n" +
-            "- Destroy all enemies and their bases", skin);
+        Label htp2 = new Label( "Select units using left mouse and command them using right\n" +
+                                "mouse. Haunt mines for souls and use them to manifest more\n" +
+                                "ghosts. Don't let the evil ghosts take over! Destroy them all!", skin);
         htp1.setWidth(300);
         htp1.setAlignment(Align.center);
         htp1.setPosition(Gdx.graphics.getWidth() /2 - 150f, Gdx.graphics.getHeight()/2 - 40f);
-        htp2.setWidth(300);
-        htp2.setAlignment(Align.left);
-        htp2.setPosition(Gdx.graphics.getWidth() / 2 - 110f, Gdx.graphics.getHeight()/2 - 145f);
+        htp2.setAlignment(Align.center);
+        htp2.setPosition(Gdx.graphics.getWidth() / 2 - htp2.getPrefWidth() / 2, Gdx.graphics.getHeight()/2 - 100f);
 
         stage.clear();
+        stage.addActor(window());
         stage.addActor(back);
         stage.addActor(htp1);
         stage.addActor(htp2);
@@ -170,6 +187,7 @@ public class SplashScreen implements Screen {
         });
 
         stage.clear();
+        stage.addActor(window());
         stage.addActor(start);
         stage.addActor(instructions);
         stage.addActor(options);
@@ -192,13 +210,27 @@ public class SplashScreen implements Screen {
         camera.update();
         cambak.update();
         stage.act(delta);
-
+        title.setPosition(-title.getWidth() / 2, -title.getHeight() / 2 + 50);
 
         game.batch.setProjectionMatrix(cambak.combined);
         map.draw(game.batch);
+        game.batch.begin();
+        title.draw(game.batch);
+        game.batch.end();
+
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
         stage.draw();
+        game.batch.end();
+
+        game.shapeRenderer.setProjectionMatrix(cambak.combined);
+        game.shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        //game.shapeRenderer.rect(cambak.position.x, cambak.position.y, cambak.viewportWidth, cambak.viewportHeight);
+        game.shapeRenderer.end();
+
+        game.batch.setProjectionMatrix(cambak.combined);
+        game.batch.begin();
+        title.draw(game.batch);
         game.batch.end();
     }
 
