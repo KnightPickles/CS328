@@ -2,7 +2,6 @@ package edu.cs328;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -62,8 +61,8 @@ public class SplashScreen implements Screen {
 
     public Actor window() {
         final Window w = new Window("", skin, "default");
-        w.setPosition(camera.viewportWidth / 2 - 350, camera.viewportHeight / 2 - 110);
-        w.setHeight(400);
+        w.setPosition(camera.viewportWidth / 2 - 350, camera.viewportHeight / 2 - 190);
+        w.setHeight(500);
         w.setWidth(700);
         w.setTouchable(Touchable.disabled);
         return w;
@@ -142,12 +141,15 @@ public class SplashScreen implements Screen {
         Label htp1 = new Label("How to play:", skin);
         Label htp2 = new Label( "Select units using left mouse and command them using right\n" +
                                 "mouse. Haunt mines for souls and use them to manifest more\n" +
-                                "ghosts. Don't let the evil ghosts take over! Destroy them all!", skin);
+                                "ghosts. Don't let the evil ghosts take over! Destroy them all!\n" +
+                                "Blue ghost = worker. Right click mines to harvest souls.\n" +
+                                "Green = melee. Purple = ranged. Right click enemies to attack.\n" +
+                                "Select blue base to spend souls on upgrades and units.", skin);
         htp1.setWidth(300);
         htp1.setAlignment(Align.center);
         htp1.setPosition(Gdx.graphics.getWidth() /2 - 150f, Gdx.graphics.getHeight()/2 - 40f);
         htp2.setAlignment(Align.center);
-        htp2.setPosition(Gdx.graphics.getWidth() / 2 - htp2.getPrefWidth() / 2, Gdx.graphics.getHeight()/2 - 100f);
+        htp2.setPosition(Gdx.graphics.getWidth() / 2 - htp2.getPrefWidth() / 2, Gdx.graphics.getHeight()/2 - 160f);
 
         stage.clear();
         stage.addActor(window());
