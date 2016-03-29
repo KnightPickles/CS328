@@ -59,7 +59,7 @@ public class BuildingComponent extends UnitComponent {
 	
 	public void trainWorkerUnit() {
 		if (GhostComponent.money >= 50) {
-			Entity e = EntityManager._instance.createGhost(new UnitStats(true, 16f, 6f, 1f, 1, 16), true, position, "greenghost1", true, GhostComponent.UnitType.Worker);
+			Entity e = EntityManager._instance.createGhost(new UnitStats(true, 16f, 6f, 1f, 1, 16), true, position, true, GhostComponent.UnitType.Worker);
 			e.getComponent(GhostComponent.class).rightClickCommand(rallyPoint, null);
 			GhostComponent.money -= 50;
 		}
@@ -67,7 +67,7 @@ public class BuildingComponent extends UnitComponent {
 	
 	public void trainMeleeUnit() {
 		if (GhostComponent.money >= 100) {
-			Entity e = EntityManager._instance.createGhost(new UnitStats(true, 15f, 6f, 1f, 4, 24), true, position, "greenghost2", true, GhostComponent.UnitType.MeleeFighter);
+			Entity e = EntityManager._instance.createGhost(new UnitStats(true, 15f, 6f, 1f, 4, 24), true, position, true, GhostComponent.UnitType.MeleeFighter);
 			e.getComponent(GhostComponent.class).rightClickCommand(rallyPoint, null);
 			GhostComponent.money -= 100;
 		}
@@ -75,7 +75,7 @@ public class BuildingComponent extends UnitComponent {
 	
 	public void trainRangedUnit() {
 		if (GhostComponent.money >= 150) {
-			Entity e = EntityManager._instance.createGhost(new UnitStats(true, 15f, 16f, 1f, 4, 24), true, position, "greenghost2", true, GhostComponent.UnitType.RangedFighter);
+			Entity e = EntityManager._instance.createGhost(new UnitStats(true, 15f, 16f, 1f, 4, 24), true, position, true, GhostComponent.UnitType.RangedFighter);
 			e.getComponent(GhostComponent.class).rightClickCommand(rallyPoint, null);
 			GhostComponent.money -= 150;
 		}

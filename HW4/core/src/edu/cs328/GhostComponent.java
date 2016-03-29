@@ -77,7 +77,7 @@ public class GhostComponent extends UnitComponent {
 		stats.maxHealth += 10;
 		stats.health += 10;
 		stats.attackDamage += 1;
-		bc.upgrade(upgradeLevel);
+		bc.upgrade(upgradeLevel, unitType);
 	}
 	
 	@Override
@@ -113,6 +113,10 @@ public class GhostComponent extends UnitComponent {
 		}
 		
 		super.update();
+	}
+	
+	public void SetFlee() {
+		SetMove(EntityManager._instance.alliedBase.getComponent(BuildingComponent.class).rallyPoint);
 	}
 	
 	public void Follow() {
@@ -284,11 +288,12 @@ public class GhostComponent extends UnitComponent {
 			}
 			
 		} else { //Target unit
-			if (EntityManager._instance.sc.get(target).friendly) { //Follow friendly unit
+			if (EntityManager._instance.sc.get(target).friendly && target != myEntity) { //Follow friendly unit
 				currBehaviour = behaviour.Follow;
 				return;
 			} else { //Attack enemy unit
-				currBehaviour = behaviour.Attack;
+				if (!EntityManager._instance.sc.get(target).friendly)
+					currBehaviour = behaviour.Attack;
 				return;
 			}
 		}

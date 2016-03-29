@@ -40,15 +40,15 @@ public class EntityManager extends EntitySystem {
     	this.world = world;
     	UnitStats stats = new UnitStats(true, 15f, 6f, 1f, 4, 24);
     	for (int i = 0; i < 5; i++) {
-    		createGhost(new UnitStats(true, 15f, 6f, 1f, 4, 24), true, new Vector2(i*10, 4), "greenghost2", true, GhostComponent.UnitType.MeleeFighter);
+    		createGhost(new UnitStats(true, 15f, 6f, 1f, 4, 24), true, new Vector2(i*10, 4), true, GhostComponent.UnitType.MeleeFighter);
     	}
-    	createGhost(new UnitStats(true, 16f, 6f, 1f, 1, 16), true, new Vector2(60, 4), "greenghost1", true, GhostComponent.UnitType.Worker);
-    	createGhost(new UnitStats(true, 15f, 44f, 1f, 4, 24), true, new Vector2(80, 4), "greenghost2", true, GhostComponent.UnitType.RangedFighter);
+    	createGhost(new UnitStats(true, 16f, 6f, 1f, 1, 16), true, new Vector2(60, 4), true, GhostComponent.UnitType.Worker);
+    	createGhost(new UnitStats(true, 15f, 44f, 1f, 4, 24), true, new Vector2(80, 4), true, GhostComponent.UnitType.RangedFighter);
     	
     	stats = new UnitStats(false, 15f, 6f, 1f, 4, 24);
-    	createGhost(new UnitStats(false, 15f, 6f, 1f, 4, 24), false, new Vector2(30, 50), "redghost5", false, GhostComponent.UnitType.MeleeFighter);
-		createGhost(new UnitStats(false, 15f, 6f, 1f, 4, 24), false, new Vector2(50, 50), "redghost5", false, GhostComponent.UnitType.MeleeFighter);
-		createGhost(new UnitStats(false, 15f, 6f, 1f, 4, 24), false, new Vector2(70, 50), "redghost5", false, GhostComponent.UnitType.MeleeFighter);
+    	createGhost(new UnitStats(false, 15f, 6f, 1f, 4, 24), false, new Vector2(30, 50), false, GhostComponent.UnitType.MeleeFighter);
+		createGhost(new UnitStats(false, 15f, 6f, 1f, 4, 24), false, new Vector2(50, 50), false, GhostComponent.UnitType.MeleeFighter);
+		createGhost(new UnitStats(false, 15f, 6f, 1f, 4, 24), false, new Vector2(70, 50), false, GhostComponent.UnitType.MeleeFighter);
 
 
 		stats = new UnitStats(true, 0, 0, 0, 0, 80);
@@ -72,9 +72,9 @@ public class EntityManager extends EntitySystem {
     	return e;
     }
     
-    public Entity createGhost(UnitStats stats, boolean pc, Vector2 spawnPosition, String spriteName, boolean friendly, GhostComponent.UnitType unitType) {
+    public Entity createGhost(UnitStats stats, boolean pc, Vector2 spawnPosition, boolean friendly, GhostComponent.UnitType unitType) {
     	Entity e = new Entity();
-    	Box2dComponent b2dc = new Box2dComponent(pc, e, atlas.createSprite(spriteName), spawnPosition, world);
+    	Box2dComponent b2dc = new Box2dComponent(pc, e, spawnPosition, world, unitType);
     	e.add(b2dc);
     	SelectableComponent sc = new SelectableComponent(friendly);
     	e.add(sc);
