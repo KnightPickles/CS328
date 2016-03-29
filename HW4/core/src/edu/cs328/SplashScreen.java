@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -60,6 +61,7 @@ public class SplashScreen implements Screen {
         w.setPosition(camera.viewportWidth / 2 - 350, camera.viewportHeight / 2 - 110);
         w.setHeight(400);
         w.setWidth(700);
+        w.setTouchable(Touchable.disabled);
         return w;
     }
 

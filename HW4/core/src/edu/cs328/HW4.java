@@ -13,8 +13,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
  ** Show icons for each selected/single entity specific stats
  * Buttons held down instead of clicked
  *
- * Building buttons: Set rally, manifest worker, ranged, melee, and upgrade.
- * Remove building highlight selection
+ * Action/Patrol/Set rally need to be clicked, held, and released when a position is selected
  */
 
 public class HW4 extends Game {
@@ -32,7 +31,7 @@ public class HW4 extends Game {
 	@Override
 	public void create() {
 		_instance = this;
-		
+
 		// Graphics
 
 		batch = new SpriteBatch();
