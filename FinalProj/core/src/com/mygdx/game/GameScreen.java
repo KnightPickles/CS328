@@ -5,6 +5,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -23,6 +24,7 @@ public class GameScreen implements Screen {
     Box2DDebugRenderer debugRenderer;
     Map map;
     EntityManager entityManager;
+
     
 	public GameScreen(MainGameClass game) {
 		this.game = game;
@@ -41,7 +43,7 @@ public class GameScreen implements Screen {
         world.setContactListener(new CollisionListener());
         debugRenderer = new Box2DDebugRenderer();
         
-        map = new Map(100, 100, game.atlas, camera, 1);
+        map = new Map("level2.png", game.atlas, camera);
         entityManager = new EntityManager(game.atlas, world);
         MyInputProcessor inputProcessor = new MyInputProcessor();
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
@@ -52,15 +54,13 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void render(float delta) {
-        // Draw
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-
         game.batch.setTransformMatrix(camera.view);
-        game.batch.setProjectionMatrix(camera.projection);
+        game.batch.setProjectionMatrix(camera.combined);
         game.shapeRenderer.setTransformMatrix(camera.view);
-        game.shapeRenderer.setProjectionMatrix(camera.projection);
-        map.draw(game.batch);		
+        game.shapeRenderer.setProjectionMatrix(camera.combined);
+        map.draw(game.batch);
 	}
 
 	@Override
