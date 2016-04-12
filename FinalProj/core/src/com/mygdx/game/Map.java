@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g3d.particles.influencers.ColorInfluencer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.World;
@@ -17,17 +18,16 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Map {
 
     public class Node {
-        int Id;
         Node parent;
         Vector2 pos;
         float f,g,h; // f = g+h; g = cost to reach this node; h = guess at cost to reach goal from this node
         
-        Node(int Id, Node parent, Vector2 pos, float g, float h) {
-            this.Id = Id;
+        Node(Node parent, Vector2 pos, float g, float h) {
             this.parent = parent;
             this.pos = pos;
             this.g = g;
@@ -36,38 +36,60 @@ public class Map {
         }
 
         Node(Node node) {
-            this.Id = node.Id;
             this.parent = node.parent;
             this.pos = node.pos;
             this.g = node.g;
             this.h = node.h;
-            f = g + h;
+            f = node.g + node.h;
         }
     }
 
     TextureAtlas atlas;
     Camera camera;
+    MainGameClass game;
     //String level;
 
     public int worldWidth;
     public int worldHeight;
     public ArrayList<Sprite> tiles = new ArrayList<Sprite>();
-    public ArrayList<Vector3> traversableCoords = new ArrayList<Vector3>();
-    public ArrayList<Vector3> spawnCoords = new ArrayList<Vector3>(); // z for blocked or not
+    public ArrayList<Vector2> traversableCoords = new ArrayList<Vector2>();
+    public ArrayList<Vector2> spawnCoords = new ArrayList<Vector2>(); // z for blocked or not
     public Vector2 goal;
 
-    Map(String level, TextureAtlas atlas, Camera camera) {
+    public ArrayList<Vector2> path = new ArrayList<Vector2>();
+    Sprite os;
+
+    Map(String level, MainGameClass game, TextureAtlas atlas, Camera camera) {
         this.atlas = atlas;
         this.camera = camera;
+        this.game = game;
         loadLevelFromImage(level);
+        os = atlas.createSprite("blue_indicator");
     }
 	
 	public void draw(Batch batch) {
+        Random rand = new Random(System.nanoTime());
+        //path = aStar4(new Vector2(rand.nextInt(50), rand.nextInt(50)), new Vector2(rand.nextInt(50),rand.nextInt(50)));
+        //path = aStar4(traversableCoords.get(rand.nextInt(traversableCoords.size())), traversableCoords.get(rand.nextInt(traversableCoords.size())));
+        path = pathToGoal(spawnCoords.get(rand.nextInt(spawnCoords.size())));
+
+
 		batch.begin();
         for(Sprite s : tiles)
             s.draw(batch);
+        if(path != null && path.size() > 0) {
+            for(Vector2 v : path) {
+                os.setPosition(v.x * MainGameClass.PPM - camera.viewportWidth / 2, v.y * MainGameClass.PPM - camera.viewportHeight / 2);
+                os.draw(batch);
+            }
+        }
 		batch.end();
-	}
+        try {
+            Thread.sleep(500);
+        } catch (Exception e) {
+
+        }
+    }
 
     /* Returns the next position to move in with respect to the goal as a Vec3 (x,y,0)
      * otherwise it returns the position of the fastest path's blocking barrier as a
@@ -95,15 +117,9 @@ public class Map {
                     Sprite s = null;
                     if (c.equals(Color.BLACK)) {
                         s = atlas.createSprite("dirt");
-                        traversableCoords.add(new Vector3(x, y, 0));
-                        if (x == 0 || x == width - 1 || y == 0 || y == height - 1) {
-                            /* // for pulling the spawn point offscreen to allow enemies to enter from offscreen
-                            if(x == 0) x -= 1;
-                            else x += 1;
-                            if(y == 0) y -= 1;
-                            else y += 1;*/
-                            spawnCoords.add(new Vector3(x, y, 0));
-                        }
+                        traversableCoords.add(new Vector2(x, y));
+                        if (x == 0 || x == width - 1 || y == 0 || y == height - 1)
+                            spawnCoords.add(new Vector2(x, y));
                     } else if (c.equals(Color.YELLOW)) {
                         s = atlas.createSprite("sand");
                         goal = new Vector2(x, y);
@@ -119,58 +135,79 @@ public class Map {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("target " + new Vector2(10,10));
-        aStar4(new Vector2(0,0), new Vector2(10,10));
+        traversableCoords.add(goal);
+    }
+
+    public ArrayList<Vector2> pathToGoal(Vector2 currPos) {
+        return aStar4(currPos, goal);
     }
 
     public float dist(Vector2 a, Vector2 b) {
         return (float)Math.sqrt(Math.pow(b.y - a.y, 2) + Math.pow(b.x - a.x, 2));
     }
 
-    public ArrayList<Vector2> aStar4(Vector2 pos, Vector2 goal) {
+    public float heuristic(Vector2 pos, Vector2 target) {
+        return dist(pos,target);
+    }
+
+    public float gScore(Node current, Vector2 nextPos) {
+        return current.g + dist(current.pos, nextPos);
+    }
+
+    public float gScore(Node current) {
+        return current.g + 1;
+    }
+
+    public ArrayList<Vector2> reconstructPath(Node n) {
+        if(n.equals(null)) return null;
+        ArrayList<Vector2> path = new ArrayList<Vector2>();
+        while(n != null) {
+            path.add(0, n.pos);
+            n = n.parent;
+        }
+        return path;
+    }
+
+    public ArrayList<Vector2> aStar4(Vector2 pos, Vector2 target) {
+        if(pos.equals(null) || target.equals(null)) return null;
+        //Sprite os = atlas.createSprite("blue_indicator");
+        //Sprite cs = atlas.createSprite("red_indicator");
         ArrayList<Node> open = new ArrayList<Node>();
         ArrayList<Node> closed = new ArrayList<Node>();
-        open.add(new Node(0, null, pos, 0f, dist(pos, goal))); // Add our pos as the starting node
+        open.add(new Node(null, pos, 0f, heuristic(pos, target))); // Add our pos as the starting node
 
         while(!open.isEmpty()) {
-            Node focus = open.get(0);
-            for(Node n : open) if(focus.f > n.f) focus = new Node(n); // get our most promising node
-            open.remove(focus.Id);
-            int id = open.size();
-            ArrayList<Node> children = new ArrayList<Node>();
-            for(int i = 1; i <= 4; i++) { // generate focus node's children and evaluate them
-                Vector2 cpos = new Vector2((i < 2 || i > 3) ? focus.pos.x + 1 : focus.pos.x - 1, i <= 2 ? focus.pos.y + 1 : focus.pos.y - 1);
-                if(cpos.equals(goal)) {
-                    System.out.println("Found optimal path");
-                    return null; // return generated list of parent nodes here
-                }
-                // if cpos is in traversableCoords skip this child
-
-                Node child = new Node(0, focus, cpos, focus.g + dist(cpos, focus.pos), dist(cpos, goal)); // id = 0; will set later
-                //System.out.println(cpos + " " + goal + " dist: " +  (dist(cpos, goal) + focus.g + dist(cpos, focus.pos)));
-                boolean skip = false;
-                for(Node n : open) // if there is a better node already in open, skip this node
-                    if(n.pos.equals(child.pos) && n.f < child.f)
-                        skip = true;
-                for(Node n : closed) // if there... in closed, skip node
-                    if(n.pos.equals(child.pos) && n.f < child.f)
-                        skip = true;
-                if(!skip) {
-                    child.Id = id++; // ++ Id for next valid child
-                    //if(id < 50) System.out.println(child.Id + " " + child.f + " " + child.pos);
-                    open.add(child);
+            int ID = 0;
+            Node current = new Node(open.get(0));
+            for (int i = 0; i < open.size(); i++) {
+                if (open.get(i).f < current.f) {
+                    current = new Node(open.get(i));
+                    ID = i;
                 }
             }
-            closed.add(focus);
-            //System.out.println(open);
 
-            //if(id < 20) System.out.println(" " + focus.f);
-            if(id > 1000) {
-                System.out.println("premature break");
-                break;
+            if(current.pos.equals(target))
+                return reconstructPath(current);
+
+            open.remove(ID);
+            closed.add(current);
+            ArrayList<Node> children = new ArrayList<Node>();
+            for(int i = 0; i < 4; i++) { // generate current node's children and evaluate them
+                int sign = i < 2 ? 1 : -1;
+                Vector2 cpos = new Vector2(i % 2 == 0 ? current.pos.x : current.pos.x + sign, i % 2 == 0 ? current.pos.y + sign : current.pos.y);
+                if (!traversableCoords.contains(cpos)) continue;
+                Node child = new Node(current, cpos, gScore(current), heuristic(cpos, target));
+                boolean inClosed = false, inOpen = false;
+                for(Node n : closed)
+                    if(n.pos.equals(cpos)) inClosed = true;
+                for(Node n : open)
+                    if(n.pos.equals(cpos)) inOpen = true;
+                if(inClosed) continue;
+                if(!inOpen)
+                    open.add(child);
             }
         }
 
-        return null;
+        return null; // Failed to find path
     }
 }
