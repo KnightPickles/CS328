@@ -55,8 +55,6 @@ public class Map {
     public ArrayList<Vector2> spawnCoords2x2 = new ArrayList<Vector2>(); // z for blocked or not
     public ArrayList<Vector2> spawnCoords3x3 = new ArrayList<Vector2>(); // z for blocked or not
     public ArrayList<Vector2> goals = new ArrayList<Vector2>();
-    //public ArrayList<Vector2> goals2x2 = new ArrayList<Vector2>();
-    //public ArrayList<Vector2> goals3x3 = new ArrayList<Vector2>();
 
     public ArrayList<Vector2> path = new ArrayList<Vector2>();
     Sprite os;
@@ -80,18 +78,18 @@ public class Map {
 		batch.begin();
         for(Sprite s : tiles)
             s.draw(batch);
-        if(path != null && path.size() > 0) {
+        /*if(path != null && path.size() > 0) {
             for(Vector2 v : path) {
                 os.setPosition(v.x * MainGameClass.PPM - camera.viewportWidth / 2, v.y * MainGameClass.PPM - camera.viewportHeight / 2);
                 os.draw(batch);
             }
-        }
+        }*/
 		batch.end();
-        try {
+        /*try {
             Thread.sleep(500);
         } catch (Exception e) {
 
-        }
+        }*/
     }
 
     void loadLevelFromImage(String filename) {
