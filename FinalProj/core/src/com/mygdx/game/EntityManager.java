@@ -9,24 +9,19 @@ public class EntityManager {
 
 	public static EntityManager _instance;
 
-    TextureAtlas atlas;
-    World world;
 
-    Engine engine;
+    Ghost ghost = new Ghost(Ghost.Size.X11, Ghost.Color.BLUE);
 
-    EntityManager(TextureAtlas atlas, World world) {
+    EntityManager() {
     	if (_instance != null) System.out.println("Creating multiple entity managers");
         _instance = this;
-    	this.atlas = atlas;
-    	this.world = world;
-        //engine.addSystem(PathfindingSystem);
     }
 	
     public void update(float delta) {
-    	engine.update(delta);
+
     }
     
-    public void render() {
-    	
+    public void draw() {
+        ghost.draw();
     }
 }

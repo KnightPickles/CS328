@@ -44,7 +44,7 @@ public class GameScreen implements Screen {
         debugRenderer = new Box2DDebugRenderer();
         
         map = new Map("level2.png", game, game.atlas, camera);
-        entityManager = new EntityManager(game.atlas, world);
+        entityManager = new EntityManager();
         MyInputProcessor inputProcessor = new MyInputProcessor();
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
         //inputMultiplexer.addProcessor(gui.stage);
@@ -61,6 +61,7 @@ public class GameScreen implements Screen {
         game.shapeRenderer.setTransformMatrix(camera.view);
         game.shapeRenderer.setProjectionMatrix(camera.combined);
         map.draw(game.batch);
+		entityManager.draw();
 	}
 
 	@Override

@@ -18,6 +18,8 @@ import java.util.Random;
 
 public class Map {
 
+    static Map _instance;
+
     public class Node {
         Node parent;
         Vector2 pos;
@@ -43,7 +45,6 @@ public class Map {
     TextureAtlas atlas;
     Camera camera;
     MainGameClass game;
-    //String level;
 
     public int worldWidth;
     public int worldHeight;
@@ -56,40 +57,25 @@ public class Map {
     public ArrayList<Vector2> spawnCoords3x3 = new ArrayList<Vector2>(); // z for blocked or not
     public ArrayList<Vector2> goals = new ArrayList<Vector2>();
 
-    public ArrayList<Vector2> path = new ArrayList<Vector2>();
-    Sprite os;
-    Sprite x2;
+    //Sprite os;
+    //Sprite x2;
 
     Map(String level, MainGameClass game, TextureAtlas atlas, Camera camera) {
+        if(_instance != null) System.out.println("Creating multiple maps");
+        _instance = this;
         this.atlas = atlas;
         this.camera = camera;
         this.game = game;
         loadLevelFromImage(level);
-        os = atlas.createSprite("blue_indicator");
-        x2 = atlas.createSprite("red_indicator");
+        //os = atlas.createSprite("blue_indicator");
+        //x2 = atlas.createSprite("red_indicator");
     }
 	
 	public void draw(Batch batch) {
-        Random rand = new Random(System.nanoTime());
-        path = pathToGoal(spawnCoords.get(rand.nextInt(spawnCoords.size())));
-        //path = pathToGoal2x2(spawnCoords2x2.get(rand.nextInt(spawnCoords2x2.size())));
-        //path = pathToGoal2x2(spawnCoords3x3.get(rand.nextInt(spawnCoords3x3.size())));
-
-		batch.begin();
+        batch.begin();
         for(Sprite s : tiles)
             s.draw(batch);
-        /*if(path != null && path.size() > 0) {
-            for(Vector2 v : path) {
-                os.setPosition(v.x * MainGameClass.PPM - camera.viewportWidth / 2, v.y * MainGameClass.PPM - camera.viewportHeight / 2);
-                os.draw(batch);
-            }
-        }*/
 		batch.end();
-        /*try {
-            Thread.sleep(500);
-        } catch (Exception e) {
-
-        }*/
     }
 
     void loadLevelFromImage(String filename) {
@@ -101,6 +87,8 @@ public class Map {
             tiles.clear();
             traversableCoords.clear();
             spawnCoords.clear();
+            worldWidth = width;
+            worldHeight = height;
 
             // Buffered Image coordinates start at 0,0 in the top left corner. Gdx 0,0 is in bottom left.
             for (int y = 0; y < height; y++) {
@@ -203,6 +191,7 @@ public class Map {
         return path;
     }
 
+    // Does pathfinding in four directions. Typically done in 8 or semi-8.
     public ArrayList<Vector2> aStar4(Vector2 pos, Vector2 target, ArrayList<Vector2> validCoords) {
         if(pos.equals(null) || target.equals(null)) return null;
         ArrayList<Node> open = new ArrayList<Node>();
