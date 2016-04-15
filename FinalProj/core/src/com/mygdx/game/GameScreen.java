@@ -62,6 +62,7 @@ public class GameScreen implements Screen {
         game.shapeRenderer.setProjectionMatrix(camera.combined);
         map.draw(game.batch);
 		entityManager.draw();
+		debugRenderer.render(world, camera.combined);
 	}
 
 	@Override

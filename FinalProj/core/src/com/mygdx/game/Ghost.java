@@ -27,7 +27,7 @@ public class Ghost extends GameObject {
     Ghost(Size size, Color color) {
         this.size = size;
         this.color = color;
-        Random r = new Random(1);
+        Random r = new Random(System.currentTimeMillis());
 
         switch(color) {
             default:
@@ -53,7 +53,7 @@ public class Ghost extends GameObject {
 
         pos = spawn;
         path = Map._instance.pathToGoal(pos);
+
+        setBody(false, true, 0, 0);
     }
-
-
 }

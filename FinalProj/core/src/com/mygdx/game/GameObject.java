@@ -28,6 +28,7 @@ public class GameObject {
     }
 
     public void draw() {
+        update();
         MainGameClass._instance.batch.begin();
         sprite.draw(MainGameClass._instance.batch);
         MainGameClass._instance.batch.end();
