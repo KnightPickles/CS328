@@ -4,12 +4,9 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class MainGameClass extends Game {
@@ -23,7 +20,8 @@ public class MainGameClass extends Game {
 	TextureAtlas atlas;
 	BitmapFont font;
 	GlyphLayout layout;
-	
+	Sprite wtf;
+
 	@Override
 	public void create () {
 		_instance = this;
@@ -42,12 +40,15 @@ public class MainGameClass extends Game {
 		//generator.dispose();
 		
 		// Init to menu screen
-		setScreen(new GameScreen(this));
+		this.setScreen(new GameScreen(this));
+		wtf = atlas.createSprite("dirt");
+		wtf.setPosition(0, 0);
+		wtf.scale(100);
 	}
 
 	@Override
 	public void render () {
-		
+		super.render();
 	}
 	
 	@Override
