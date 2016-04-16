@@ -44,7 +44,7 @@ public class GameScreen implements Screen {
         debugRenderer = new Box2DDebugRenderer();
         
         map = new Map("level2.png", game, game.atlas, camera);
-        entityManager = new EntityManager(game.atlas, world);
+        entityManager = new EntityManager();
         MyInputProcessor inputProcessor = new MyInputProcessor();
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
         //inputMultiplexer.addProcessor(gui.stage);
@@ -56,11 +56,13 @@ public class GameScreen implements Screen {
 	public void render(float delta) {
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-        game.batch.setTransformMatrix(camera.view);
+		camera.update();
         game.batch.setProjectionMatrix(camera.combined);
-        game.shapeRenderer.setTransformMatrix(camera.view);
         game.shapeRenderer.setProjectionMatrix(camera.combined);
+		world.step(delta, 6, 2);
         map.draw(game.batch);
+		entityManager.draw();
+		debugRenderer.render(world, camera.combined);
 	}
 
 	@Override
