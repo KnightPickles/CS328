@@ -3,6 +3,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -36,10 +37,10 @@ public class GameObject {
 
     public void update() {
         if(sprite != null && body != null)
-            sprite.setPosition((body.getPosition().x * MainGameClass.PPM) - sprite.getWidth()/2 , (body.getPosition().y * MainGameClass.PPM) - sprite.getHeight()/2);
+            sprite.setPosition((body.getPosition().x) - sprite.getWidth()/2 , (body.getPosition().y) - sprite.getHeight()/2);
     }
 
-    protected void setBody(boolean isStatic, boolean isSensor, int widthPad, int verticalPad) {
+    protected void setBody(boolean isStatic, boolean isSensor, int horizontalPad, int verticalPad) {
         BodyDef bodyDef = new BodyDef();
         if(isStatic)
             bodyDef.type = BodyDef.BodyType.StaticBody;
@@ -50,7 +51,7 @@ public class GameObject {
         body.setFixedRotation(true);
 
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox((sprite.getWidth() - widthPad) / 2 / MainGameClass.PPM * sprite.getScaleX(), (sprite.getHeight() - verticalPad) / 2 / MainGameClass.PPM * sprite.getScaleY());
+        shape.setAsBox((sprite.getWidth() - horizontalPad) / 2 / sprite.getScaleX(), (sprite.getHeight() - verticalPad) / 2 / sprite.getScaleY());
 
         // Physics attributes
         FixtureDef fixtureDef = new FixtureDef();
@@ -59,6 +60,7 @@ public class GameObject {
         fixtureDef.density = 1.0f;
         fixtureDef.friction = 3.0f;
         body.createFixture(fixtureDef);
+        body.setTransform(sprite.getX() + sprite.getWidth() / 2, sprite.getY() + sprite.getHeight() / 2, body.getAngle());
 
         shape.dispose(); // only disposable object
         update();

@@ -53,7 +53,14 @@ public class Ghost extends GameObject {
 
         pos = spawn;
         path = Map._instance.pathToGoal(pos);
+        // translating map coords to game coords
+        sprite.setPosition(spawn.x * MainGameClass.PPM - GameScreen._instance.camera.viewportWidth / 2, spawn.y * MainGameClass.PPM - GameScreen._instance.camera.viewportHeight / 2);
 
         setBody(false, true, 0, 0);
+    }
+
+    public void update() {
+        if(body.getPosition().equals())
+        body.setLinearVelocity()
     }
 }
