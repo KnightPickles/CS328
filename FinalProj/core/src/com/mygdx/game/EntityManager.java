@@ -22,6 +22,7 @@ public class EntityManager {
     }
     
     public void draw() {
+        ghost.update();
         ghost.draw();
     }
 }

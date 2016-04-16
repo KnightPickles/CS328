@@ -41,9 +41,6 @@ public class MainGameClass extends Game {
 		
 		// Init to menu screen
 		this.setScreen(new GameScreen(this));
-		wtf = atlas.createSprite("dirt");
-		wtf.setPosition(0, 0);
-		wtf.scale(100);
 	}
 
 	@Override
