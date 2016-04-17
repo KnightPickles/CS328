@@ -56,7 +56,7 @@ public class GameObject {
         body.setFixedRotation(true);
 
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox((sprite.getWidth() - horizontalPad) / 2 / sprite.getScaleX(), (sprite.getHeight() - verticalPad) / 2 / sprite.getScaleY());
+        shape.setAsBox((sprite.getWidth() - horizontalPad) / 2 * sprite.getScaleX(), (sprite.getHeight() - verticalPad) / 2 * sprite.getScaleY());
 
         // Physics attributes
         FixtureDef fixtureDef = new FixtureDef();
