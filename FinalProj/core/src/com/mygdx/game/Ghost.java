@@ -1,6 +1,7 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ public class Ghost extends GameObject {
 
     Size size;
     Color color;
+    int hasGold = 0;
+    int maxGold = 0;
     float moveSpeed = 10f;
     
     Vector2 spawn;
@@ -30,6 +33,8 @@ public class Ghost extends GameObject {
     Vector2 deltaPos;
     List<Vector2> path;
     int pathPos = 0;
+
+    Sprite os;
 
     Ghost(Size size, Color color) {
         this.size = size;
@@ -41,18 +46,22 @@ public class Ghost extends GameObject {
             case RED: 
             	sprite = MainGameClass._instance.atlas.createSprite("redghost5");
             	moveSpeed = 15f;
+                maxGold = 30;
             	break;
             case BLUE: 
             	sprite = MainGameClass._instance.atlas.createSprite("blueghost5"); 
-            	moveSpeed = 20f;
+            	moveSpeed = 80f;
+                maxGold = 25;
             	break;
             case GREEN: 
             	sprite = MainGameClass._instance.atlas.createSprite("greenghost5"); 
             	moveSpeed = 25f;
+                maxGold = 20;
             	break;
             case PURPLE: 
             	sprite = MainGameClass._instance.atlas.createSprite("purpleghost5"); 
             	moveSpeed = 30f;
+                maxGold = 15;
             	break;
         }
         switch(size) {
@@ -73,8 +82,11 @@ public class Ghost extends GameObject {
         // translating map coords to game coords
         sprite.setPosition(spawn.x * MainGameClass.PPM - GameScreen._instance.camera.viewportWidth / 2, spawn.y * MainGameClass.PPM - GameScreen._instance.camera.viewportHeight / 2);
         setBody(false, true, 0, 0);
-        
+
+        pos = deltaPos = spawn;
         path = Map._instance.pathToGoal(spawn);
+
+        os = MainGameClass._instance.atlas.createSprite("blue_indicator");
     }
 
     @Override
@@ -83,32 +95,47 @@ public class Ghost extends GameObject {
         
         super.update();
     }
+
+    @Override
+    public void draw() {
+        MainGameClass._instance.batch.begin();
+        for(Vector2 v : path) {
+            os.setPosition(v.x * MainGameClass.PPM - GameScreen._instance.camera.viewportWidth / 2, v.y * MainGameClass.PPM - GameScreen._instance.camera.viewportHeight / 2);
+            os.draw(MainGameClass._instance.batch);
+        }
+        MainGameClass._instance.batch.end();
+        super.draw();
+    }
     
     void ghostMoveUpdate() {
     	if (!validPath()) {
     		killUnit();
     		return;
     	}
-    	
-    	float deltaTime = Gdx.graphics.getDeltaTime();
-        Vector2 dest = path.get(pathPos + 1); //Goal is the next path position
-        Vector2 dir = dest.sub(position); //Get vector between this and goal
-        dir.nor();
-        dir = new Vector2(dir.x * (deltaTime * moveSpeed), dir.y * (deltaTime *moveSpeed)); //Take move speed into account
-        Vector2 nextPos = new Vector2(position.x + dir.x, position.y + dir.y); //Add that dir vector onto our curr position
-        body.setTransform(nextPos, 0); //Move
-        
-        if (Vector2.dst(position.x, position.y, dest.x, dest.y) < 1f) { //Check if we've reached next node
-        	pathPos++;
-        	if (pathPos >= path.size()-1) { //Reached gold/end of path
-        		if (Vector2.dst(position.x, position.y, spawn.x, spawn.y) < 1f) { //Not sure if spawn point lines up with first path node so this will need to be checked/fixed
-        			killUnit(); //Kill unit but dont give player money for it, and take away however much gold was taken from the middle from the player
-        			return;
-        		}
-        		pathPos = 0;
-        		Collections.reverse(path);
-        	}
+
+        // Ghost does not line up correctly all the time
+        Vector2 dest = new Vector2(path.get(pathPos + 1)); //Goal is the next path position
+        Vector2 dir = new Vector2(dest);
+        dir.sub(pos); //Get vector between this and goal
+        dir = new Vector2(dir.x * moveSpeed, dir.y * moveSpeed); //Take move speed into account
+        deltaPos = new Vector2((int)((sprite.getX() + GameScreen._instance.camera.viewportWidth / 2) / MainGameClass.PPM), (int)((sprite.getY() + GameScreen._instance.camera.viewportHeight / 2) / MainGameClass.PPM));
+        if(deltaPos.equals(dest)) {
+            pos = new Vector2(deltaPos);
+            if(hasGold > 0 && pos.equals(spawn)) {
+                killUnit();
+                return;
+            }
+            if(pathPos == path.size() - 2) {
+                Collections.reverse(path);
+                hasGold = maxGold;
+                pathPos = 0;
+            } else pathPos++;
         }
+
+        body.setLinearVelocity(dir); //Move
+        //System.out.println(dir);
+        //body.setTransform(position.x * Gdx.graphics.getDeltaTime(), position.y + dir.y * Gdx.graphics.getDeltaTime(), 0);
+
     }
     
     boolean validPath() { 
