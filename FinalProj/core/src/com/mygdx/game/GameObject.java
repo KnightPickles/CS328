@@ -69,11 +69,5 @@ public class GameObject {
         position = body.getPosition();
         
         shape.dispose(); // only disposable object
-        update();
-    }
-    
-    void KillUnit() {
-    	body.destroyFixture(fixture);
-    	EntityManager._instance.removeEntity(this);
     }
 }
