@@ -1,18 +1,58 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 
 public class MyInputProcessor implements InputProcessor {
 
+	public static boolean wIsDown;
+	public static boolean aIsDown;
+	public static boolean sIsDown;
+	public static boolean dIsDown;
+	
+	public InputMode inputMode = InputMode.PlayMode;
+	public enum InputMode {
+		PlayMode,	//Regular playing/movement/etc
+		BuildMode	//Trying to build new turrets
+	}
+	
 	@Override
 	public boolean keyDown(int keycode) {
-		// TODO Auto-generated method stub
+		if (keycode == Keys.W)
+			wIsDown = true;
+		if (keycode == Keys.A)
+			aIsDown = true;
+		if (keycode == Keys.S)
+			sIsDown = true;
+		if (keycode == Keys.D)
+			dIsDown = true;
+		
+		if (keycode == Keys.B) {
+			if (inputMode != InputMode.BuildMode) {
+				inputMode = InputMode.BuildMode;
+				BuildManager._instance.enableBuildMode();
+			}
+			else {
+				inputMode = InputMode.PlayMode;
+				BuildManager._instance.disableBuildMode();
+			}
+		}
+			
 		return false;
 	}
 
 	@Override
 	public boolean keyUp(int keycode) {
-		// TODO Auto-generated method stub
+		if (keycode == Keys.W)
+			wIsDown = false;
+		if (keycode == Keys.A)
+			aIsDown = false;
+		if (keycode == Keys.S)
+			sIsDown = false;
+		if (keycode == Keys.D)
+			dIsDown = false;
+		
 		return false;
 	}
 
@@ -24,7 +64,13 @@ public class MyInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
+		if (button == 0 && inputMode == InputMode.PlayMode) {
+			SelectionManager._instance.leftTouched(screenY, screenY);
+		} else if (button == 00 && inputMode == InputMode.BuildMode) {
+			BuildManager._instance.leftTouched(screenX, screenY);
+		}
+			
+		
 		return false;
 	}
 
