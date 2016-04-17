@@ -24,6 +24,8 @@ public class GameScreen implements Screen {
     Box2DDebugRenderer debugRenderer;
     Map map;
     EntityManager entityManager;
+    BuildManager buildManager;
+    SelectionManager selectionManager;
 
     
 	public GameScreen(MainGameClass game) {
@@ -45,6 +47,8 @@ public class GameScreen implements Screen {
         
         map = new Map("level2.png", game, game.atlas, camera);
         entityManager = new EntityManager();
+        buildManager = new BuildManager();
+        selectionManager = new SelectionManager();
         MyInputProcessor inputProcessor = new MyInputProcessor();
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
         //inputMultiplexer.addProcessor(gui.stage);
@@ -61,7 +65,8 @@ public class GameScreen implements Screen {
         game.shapeRenderer.setProjectionMatrix(camera.combined);
 		world.step(delta, 6, 2);
         map.draw(game.batch);
-		entityManager.draw();
+        entityManager.update(delta);
+        buildManager.update(delta);
 		debugRenderer.render(world, camera.combined);
 	}
 

@@ -1,8 +1,11 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -20,10 +23,12 @@ public class Ghost extends GameObject {
 
     Size size;
     Color color;
+    float moveSpeed = 10f;
+    
     Vector2 spawn;
     Vector2 pos;
     Vector2 deltaPos;
-    ArrayList<Vector2> path;
+    List<Vector2> path;
     int pathPos = 0;
 
     Ghost(Size size, Color color) {
@@ -33,10 +38,22 @@ public class Ghost extends GameObject {
 
         switch(color) {
             default:
-            case RED: sprite = MainGameClass._instance.atlas.createSprite("redghost5"); break;
-            case BLUE: sprite = MainGameClass._instance.atlas.createSprite("blueghost5"); break;
-            case GREEN: sprite = MainGameClass._instance.atlas.createSprite("greenghost5"); break;
-            case PURPLE: sprite = MainGameClass._instance.atlas.createSprite("purpleghost5"); break;
+            case RED: 
+            	sprite = MainGameClass._instance.atlas.createSprite("redghost5");
+            	moveSpeed = 15f;
+            	break;
+            case BLUE: 
+            	sprite = MainGameClass._instance.atlas.createSprite("blueghost5"); 
+            	moveSpeed = 20f;
+            	break;
+            case GREEN: 
+            	sprite = MainGameClass._instance.atlas.createSprite("greenghost5"); 
+            	moveSpeed = 25f;
+            	break;
+            case PURPLE: 
+            	sprite = MainGameClass._instance.atlas.createSprite("purpleghost5"); 
+            	moveSpeed = 30f;
+            	break;
         }
         switch(size) {
             default:
@@ -52,46 +69,58 @@ public class Ghost extends GameObject {
                 spawn = Map._instance.spawnCoords3x3.get(r.nextInt(Map._instance.spawnCoords3x3.size()));
                 break;
         }
-
-        pos = deltaPos = spawn;
-        path = Map._instance.pathToGoal(pos);
+        
+        path = Map._instance.pathToGoal(spawn);
+        
         // translating map coords to game coords
         sprite.setPosition(spawn.x * MainGameClass.PPM - GameScreen._instance.camera.viewportWidth / 2, spawn.y * MainGameClass.PPM - GameScreen._instance.camera.viewportHeight / 2);
 
+        if (!validPath()) {
+        	KillUnit();
+        	return;
+        }
+        
         setBody(false, true, 0, 0);
     }
 
+    @Override
     public void update() {
+    	ghostMoveUpdate();
+        
         super.update();
-
-        if(path != null || path.size() > 1) {
-            Vector2 lastPos = new Vector2(pos);
-            Vector2 nextPos = new Vector2(path.get(pathPos + 1));
-            nextPos.sub(pos);
-            nextPos.x *= 100;
-            nextPos.y *= 100;
-            body.setLinearVelocity(nextPos);
-            Vector2 d = new Vector2((int)(sprite.getX() / MainGameClass.PPM + GameScreen._instance.camera.viewportWidth / 2), (int)(sprite.getY() / MainGameClass.PPM + GameScreen._instance.camera.viewportWidth / 2));
-            System.out.println(pos + " " + nextPos + " " + d);
-
-            //pos.x = (int)(sprite.getX() / MainGameClass.PPM + GameScreen._instance.camera.viewportWidth / 2);
-            //pos.y = (int)(sprite.getY() / MainGameClass.PPM + GameScreen._instance.camera.viewportWidth / 2);
-            /*if(!pos.equals(lastPos)) {
-                pathPos++;
-            }*/
-
-            /*if((int)(sprite.getX() / MainGameClass.PPM + GameScreen._instance.camera.viewportWidth / 2) == path.get(pathPos + 1).x
-                && (int)(sprite.getY() / MainGameClass.PPM + GameScreen._instance.camera.viewportWidth / 2) == path.get(pathPos + 1).y) {
-
-            }*/
-
-            /*deltaPos.add(new Vector2(nextPos.x * MainGameClass.PPM * deltaTime * 2, nextPos.y * MainGameClass.PPM * deltaTime * 2));
-            unit.sprite.translate(nextPos.x * MainGameClass.PPM * deltaTime * 2 * 8, nextPos.y * MainGameClass.PPM * deltaTime * 2 * 8);
-            //unit.sprite.translate(nextPos.x * MainGameClass.PPM, nextPos.y * MainGameClass.PPM);
-
-
-            ghost.pos = new Vector2((int) ghost.deltaPos.x, (int) ghost.deltaPos.y);
-            //ghost.pos = new Vector2(ghost.path.get(1));*/
+    }
+    
+    void ghostMoveUpdate() {
+    	float deltaTime = Gdx.graphics.getDeltaTime();
+        Vector2 dest = path.get(pathPos + 1); //Goal is the next path position
+        Vector2 dir = dest.sub(position); //Get vector between this and goal
+        dir.nor();
+        dir = new Vector2(dir.x * (deltaTime * moveSpeed), dir.y * (deltaTime *moveSpeed)); //Take move speed into account
+        Vector2 nextPos = new Vector2(position.x + dir.x, position.y + dir.y); //Add that dir vector onto our curr position
+        body.setTransform(nextPos, 0); //Move
+        
+        if (Vector2.dst(position.x, position.y, dest.x, dest.y) < 1f) { //Check if we've reached next node
+        	pathPos++;
+        	if (pathPos >= path.size()-1) { //Reached gold/end of path
+        		if (Vector2.dst(position.x, position.y, spawn.x, spawn.y) < 1f) { //Not sure if spawn point lines up with first path node so this will need to be checked/fixed
+        			KillUnit(); //Kill unit but dont give player money for it, and take away however much gold was taken from the middle from the player
+        			return;
+        		}
+        		pathPos = 0;
+        		Collections.reverse(path);
+        	}
         }
+    }
+    
+    boolean validPath() { 
+    	if (path == null) {
+    		System.out.println("Path invalid, null");
+    		return false;
+    	}
+    	if (path.size() <= 1) { 
+    		System.out.println("Path invalid, Size: " + path.size());
+    		return false;
+    	}
+    	return true;
     }
 }
