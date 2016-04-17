@@ -45,7 +45,7 @@ public class GameScreen implements Screen {
         world.setContactListener(new CollisionListener());
         debugRenderer = new Box2DDebugRenderer();
         
-        map = new Map("level2.png", game, game.atlas, camera);
+        map = new Map("level1.png", game, game.atlas, camera);
         entityManager = new EntityManager();
         buildManager = new BuildManager();
         selectionManager = new SelectionManager();

@@ -122,10 +122,4 @@ public class Ghost extends GameObject {
     	}
     	return true;
     }
-    
-    void killUnit() {
-    	if (body != null && body.getFixtureList().size >= 1)
-    		body.destroyFixture(body.getFixtureList().first());
-    	EntityManager._instance.removeEntity(this);
-    }
 }
