@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 
@@ -14,8 +15,12 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
  */
 public class GameObject {
     protected Body body;
+    Fixture fixture;
     protected Sprite sprite;
-
+    
+    boolean active; //Alive or active
+    public Vector2 position;
+    
     GameObject(String atlasRegion, float x, float y, boolean isStatic, boolean isSensor) {
         sprite = MainGameClass._instance.atlas.createSprite(atlasRegion);
         if(sprite == null) sprite = new Sprite();
@@ -29,7 +34,6 @@ public class GameObject {
     }
 
     public void draw() {
-        update();
         MainGameClass._instance.batch.begin();
         sprite.draw(MainGameClass._instance.batch);
         MainGameClass._instance.batch.end();
@@ -38,6 +42,7 @@ public class GameObject {
     public void update() {
         if(sprite != null && body != null)
             sprite.setPosition((body.getPosition().x) - sprite.getWidth()/2 , (body.getPosition().y) - sprite.getHeight()/2);
+        position = body.getPosition();
     }
 
     protected void setBody(boolean isStatic, boolean isSensor, int horizontalPad, int verticalPad) {
@@ -59,10 +64,10 @@ public class GameObject {
         fixtureDef.shape = shape;
         fixtureDef.density = 1.0f;
         fixtureDef.friction = 3.0f;
-        body.createFixture(fixtureDef);
+        fixture = body.createFixture(fixtureDef);
         body.setTransform(sprite.getX() + sprite.getWidth() / 2, sprite.getY() + sprite.getHeight() / 2, body.getAngle());
-
+        position = body.getPosition();
+        
         shape.dispose(); // only disposable object
-        update();
     }
 }
