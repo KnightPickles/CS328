@@ -70,17 +70,11 @@ public class Ghost extends GameObject {
                 break;
         }
         
-        path = Map._instance.pathToGoal(spawn);
-        
         // translating map coords to game coords
         sprite.setPosition(spawn.x * MainGameClass.PPM - GameScreen._instance.camera.viewportWidth / 2, spawn.y * MainGameClass.PPM - GameScreen._instance.camera.viewportHeight / 2);
-
-        if (!validPath()) {
-        	KillUnit();
-        	return;
-        }
-        
         setBody(false, true, 0, 0);
+        
+        path = Map._instance.pathToGoal(spawn);
     }
 
     @Override
@@ -91,6 +85,11 @@ public class Ghost extends GameObject {
     }
     
     void ghostMoveUpdate() {
+    	if (!validPath()) {
+    		killUnit();
+    		return;
+    	}
+    	
     	float deltaTime = Gdx.graphics.getDeltaTime();
         Vector2 dest = path.get(pathPos + 1); //Goal is the next path position
         Vector2 dir = dest.sub(position); //Get vector between this and goal
@@ -103,7 +102,7 @@ public class Ghost extends GameObject {
         	pathPos++;
         	if (pathPos >= path.size()-1) { //Reached gold/end of path
         		if (Vector2.dst(position.x, position.y, spawn.x, spawn.y) < 1f) { //Not sure if spawn point lines up with first path node so this will need to be checked/fixed
-        			KillUnit(); //Kill unit but dont give player money for it, and take away however much gold was taken from the middle from the player
+        			killUnit(); //Kill unit but dont give player money for it, and take away however much gold was taken from the middle from the player
         			return;
         		}
         		pathPos = 0;
@@ -122,5 +121,11 @@ public class Ghost extends GameObject {
     		return false;
     	}
     	return true;
+    }
+    
+    void killUnit() {
+    	if (body != null && body.getFixtureList().size >= 1)
+    		body.destroyFixture(body.getFixtureList().first());
+    	EntityManager._instance.removeEntity(this);
     }
 }

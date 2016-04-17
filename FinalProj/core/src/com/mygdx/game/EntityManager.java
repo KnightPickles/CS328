@@ -16,6 +16,7 @@ public class EntityManager {
 	public List<GameObject> turrets = new ArrayList<GameObject>();
 	public Player player;
 
+	public List<GameObject> objectsToDelete = new ArrayList<GameObject>(); //Objects queued for removal
 
     EntityManager() {
     	if (_instance != null) System.out.println("Creating multiple entity managers");
@@ -38,7 +39,8 @@ public class EntityManager {
     	}
     	
     	player.update();
-    	
+
+    	removeQueuedEntities();
     	draw();
     }
     
@@ -70,16 +72,23 @@ public class EntityManager {
     	return selectables;
     }
     
+    void removeQueuedEntities() {
+    	for (GameObject e : objectsToDelete) {
+	    	if (e instanceof Ghost) {
+	    		if (ghosts.contains(e)) {
+	    			ghosts.remove(e);
+	    		}
+	    	}
+	    	if (e instanceof Turret) {
+	    		if (turrets.contains(e)) {
+	    			turrets.remove(e);
+	    		}
+	    	}
+    	}
+    	objectsToDelete.clear();
+    }
+    
     public void removeEntity(GameObject e) {
-    	if (e instanceof Ghost) {
-    		if (ghosts.contains(e)) {
-    			ghosts.remove(e);
-    		}
-    	}
-    	if (e instanceof Turret) {
-    		if (turrets.contains(e)) {
-    			turrets.remove(e);
-    		}
-    	}
+    	objectsToDelete.add(e);
     }
 }
