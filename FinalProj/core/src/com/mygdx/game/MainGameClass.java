@@ -29,7 +29,7 @@ public class MainGameClass extends Game {
 		// Graphics
 		batch = new SpriteBatch();
 		shapeRenderer = new ShapeRenderer();
-		atlas = new TextureAtlas("td.atlas");
+		atlas = new TextureAtlas("towerdefense.pack");
 		
 		// Font
 		layout = new GlyphLayout();
