@@ -68,14 +68,17 @@ public class Ghost extends GameObject {
             default:
             case X11:
                 spawn = Map._instance.spawnCoords.get(r.nextInt(Map._instance.spawnCoords.size()));
+                path = Map._instance.pathToGoal(spawn);
                 break;
             case X22:
                 sprite.scale(2);
                 spawn = Map._instance.spawnCoords2x2.get(r.nextInt(Map._instance.spawnCoords2x2.size()));
+                path = Map._instance.pathToGoal2x2(spawn);
                 break;
             case X33:
                 sprite.scale(3);
                 spawn = Map._instance.spawnCoords3x3.get(r.nextInt(Map._instance.spawnCoords3x3.size()));
+                path = Map._instance.pathToGoal3x3(spawn);
                 break;
         }
         
@@ -84,7 +87,6 @@ public class Ghost extends GameObject {
         setBody(false, true, 0, 0);
 
         pos = deltaPos = spawn;
-        path = Map._instance.pathToGoal(spawn);
 
         os = MainGameClass._instance.atlas.createSprite("blue_indicator");
     }
@@ -135,7 +137,6 @@ public class Ghost extends GameObject {
         body.setLinearVelocity(dir); //Move
         //System.out.println(dir);
         //body.setTransform(position.x * Gdx.graphics.getDeltaTime(), position.y + dir.y * Gdx.graphics.getDeltaTime(), 0);
-
     }
     
     boolean validPath() { 
