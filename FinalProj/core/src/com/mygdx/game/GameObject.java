@@ -65,9 +65,15 @@ public class GameObject {
         fixtureDef.density = 1.0f;
         fixtureDef.friction = 3.0f;
         fixture = body.createFixture(fixtureDef);
-        body.setTransform(sprite.getX() + sprite.getWidth() / 2, sprite.getY() + sprite.getHeight() / 2, body.getAngle());
+    	body.setTransform(sprite.getX() + sprite.getWidth() / 2, sprite.getY() + sprite.getHeight() / 2, body.getAngle());
         position = body.getPosition();
         
         shape.dispose(); // only disposable object
+    }
+    
+    void killUnit() {
+    	if (body != null && body.getFixtureList().size >= 1)
+    		body.destroyFixture(body.getFixtureList().first());
+    	EntityManager._instance.removeEntity(this);
     }
 }
