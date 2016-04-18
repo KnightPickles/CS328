@@ -15,7 +15,7 @@ public class MainGameClass extends Game {
 	public static final int SCALE = 3;
 	public static MainGameClass _instance;
 	
-	Batch batch;
+	SpriteBatch batch;
 	ShapeRenderer shapeRenderer;
 	TextureAtlas atlas;
 	BitmapFont font;

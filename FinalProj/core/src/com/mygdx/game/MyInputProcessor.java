@@ -11,10 +11,16 @@ public class MyInputProcessor implements InputProcessor {
 	public static boolean sIsDown;
 	public static boolean dIsDown;
 	
-	public InputMode inputMode = InputMode.PlayMode;
+	public static boolean rightMouseIsDown;
+	
+	public static InputMode inputMode = InputMode.PlayMode;
 	public enum InputMode {
 		PlayMode,	//Regular playing/movement/etc
 		BuildMode	//Trying to build new turrets
+	}
+	
+	public static boolean isPlayMode() {
+		return inputMode == InputMode.PlayMode;
 	}
 	
 	@Override
@@ -66,17 +72,23 @@ public class MyInputProcessor implements InputProcessor {
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		if (button == 0 && inputMode == InputMode.PlayMode) {
 			SelectionManager._instance.leftTouched(screenY, screenY);
-		} else if (button == 00 && inputMode == InputMode.BuildMode) {
+		} else if (button == 0 && inputMode == InputMode.BuildMode) {
 			BuildManager._instance.leftTouched(screenX, screenY);
 		}
 			
+		if (button == 1 && inputMode == InputMode.PlayMode) {
+			rightMouseIsDown = true;
+		}
 		
 		return false;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		// TODO Auto-generated method stub
+		if (button == 1) {
+			rightMouseIsDown = false;
+		}
+		
 		return false;
 	}
 
