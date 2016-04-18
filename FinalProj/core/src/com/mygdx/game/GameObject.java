@@ -20,6 +20,8 @@ public class GameObject {
     
     boolean active; //Alive or active
     public Vector2 position;
+    public int maxHealth;
+    int health;
     
     GameObject(String atlasRegion, float x, float y, boolean isStatic, boolean isSensor) {
         sprite = MainGameClass._instance.atlas.createSprite(atlasRegion);
@@ -40,11 +42,15 @@ public class GameObject {
     }
 
     public void update() {
+    	position = body.getPosition();
         if(sprite != null && body != null)
-            sprite.setPosition((body.getPosition().x) - sprite.getWidth()/2 , (body.getPosition().y) - sprite.getHeight()/2);
-        position = body.getPosition();
+            sprite.setPosition((position.x) - sprite.getWidth()/2 , (position.y) - sprite.getHeight()/2);
     }
 
+    protected void setBody(boolean isStatic, boolean isSensor) {
+    	setBody(isStatic, isSensor, 0, 0);
+    }
+    
     protected void setBody(boolean isStatic, boolean isSensor, int horizontalPad, int verticalPad) {
         BodyDef bodyDef = new BodyDef();
         if(isStatic)
@@ -68,12 +74,21 @@ public class GameObject {
     	body.setTransform(sprite.getX() + sprite.getWidth() / 2, sprite.getY() + sprite.getHeight() / 2, body.getAngle());
         position = body.getPosition();
         
+        active = true;
+        
         shape.dispose(); // only disposable object
+    }
+    
+    void receiveDamage(int amount) {
+    	health -= amount;
+    	if (health <= 0)
+    		killUnit();
     }
     
     void killUnit() {
     	if (body != null && body.getFixtureList().size >= 1)
     		body.destroyFixture(body.getFixtureList().first());
     	EntityManager._instance.removeEntity(this);
+    	active = false;
     }
 }

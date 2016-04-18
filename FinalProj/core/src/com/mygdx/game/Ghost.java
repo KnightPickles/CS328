@@ -46,21 +46,25 @@ public class Ghost extends GameObject {
             case RED: 
             	sprite = MainGameClass._instance.atlas.createSprite("redghost5");
             	moveSpeed = 15f;
+            	maxHealth = 50;
                 maxGold = 30;
             	break;
             case BLUE: 
             	sprite = MainGameClass._instance.atlas.createSprite("blueghost5"); 
             	moveSpeed = 80f;
+            	maxHealth = 10;
                 maxGold = 25;
             	break;
             case GREEN: 
             	sprite = MainGameClass._instance.atlas.createSprite("greenghost5"); 
             	moveSpeed = 25f;
+            	maxHealth = 75;
                 maxGold = 20;
             	break;
             case PURPLE: 
             	sprite = MainGameClass._instance.atlas.createSprite("purpleghost5"); 
             	moveSpeed = 30f;
+            	maxHealth = 65;
                 maxGold = 15;
             	break;
         }
@@ -87,6 +91,7 @@ public class Ghost extends GameObject {
         setBody(false, true, 0, 0);
 
         pos = deltaPos = spawn;
+        health = maxHealth;
 
         os = MainGameClass._instance.atlas.createSprite("blue_indicator");
     }
