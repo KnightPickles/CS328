@@ -173,7 +173,7 @@ public class Map {
         int min = paths.get(0).size();
         int ID = 0;
         for(ArrayList<Vector2> vl : paths) {
-            if(vl.size() < min) {
+            if(vl.size() <= min) {
                 min = vl.size();
                 path = vl;
             }

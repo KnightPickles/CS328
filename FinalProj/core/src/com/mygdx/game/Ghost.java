@@ -4,10 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by KnightPickles on 4/15/16.
@@ -19,7 +16,7 @@ public class Ghost extends GameObject {
     }
 
     public enum Size {
-        X11, X22, X33
+        X11, X22, X33;
     }
 
     Size size;
@@ -45,11 +42,11 @@ public class Ghost extends GameObject {
             default:
             case RED: 
             	sprite = MainGameClass._instance.atlas.createSprite("redghost5");
-            	moveSpeed = 15f;
+            	moveSpeed = 80f;
                 maxGold = 30;
             	break;
             case BLUE: 
-            	sprite = MainGameClass._instance.atlas.createSprite("aquawater");
+            	sprite = MainGameClass._instance.atlas.createSprite("blueghost5");
             	moveSpeed = 20f;
                 maxGold = 25;
             	break;
@@ -81,7 +78,7 @@ public class Ghost extends GameObject {
                 path = Map._instance.pathToGoal3x3(spawn);
                 break;
         }
-        
+
         // translating map coords to game coords
         sprite.setPosition(spawn.x * MainGameClass.PPM - GameScreen._instance.camera.viewportWidth / 2, spawn.y * MainGameClass.PPM - GameScreen._instance.camera.viewportHeight / 2);
         setBody(false, true, 0, 0);
@@ -100,12 +97,12 @@ public class Ghost extends GameObject {
 
     @Override
     public void draw() {
-        MainGameClass._instance.batch.begin();
+        /*MainGameClass._instance.batch.begin();
         for(Vector2 v : path) {
             os.setPosition(v.x * MainGameClass.PPM - GameScreen._instance.camera.viewportWidth / 2, v.y * MainGameClass.PPM - GameScreen._instance.camera.viewportHeight / 2);
             os.draw(MainGameClass._instance.batch);
         }
-        MainGameClass._instance.batch.end();
+        MainGameClass._instance.batch.end();*/
         super.draw();
     }
     
