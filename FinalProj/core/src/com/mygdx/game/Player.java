@@ -7,13 +7,15 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Player extends GameObject {
 
 	public float moveSpeed = 20f;
-	public float attackCooldown = .5f; 
+	public float attackCooldown = .3f; 
 	public float attackCooldownRemaining = 0f;
+	public int attackDamage = 10;
 	
 	Animation walkAnimation;
 	Animation idleAnimation;
@@ -28,6 +30,8 @@ public class Player extends GameObject {
 	TextureRegion[][] idleAttackFrames;
 	TextureRegion currentAttackFrame;
 	float attackStateTime = 0f;
+	
+	Rectangle meleeHitBox;
 	
 	enum State {
 		Idle,
@@ -52,9 +56,13 @@ public class Player extends GameObject {
 	public Player(Vector2 spawnPos) {
 		sprite = MainGameClass._instance.atlas.createSprite("warrior_idle_d0");
 		
-		initiateAnimationTextureRegions();
-		
 		setBody(false, false, 0, 0);
+		
+		meleeHitBox = new Rectangle();
+		meleeHitBox.setCenter(spawnPos);
+		meleeHitBox.setSize(10, 10);
+		
+		initiateAnimationTextureRegions();
 	}
 	
 	@Override
@@ -75,7 +83,17 @@ public class Player extends GameObject {
             MainGameClass._instance.batch.draw(currentFrame, position.x - currentFrame.getRegionWidth()/2, position.y - currentFrame.getRegionHeight()/2);
         } else {
 	        MainGameClass._instance.batch.draw(currentFrame, position.x - currentFrame.getRegionWidth()/2, position.y - currentFrame.getRegionHeight()/2);
-	        MainGameClass._instance.batch.draw(currentAttackFrame, position.x - currentAttackFrame.getRegionWidth()/2, position.y - currentAttackFrame.getRegionHeight()/2);
+	        int offset = 0; //Weapon offset
+	        if (attackState == AttackState.Attack) {
+	        	if (direction == Direction.Right)
+	        		offset = 7;
+	        	else if (direction == Direction.Left)
+	        		offset = -7;
+	        }
+	        if (attackState == AttackState.Idle && direction == Direction.Down) {
+	        	offset = 6;
+	        }
+	        MainGameClass._instance.batch.draw(currentAttackFrame, position.x - currentAttackFrame.getRegionWidth()/2 + offset, position.y - currentAttackFrame.getRegionHeight()/2);
         }
         MainGameClass._instance.batch.end();
     }
@@ -116,7 +134,7 @@ public class Player extends GameObject {
 		stateTime = 0f;
 		walkAnimation = new Animation(0.25f, walkFrames[dir.ordinal()]);
 		idleAnimation = new Animation(0.25f, idleFrames[dir.ordinal()]);
-		attackAnimation = new Animation(attackCooldown/attackFrames.length, attackFrames[dir.ordinal()]);
+		attackAnimation = new Animation(attackCooldown/attackFrames[dir.ordinal()].length, attackFrames[dir.ordinal()]);
 		attackIdleAnimation = new Animation(0.25f, idleAttackFrames[dir.ordinal()]);
 		direction = dir;
 	}
@@ -134,7 +152,17 @@ public class Player extends GameObject {
 
 		float delta = Gdx.graphics.getDeltaTime();
 		attackCooldownRemaining -= delta;
-		attackStateTime += delta;		
+		attackStateTime += delta;
+		
+		if (attackCooldownRemaining <= 0 && attackState == AttackState.Attack) { //If we just finished attacking
+			updateMeleeHitBox();
+			
+			for (GameObject g : EntityManager._instance.ghosts) {
+				if (meleeHitBox.overlaps(g.sprite.getBoundingRectangle())) {
+					g.receiveDamage(attackDamage);
+				}
+			}
+		}
 	}
 	
 	void movement() {
@@ -160,18 +188,32 @@ public class Player extends GameObject {
 		if (moveAdd.isZero()) {
 			setState(State.Idle);
 			currentFrame = idleAnimation.getKeyFrame(stateTime, true);
+			body.setLinearVelocity(Vector2.Zero);
 		} else {			
 			setState(State.Move);
 			
 			float deltaTime = Gdx.graphics.getDeltaTime();
 	        currentFrame = walkAnimation.getKeyFrame(stateTime, true);
 			moveAdd.nor();
-			moveAdd = new Vector2(moveAdd.x * moveSpeed * deltaTime + position.x, moveAdd.y * moveSpeed * deltaTime + position.y);
-			body.setTransform(moveAdd, 0);
+//			moveAdd = new Vector2(moveAdd.x * moveSpeed * deltaTime + position.x, moveAdd.y * moveSpeed * deltaTime + position.y);
+			moveAdd = new Vector2(moveAdd.x * moveSpeed * deltaTime * 100, moveAdd.y * moveSpeed * deltaTime * 100);
+//			body.setTransform(moveAdd, 0);
+			body.setLinearVelocity(moveAdd);
 		}
 		stateTime += Gdx.graphics.getDeltaTime();
 	}
 
+	void updateMeleeHitBox() {
+		if (direction == Direction.Up)
+			meleeHitBox.setCenter(new Vector2(position.x, position.y + 7));
+		else if (direction == Direction.Down)
+			meleeHitBox.setCenter(new Vector2(position.x, position.y - 7));
+		else if (direction == Direction.Left)
+			meleeHitBox.setCenter(new Vector2(position.x - 7, position.y));
+		else if (direction == Direction.Right)
+			meleeHitBox.setCenter(new Vector2(position.x + 7, position.y));
+	}
+	
 	void initiateAnimationTextureRegions() {
 		//Move/player textures
 		walkFrames = new TextureRegion[4][];
@@ -238,10 +280,10 @@ public class Player extends GameObject {
 		idleAttackFrames[1][0] = MainGameClass._instance.atlas.findRegion("sword_d_idle");
 		
 		idleAttackFrames[2] = new TextureRegion[1];
-		idleAttackFrames[2][0] = MainGameClass._instance.atlas.findRegion("sword_l_idle");
+		idleAttackFrames[2][0] = MainGameClass._instance.atlas.findRegion("sword_r_idle");
 		
 		idleAttackFrames[3] = new TextureRegion[1];
-		idleAttackFrames[3][0] = MainGameClass._instance.atlas.findRegion("sword_r_idle");
+		idleAttackFrames[3][0] = MainGameClass._instance.atlas.findRegion("sword_l_idle");
 		
 		setDir(Direction.Down);
 	}
