@@ -8,6 +8,7 @@ public class TurretInfo {
 	public String spriteName;
 	public float range;
 	public float attackCooldown;
+	public int cost;
 	
 	//Upgrade stuff
 	public int redLevel;
@@ -28,6 +29,7 @@ public class TurretInfo {
 	}
 	public ProjectileType projectileType;
 	public String projectileSpriteName; //Name of sprite used for any projectile type
-	
+	public int projectileDamage;
+	public float projectileSpeed;
 	
 }

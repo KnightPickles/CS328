@@ -2,41 +2,72 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 public class Turret extends GameObject {
 
 	TurretInfo myInfo;
 	
 	Sprite rotateSprite;
+	Circle targetFinder;
 
 	GameObject target; //What we're targetting
 	float attackCooldown = 0;
 	
-	public Turret(TurretInfo info) {
+	public Turret(TurretInfo info, Vector2 spawnPos) {
 		myInfo = info;
 		sprite = MainGameClass._instance.atlas.createSprite(myInfo.spriteName);
+		sprite.setPosition(spawnPos.x, spawnPos.y);
 		if (myInfo.trackTarget) {
 			rotateSprite = MainGameClass._instance.atlas.createSprite(myInfo.rotateSpriteName);
+			rotateSprite.setPosition(spawnPos.x, spawnPos.y +2);
 		}
 		
-		setBody(false, false, 0, 0);
+		setBody(true, false, 0, 0);
+		targetFinder = new Circle();
+		targetFinder.set(position, myInfo.range);
 	}
 	
 	@Override
 	public void update() {
+
 		findTarget();
 		trackTarget();
 		shootTarget();
 		
 		attackCooldown -= Gdx.graphics.getDeltaTime();
-		
+
 		super.update();
+	}
+	
+	@Override
+	public void draw() {
+        MainGameClass._instance.batch.begin();
+        sprite.draw(MainGameClass._instance.batch);
+        rotateSprite.draw(MainGameClass._instance.batch);
+        MainGameClass._instance.batch.end();
 	}
 	
 	//Looks for a valid target in our range
 	//Right now it will just find the first target in range, but we can add different AI modes, (units with gold > units with low health > units in front > units in back) etc
 	void findTarget() {
+		if (target != null && 
+				(!target.active 
+						|| !EntityManager._instance.ghosts.contains(target) 
+						|| position.dst(target.position) > myInfo.range))
+			target = null;
 		
+		if (target != null)
+			return;
+		
+		for (GameObject g : EntityManager._instance.ghosts) {
+			if (targetFinder.contains(g.position)) {
+				target = g;
+				return;
+			}
+		}
 	}
 	
 	void shootTarget() {
@@ -60,7 +91,10 @@ public class Turret extends GameObject {
 	void shootBallistic() {
 		//Create projectile
 		//Tell projectile its target, damage, speed, etc (it will deal damage when it hits)
-		attackCooldown = myInfo.attackCooldown; //Reset attack CD
+		if (attackCooldown <= 0) {
+			EntityManager._instance.spawnProjectile(myInfo.projectileSpriteName, target, myInfo.projectileDamage,  myInfo.projectileSpeed, position);
+			attackCooldown = myInfo.attackCooldown; //Reset attack CD
+		}
 	}
 	
 	void shootLaser() {
@@ -87,21 +121,23 @@ public class Turret extends GameObject {
 		
 		//Need to do the math and figure out how to rotate the rotateSprite towards the targets vector
 		if (target != null) {
-			
+			float degrees = (float) ((Math.atan2 (target.position.x - position.x, -(target.position.y - position.y))*180.0d/Math.PI)+90.0f);
+			rotateSprite.setRotation(degrees);
 		}
 		
 		//If we have no target, rotate the turret back to the stationary position, angle 0 or whatever
 		//Assuming angles are working on 0-360 and it doesnt go to 380 degrees for 20 degrees or -20 for 340 degrees, in which case this'll need to be fixed
 		if (target == null) {
-			float angle = rotateSprite.getRotation();
-			if (angle < 2 || angle > 358)
-				return;
-			
-			if (angle < 180)
-				rotateSprite.rotate(-myInfo.trackingSpeed * Gdx.graphics.getDeltaTime());
-			if (angle >= 180)
-				rotateSprite.rotate(myInfo.trackingSpeed * Gdx.graphics.getDeltaTime());
+			float angle = rotateSprite.getRotation() % 360;
+			if (angle < 0)
+				angle += 360;
+			float diff = myInfo.trackingSpeed * Gdx.graphics.getDeltaTime();
+			if (angle > diff && angle < 360-diff) {
+				if (angle > 180)
+					angle += diff;
+				else angle -= diff;
+			}
+			rotateSprite.setRotation(angle);
 		}
-
 	}
 }
