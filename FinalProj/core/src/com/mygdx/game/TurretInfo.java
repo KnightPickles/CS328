@@ -28,6 +28,7 @@ public class TurretInfo {
 	}
 	public ProjectileType projectileType;
 	public String projectileSpriteName; //Name of sprite used for any projectile type
-	
+	public int projectileDamage;
+	public float projectileSpeed;
 	
 }
