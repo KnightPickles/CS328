@@ -49,8 +49,8 @@ public class Ghost extends GameObject {
                 maxGold = 30;
             	break;
             case BLUE: 
-            	sprite = MainGameClass._instance.atlas.createSprite("blueghost5"); 
-            	moveSpeed = 80f;
+            	sprite = MainGameClass._instance.atlas.createSprite("aquawater");
+            	moveSpeed = 20f;
                 maxGold = 25;
             	break;
             case GREEN: 
@@ -71,12 +71,12 @@ public class Ghost extends GameObject {
                 path = Map._instance.pathToGoal(spawn);
                 break;
             case X22:
-                sprite.scale(2);
+                sprite.scale(1);
                 spawn = Map._instance.spawnCoords2x2.get(r.nextInt(Map._instance.spawnCoords2x2.size()));
                 path = Map._instance.pathToGoal2x2(spawn);
                 break;
             case X33:
-                sprite.scale(3);
+                sprite.scale(2);
                 spawn = Map._instance.spawnCoords3x3.get(r.nextInt(Map._instance.spawnCoords3x3.size()));
                 path = Map._instance.pathToGoal3x3(spawn);
                 break;
@@ -120,7 +120,7 @@ public class Ghost extends GameObject {
         Vector2 dir = new Vector2(dest);
         dir.sub(pos); //Get vector between this and goal
         dir = new Vector2(dir.x * moveSpeed, dir.y * moveSpeed); //Take move speed into account
-        deltaPos = new Vector2((int)((sprite.getX() + GameScreen._instance.camera.viewportWidth / 2) / MainGameClass.PPM), (int)((sprite.getY() + GameScreen._instance.camera.viewportHeight / 2) / MainGameClass.PPM));
+        deltaPos = new Vector2((int)((sprite.getX() + sprite.getWidth() / 2 + GameScreen._instance.camera.viewportWidth / 2) / MainGameClass.PPM), (int)((sprite.getY() + sprite.getWidth() / 2 + GameScreen._instance.camera.viewportHeight / 2) / MainGameClass.PPM));
         if(deltaPos.equals(dest)) {
             pos = new Vector2(deltaPos);
             if(hasGold > 0 && pos.equals(spawn)) {
