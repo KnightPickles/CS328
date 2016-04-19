@@ -13,94 +13,116 @@ public class WaveManager {
 
     public static WaveManager _instance;
 
-
+    public enum Difficulty {
+        EASY, MEDIOCRE, NORMAL, HARD
+    }
+    Difficulty difficulty = Difficulty.NORMAL;
 
     public enum WaveState {
-        START, STOP, PAUSED, FINISHED
+        WAVE_START, WAVE_RUNNING, WAVE_FINISHED, LEVEL_FINISHED, STOP
     }
+    WaveState waveState = WaveState.WAVE_START;
+    int wave = 0, numWaves = 0;
+    public boolean waveStartTimer = false;
+    Random random = new Random();
 
-    WaveState waveState = WaveState.STOP;
-    int wave = 0, numWaves, levelTime = 20, waveTime = 5, difficulty = 2;
-
-    WaveManager(int numWaves) {
+    WaveManager(int numWaves, Difficulty difficulty) {
         _instance = this;
         this.numWaves = numWaves;
-
-        startWave();
+        this.difficulty = difficulty;
     }
 
     void update() {
-        if(wave >= numWaves) {
-            waveState = WaveState.FINISHED;
-            wave = 0;
-        }
-
-
         switch(waveState) {
-            case STOP:
-                if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-                    waveState = WaveState.START;
+            case WAVE_START:
+                waveStartTimer = false;
+                if(EntityManager._instance.ghosts.isEmpty()) {
+                    System.out.println("Begining wave " + (wave + 1));
+                    startWave();
+                } else waveState = WaveState.WAVE_RUNNING;
+                break;
+            case WAVE_RUNNING:
+                if(EntityManager._instance.ghosts.isEmpty()) {
+                    System.out.println("Completed wave " + wave);
+                    waveState = WaveState.WAVE_FINISHED;
                 }
                 break;
-            case START:
-                if(EntityManager._instance.ghosts.isEmpty())
-                    startWave();
-                //else waveState = WaveState.STOP;
+            case WAVE_FINISHED:
+                if(wave >= numWaves) waveState = WaveState.LEVEL_FINISHED;
+                else { // start a new wave
+                    if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+                        waveState = WaveState.WAVE_START;
+                        System.out.println("Wave manually started");
+                    }
+                    if(!waveStartTimer) {
+                        waveStartTimer = true;
+                        Timer.schedule(new Timer.Task() {
+                            @Override
+                            public void run() {
+                                if(waveStartTimer) {
+                                    System.out.println("Wave automatically started");
+                                    waveStartTimer = false;
+                                    waveState = WaveState.WAVE_START;
+                                }
+                            }
+                        }, 5);
+                    }
+                }
                 break;
-            case PAUSED:
-                // pause stuff
+            case LEVEL_FINISHED:
+                System.out.println("Level Completed");
+                waveState = WaveState.STOP;
                 break;
-            case FINISHED:
-                System.out.println("Wave Complete");
+            case STOP: // trigger a display of heuristics and whatnot
                 break;
         }
     }
 
     void startWave() {
-        for (int j = 0; j < (wave + 1) * difficulty; j++) {
+        for (int j = 0; j < (wave + 1) * difficulty.ordinal() * 3; j++) {
+            final int d = j;
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
-                    spawnEnemies();
+                    spawnRandomizedEnemy();
                 }
             }, j * 0.5f);
         }
         wave++;
     }
 
-    void spawnEnemies() {
-        // percent chance its x ghost
-        Random r = new Random();
-
-
-
-        EntityManager._instance.ghosts.add(new Ghost(Ghost.Size.X11, Ghost.Color.RED));
-    }
-
-    void weightedRandomGhost() {
+    void spawnRandomizedEnemy() {
         Ghost.Color[] colors = {Ghost.Color.RED, Ghost.Color.GREEN, Ghost.Color.BLUE, Ghost.Color.PURPLE};
-        //double[] colorWeight = {3 * wave / 10, 3 * wave / 5, 10};
+        //double[] colorWeight = {numWaves / (wave + 1), wave / numWaves, wave / 2, wave};
+        double[] colorWeight = {0.92, 0.05, 0.02, 0.01};
         Ghost.Size[] sizes = {Ghost.Size.X11, Ghost.Size.X22, Ghost.Size.X33};
+        double[] sizeWeight = {0.94, 0.05, 0.01};
 
-
-// Compute the total weight of all items together
-       /* double totalWeight = 0.0d;
-        for (Item i : items)
-        {
-            totalWeight += i.getWeight();
+        double colorTotal = 0.0d;
+        double sizeTotal = 0.0d;
+        for(int i = 0; i < 4; i++) {
+            if(i < 3) sizeTotal += sizeWeight[i];
+            colorTotal += colorWeight[i];
         }
-// Now choose a random item
-        int randomIndex = -1;
-        double random = Math.random() * totalWeight;
-        for (int i = 0; i < items.length; ++i)
-        {
-            random -= items[i].getWeight();
-            if (random <= 0.0d)
-            {
-                randomIndex = i;
-                break;
+
+        int colorIndex = -1, sizeIndex = -1;
+        boolean colIndexed = false, sizIndexed = false;
+        double randomColor = Math.random() * colorTotal;
+        double randomSize = Math.random() * sizeTotal;
+
+        for(int i = 0; i < 4; i++) {
+            if(i < 3) randomSize -= sizeWeight[i];
+            randomColor -= colorWeight[i];
+            if(i < 3 && !sizIndexed && randomSize <= 0.0d) {
+                sizeIndex = i;
+                sizIndexed = true;
+            }
+            if(!colIndexed && randomColor <= 0.0d) {
+                colorIndex = i;
+                colIndexed = true;
             }
         }
-        Item myRandomItem = items[randomIndex];*/
+
+        EntityManager._instance.spawnGhost(sizes[sizeIndex], colors[colorIndex]);
     }
 }

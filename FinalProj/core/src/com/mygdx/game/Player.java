@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 public class Player extends GameObject {
 
 	public static int gold = 0;
+	public int goldTemp = gold;
 
 	public float moveSpeed = 20f;
 	public float attackCooldown = .3f; 
@@ -74,6 +75,11 @@ public class Player extends GameObject {
 		attack();
 
 		position = body.getPosition();
+
+		if(goldTemp != gold && goldTemp < gold) {
+			System.out.println("You gained " + (gold - goldTemp) + " gold! You now have " + gold);
+			goldTemp = gold;
+		}
 	}
 	
 	@Override
@@ -91,6 +97,9 @@ public class Player extends GameObject {
 	        		offset = 7;
 	        	else if (direction == Direction.Left)
 	        		offset = -7;
+				//else if (direction == Direction.Down)
+				//	offset on x = 2;
+				//  offset on y = -1;
 	        }
 	        if (attackState == AttackState.Idle && direction == Direction.Down) {
 	        	offset = 6;

@@ -27,6 +27,7 @@ public class GameScreen implements Screen {
     BuildManager buildManager;
     SelectionManager selectionManager;
 	WaveManager waveManager;
+	MyInputProcessor inputProcessor;
 
     
 	public GameScreen(MainGameClass game) {
@@ -46,12 +47,12 @@ public class GameScreen implements Screen {
         world.setContactListener(new CollisionListener());
         debugRenderer = new Box2DDebugRenderer();
         
-        map = new Map("level2.png", game, game.atlas, camera);
+        map = new Map("level2.png");
         entityManager = new EntityManager();
         buildManager = new BuildManager();
         selectionManager = new SelectionManager();
-		waveManager = new WaveManager(2);
-        MyInputProcessor inputProcessor = new MyInputProcessor();
+		waveManager = new WaveManager(10, WaveManager.Difficulty.NORMAL);
+        inputProcessor = new MyInputProcessor();
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
         //inputMultiplexer.addProcessor(gui.stage);
         inputMultiplexer.addProcessor(inputProcessor);
@@ -68,8 +69,8 @@ public class GameScreen implements Screen {
 		game.batch.setProjectionMatrix(camera.combined);
         game.shapeRenderer.setProjectionMatrix(camera.combined);
         map.draw(game.batch);
-        entityManager.update(delta);
-        buildManager.update(delta);
+		buildManager.update(delta);
+		entityManager.update(delta);
 		debugRenderer.render(world, camera.combined);
 	}
 

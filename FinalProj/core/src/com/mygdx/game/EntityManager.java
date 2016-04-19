@@ -27,8 +27,8 @@ public class EntityManager {
     
         spawnPlayer(new Vector2(50, 50));
 
-        spawnTurret("red0", new Vector2(40, 40));
-        spawnGhost(Ghost.Size.X11, Ghost.Color.RED);      
+        //spawnTurret("red0", new Vector2(40, 40));
+        //spawnGhost(Ghost.Size.X11, Ghost.Color.RED);
     }
     
     public void spawnPlayer(Vector2 position) {
@@ -41,9 +41,12 @@ public class EntityManager {
     }
 
     public void buildTurret(String turretName, Vector2 position) {
-        Turret turret = new Turret(turretTable.get(turretName), position);
-        turrets.add(turret);
-        // player monies -= turret.cost;
+        if(Player.gold >= turretTable.get("red0").cost) {
+            System.out.println("Spent " + turretTable.get("red0").cost + " gold on a ballista");
+            Player.gold -= turretTable.get("red0").cost;
+            Turret turret = new Turret(turretTable.get(turretName), position);
+            turrets.add(turret);
+        } else System.out.println(Player.gold + " is not enough to buy a ballista. It costs " + turretTable.get("red0").cost + ".");
     }
     
     public void spawnTurret(String turretName, Vector2 position) {

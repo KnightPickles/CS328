@@ -32,8 +32,6 @@ public class Ghost extends GameObject {
     List<Vector2> path;
     int pathPos = 0;
 
-    Sprite os;
-
     Ghost(Size size, Color color) {
         this.size = size;
         this.color = color;
@@ -50,7 +48,7 @@ public class Ghost extends GameObject {
             	break;
             case BLUE: 
             	sprite = MainGameClass._instance.atlas.createSprite("blueghost5"); 
-            	moveSpeed = 80f;
+            	moveSpeed = 20f;
             	maxHealth = 10;
                 maxGold = 25;
                 goldValue = 10;
@@ -90,6 +88,7 @@ public class Ghost extends GameObject {
         }
 
         goldValue *= size.ordinal() + 1;
+        health *= (size.ordinal() + 1);
 
         // translating map coords to game coords
         sprite.setPosition(spawn.x * MainGameClass.PPM - GameScreen._instance.camera.viewportWidth / 2, spawn.y * MainGameClass.PPM - GameScreen._instance.camera.viewportHeight / 2);
@@ -97,8 +96,6 @@ public class Ghost extends GameObject {
 
         pos = deltaPos = spawn;
         health = maxHealth;
-
-        os = MainGameClass._instance.atlas.createSprite("blue_indicator");
     }
 
     @Override
@@ -134,7 +131,8 @@ public class Ghost extends GameObject {
         if(deltaPos.equals(dest)) {
             pos = new Vector2(deltaPos);
             if(hasGold > 0 && pos.equals(spawn)) {
-                killUnit();
+                Map._instance.takeGold(hasGold);
+                super.killUnit();
                 return;
             }
             if(pathPos == path.size() - 2) {
@@ -163,7 +161,7 @@ public class Ghost extends GameObject {
 
     @Override
     public void killUnit() {
+        Player.gold += goldValue;
         super.killUnit();
-        // give player goldValue
     }
 }
