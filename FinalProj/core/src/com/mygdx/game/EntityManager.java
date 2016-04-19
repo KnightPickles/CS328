@@ -40,13 +40,17 @@ public class EntityManager {
     	ghosts.add(ghost);
     }
 
-    public void buildTurret(String turretName, Vector2 position) {
+    public boolean buildTurret(String turretName, Vector2 position) {
         if(Player.gold >= turretTable.get("red0").cost) {
             System.out.println("Spent " + turretTable.get("red0").cost + " gold on a ballista");
             Player.gold -= turretTable.get("red0").cost;
             Turret turret = new Turret(turretTable.get(turretName), position);
             turrets.add(turret);
-        } else System.out.println(Player.gold + " is not enough to buy a ballista. It costs " + turretTable.get("red0").cost + ".");
+            return true;
+        } else {
+            System.out.println(Player.gold + " is not enough to buy a ballista. It costs " + turretTable.get("red0").cost + ".");
+            return false;
+        }
     }
     
     public void spawnTurret(String turretName, Vector2 position) {
