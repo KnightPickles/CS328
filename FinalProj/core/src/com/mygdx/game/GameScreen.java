@@ -26,6 +26,8 @@ public class GameScreen implements Screen {
     EntityManager entityManager;
     BuildManager buildManager;
     SelectionManager selectionManager;
+	WaveManager waveManager;
+	MyInputProcessor inputProcessor;
 
     
 	public GameScreen(MainGameClass game) {
@@ -45,11 +47,12 @@ public class GameScreen implements Screen {
         world.setContactListener(new CollisionListener());
         debugRenderer = new Box2DDebugRenderer();
         
-        map = new Map("level2.png", game, game.atlas, camera);
+        map = new Map("level2.png");
         entityManager = new EntityManager();
         buildManager = new BuildManager();
         selectionManager = new SelectionManager();
-        MyInputProcessor inputProcessor = new MyInputProcessor();
+		waveManager = new WaveManager(10, WaveManager.Difficulty.NORMAL);
+        inputProcessor = new MyInputProcessor();
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
         //inputMultiplexer.addProcessor(gui.stage);
         inputMultiplexer.addProcessor(inputProcessor);
@@ -61,12 +64,13 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 		camera.update();
-        game.batch.setProjectionMatrix(camera.combined);
-        game.shapeRenderer.setProjectionMatrix(camera.combined);
+		waveManager.update();
 		world.step(delta, 6, 2);
+		game.batch.setProjectionMatrix(camera.combined);
+        game.shapeRenderer.setProjectionMatrix(camera.combined);
         map.draw(game.batch);
-        entityManager.update(delta);
-        buildManager.update(delta);
+		buildManager.update(delta);
+		entityManager.update(delta);
 		debugRenderer.render(world, camera.combined);
 	}
 

@@ -6,6 +6,8 @@ import com.badlogic.gdx.InputProcessor;
 
 public class MyInputProcessor implements InputProcessor {
 
+	public static InputProcessor _instance;
+
 	public static boolean wIsDown;
 	public static boolean aIsDown;
 	public static boolean sIsDown;
@@ -18,7 +20,12 @@ public class MyInputProcessor implements InputProcessor {
 		PlayMode,	//Regular playing/movement/etc
 		BuildMode	//Trying to build new turrets
 	}
-	
+
+	MyInputProcessor() {
+		if(_instance != null) System.out.println("Creating multiple input processors");
+		_instance = this;
+	}
+
 	public static boolean isPlayMode() {
 		return inputMode == InputMode.PlayMode;
 	}

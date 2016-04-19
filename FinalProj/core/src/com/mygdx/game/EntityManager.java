@@ -4,11 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.badlogic.ashley.core.Engine;
-import com.badlogic.ashley.core.EntitySystem;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
 
 public class EntityManager {
 
@@ -30,9 +26,9 @@ public class EntityManager {
         createTurretInfo();
     
         spawnPlayer(new Vector2(50, 50));
-        
-        spawnTurret("red0", new Vector2(40, 40));
-        spawnGhost(Ghost.Size.X11, Ghost.Color.RED);      
+
+        //spawnTurret("red0", new Vector2(40, 40));
+        //spawnGhost(Ghost.Size.X11, Ghost.Color.RED);
     }
     
     public void spawnPlayer(Vector2 position) {
@@ -43,6 +39,15 @@ public class EntityManager {
     	Ghost ghost = new Ghost(size, color);
     	ghosts.add(ghost);
     }
+
+    public void buildTurret(String turretName, Vector2 position) {
+        if(Player.gold >= turretTable.get("red0").cost) {
+            System.out.println("Spent " + turretTable.get("red0").cost + " gold on a ballista");
+            Player.gold -= turretTable.get("red0").cost;
+            Turret turret = new Turret(turretTable.get(turretName), position);
+            turrets.add(turret);
+        } else System.out.println(Player.gold + " is not enough to buy a ballista. It costs " + turretTable.get("red0").cost + ".");
+    }
     
     public void spawnTurret(String turretName, Vector2 position) {
     	Turret turret = new Turret(turretTable.get(turretName), position);
@@ -52,7 +57,6 @@ public class EntityManager {
     public void spawnProjectile(String spriteName, GameObject target, int damage, float speed, Vector2 spawnPosition) {
     	Projectile p = new Projectile(spriteName, target, damage, speed, spawnPosition);
     	projectiles.add(p);
-    	
     }
 	
     public void update(float delta) {
@@ -147,6 +151,7 @@ public class EntityManager {
     	info.projectileType = TurretInfo.ProjectileType.Ballistic;
     	info.projectileDamage = 10;
     	info.projectileSpeed = 80f;
+        info.cost = 25;
     	
     	turretTable.put(info.turretName, info);
     }

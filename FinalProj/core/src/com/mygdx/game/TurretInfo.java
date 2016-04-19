@@ -8,6 +8,7 @@ public class TurretInfo {
 	public String spriteName;
 	public float range;
 	public float attackCooldown;
+	public int cost;
 	
 	//Upgrade stuff
 	public int redLevel;
