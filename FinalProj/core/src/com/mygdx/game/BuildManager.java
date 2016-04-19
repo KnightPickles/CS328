@@ -92,10 +92,11 @@ public class BuildManager {
 			//System.out.println(xScreen + " " + yScreen + " " + (int)xScreen + " " + (int)yScreen);
 
 			if(!occupiedTiles[(int)xScreen][(int)yScreen]) {
+				occupiedTiles[(int)xScreen][(int)yScreen] = true;
 				float xPos = (int)xScreen * MainGameClass.PPM - GameScreen._instance.camera.viewportWidth / 2;
 				float yPos = (int)yScreen * MainGameClass.PPM - GameScreen._instance.camera.viewportHeight / 2;
 				EntityManager._instance.buildTurret("red0", new Vector2((int)xPos, (int)yPos));
-			}
+			} else System.out.println("Cannot build here. This space is occupied.");
 		}
 	}	
 }
