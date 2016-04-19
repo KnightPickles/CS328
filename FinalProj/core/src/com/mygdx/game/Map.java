@@ -46,6 +46,9 @@ public class Map {
     Camera camera;
     MainGameClass game;
 
+    public int levelGold = 0;
+    public int treasureValue = 10;
+
     public int worldWidth;
     public int worldHeight;
     public ArrayList<Sprite> tiles = new ArrayList<Sprite>();
@@ -60,12 +63,12 @@ public class Map {
     //Sprite os;
     //Sprite x2;
 
-    Map(String level, MainGameClass game, TextureAtlas atlas, Camera camera) {
+    Map(String level) {
         if(_instance != null) System.out.println("Creating multiple maps");
         _instance = this;
-        this.atlas = atlas;
-        this.camera = camera;
-        this.game = game;
+        this.atlas = MainGameClass._instance.atlas;
+        this.camera = GameScreen._instance.camera;
+        this.game = MainGameClass._instance;
         loadLevelFromImage(level);
         //os = atlas.createSprite("blue_indicator");
         //x2 = atlas.createSprite("red_indicator");
@@ -76,6 +79,13 @@ public class Map {
         for(Sprite s : tiles)
             s.draw(batch);
 		batch.end();
+    }
+
+    public void takeGold(int gold) {
+        levelGold -= gold;
+        System.out.println(gold + " gold was taken! There's " + levelGold + " left.");
+        if(levelGold <= 0)
+            System.out.println("All the gold was taken back!");
     }
 
     void loadLevelFromImage(String filename) {
@@ -131,6 +141,7 @@ public class Map {
                         Vector2 goal = new Vector2(x, y);
                         goals.add(goal);
                         //goals.add()
+                        levelGold += treasureValue;
                         traversableCoords.add(goal);
                         traversableCoords2x2.add(goal);
                         traversableCoords3x3.add(goal);
@@ -147,6 +158,8 @@ public class Map {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        System.out.println("The level has " + levelGold + " gold total.");
     }
 
     public ArrayList<Vector2> pathToGoal(Vector2 currPos) {
@@ -173,7 +186,7 @@ public class Map {
         int min = paths.get(0).size();
         int ID = 0;
         for(ArrayList<Vector2> vl : paths) {
-            if(vl.size() < min) {
+            if(vl.size() <= min) {
                 min = vl.size();
                 path = vl;
             }
