@@ -9,9 +9,9 @@ import java.util.Random;
 /**
  * Created by KnightPickles on 4/17/16.
  */
-public class WaveManager {
+public class LevelManager {
 
-    public static WaveManager _instance;
+    public static LevelManager _instance;
 
     public enum Difficulty {
         EASY, MEDIOCRE, NORMAL, HARD
@@ -22,14 +22,16 @@ public class WaveManager {
         WAVE_START, WAVE_RUNNING, WAVE_FINISHED, LEVEL_FINISHED, STOP
     }
     WaveState waveState = WaveState.WAVE_START;
-    int wave = 0, numWaves = 0;
+    int level = 0, levels = 0, wave = 0, numWaves = 0;
     public boolean waveStartTimer = false;
     Random random = new Random();
 
-    WaveManager(int numWaves, Difficulty difficulty) {
+    LevelManager(int numLevels, int numWaves, Difficulty difficulty) {
         _instance = this;
+        this.levels = numLevels;
         this.numWaves = numWaves;
         this.difficulty = difficulty;
+        Map._instance.loadLevelFromImage("level" + 0 + ".png");
     }
 
     void update() {
@@ -71,7 +73,14 @@ public class WaveManager {
                 break;
             case LEVEL_FINISHED:
                 System.out.println("Level Completed");
-                waveState = WaveState.STOP;
+                wave = 0;
+                level++;
+                if(level >= levels) {
+                    waveState = WaveState.STOP;
+                } else {
+                    Map._instance.loadLevelFromImage("level" + level + ".png");
+                    waveState = WaveState.WAVE_START;
+                }
                 break;
             case STOP: // trigger a display of heuristics and whatnot
                 break;
@@ -92,6 +101,7 @@ public class WaveManager {
     }
 
     void spawnRandomizedEnemy() {
+        if(waveState != WaveState.WAVE_START && waveState != WaveState.WAVE_RUNNING) return;
         Ghost.Color[] colors = {Ghost.Color.RED, Ghost.Color.GREEN, Ghost.Color.BLUE, Ghost.Color.PURPLE};
         //double[] colorWeight = {numWaves / (wave + 1), wave / numWaves, wave / 2, wave};
         double[] colorWeight = {0.92, 0.05, 0.02, 0.01};
@@ -123,6 +133,7 @@ public class WaveManager {
             }
         }
 
+        //if(EntityManager._instance.)
         EntityManager._instance.spawnGhost(sizes[sizeIndex], colors[colorIndex]);
     }
 }

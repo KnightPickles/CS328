@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
+import com.sun.glass.ui.Window;
 
 public class BuildManager {
 
@@ -14,6 +15,8 @@ public class BuildManager {
 	public int width, height;
 
 	Sprite occupied, free;
+
+	int level = 0;
 	
 	public BuildManager() {
 		if (_instance != null) System.out.println("Trying to create multiple BuildManagers");
@@ -22,10 +25,15 @@ public class BuildManager {
 		occupied.setAlpha(0.2f);
 		free = MainGameClass._instance.atlas.createSprite("blue_indicator");
 		free.setAlpha(0.2f);
+		level = LevelManager._instance.level;
 		createBuildingGrid();
 	}
 	
 	public void update(float delta) {
+		if(level != LevelManager._instance.level) {
+			createBuildingGrid();
+			level = LevelManager._instance.level;
+		}
 		//Render a building blueprint and map grid so we can see the spaces that we are building on and whether or not theyre occupied
 
 		if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE))

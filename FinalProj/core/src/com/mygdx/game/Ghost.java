@@ -32,10 +32,11 @@ public class Ghost extends GameObject {
     List<Vector2> path;
     int pathPos = 0;
 
+    Random r = new Random(System.currentTimeMillis());
+
     Ghost(Size size, Color color) {
         this.size = size;
         this.color = color;
-        Random r = new Random(System.currentTimeMillis());
 
         switch(color) {
             default:
@@ -69,23 +70,7 @@ public class Ghost extends GameObject {
             	break;
         }
 
-        switch(size) {
-            default:
-            case X11:
-                spawn = Map._instance.spawnCoords.get(r.nextInt(Map._instance.spawnCoords.size()));
-                path = Map._instance.pathToGoal(spawn);
-                break;
-            case X22:
-                sprite.scale(1);
-                spawn = Map._instance.spawnCoords2x2.get(r.nextInt(Map._instance.spawnCoords2x2.size()));
-                path = Map._instance.pathToGoal2x2(spawn);
-                break;
-            case X33:
-                sprite.scale(2);
-                spawn = Map._instance.spawnCoords3x3.get(r.nextInt(Map._instance.spawnCoords3x3.size()));
-                path = Map._instance.pathToGoal3x3(spawn);
-                break;
-        }
+        setSize(size);
 
         goldValue *= size.ordinal() + 1;
         health *= (size.ordinal() + 1);
@@ -96,6 +81,41 @@ public class Ghost extends GameObject {
 
         pos = deltaPos = spawn;
         health = maxHealth;
+    }
+
+    void setSize(Size size) {
+        switch(size) {
+            default:
+            case X11:
+                spawn = Map._instance.spawnCoords.get(r.nextInt(Map._instance.spawnCoords.size()));
+                path = Map._instance.pathToGoal(spawn);
+                break;
+            case X22:
+                if(Map._instance.spawnCoords2x2.size() <= 0) {
+                    setSize(Size.X11);
+                    return;
+                }
+                sprite.scale(1);
+                spawn = Map._instance.spawnCoords2x2.get(r.nextInt(Map._instance.spawnCoords2x2.size()));
+                if(path == null) {
+                    setSize(Size.X11);
+                    return;
+                }
+                break;
+            case X33:
+                if(Map._instance.spawnCoords3x3.size() <= 0) {
+                    setSize(Size.X22);
+                    return;
+                }
+                sprite.scale(2);
+                spawn = Map._instance.spawnCoords3x3.get(r.nextInt(Map._instance.spawnCoords3x3.size()));
+                path = Map._instance.pathToGoal3x3(spawn);
+                if(path == null) {
+                    setSize(Size.X22);
+                    return;
+                }
+                break;
+        }
     }
 
     @Override
