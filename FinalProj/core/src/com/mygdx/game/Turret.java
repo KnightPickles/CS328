@@ -16,6 +16,13 @@ public class Turret extends GameObject {
 	GameObject target; //What we're targetting
 	float attackCooldown = 0;
 	
+	public TurretType turretType;
+	public enum TurretType {
+		Red,
+		Green,
+		Blue
+	}
+	
 	public Turret(TurretInfo info, Vector2 spawnPos) {
 		myInfo = info;
 		sprite = MainGameClass._instance.atlas.createSprite(myInfo.spriteName);
@@ -24,6 +31,13 @@ public class Turret extends GameObject {
 			rotateSprite = MainGameClass._instance.atlas.createSprite(myInfo.rotateSpriteName);
 			rotateSprite.setPosition(spawnPos.x, spawnPos.y +2);
 		}
+		
+		if (myInfo.redLevel >= 1)
+			turretType = TurretType.Red;
+		else if (myInfo.greenLevel >= 1)
+			turretType = TurretType.Green;
+		else if (myInfo.blueLevel >= 1)
+			turretType = TurretType.Blue;
 		
 		setBody(true, false, 0, 0);
 		targetFinder = new Circle();
@@ -48,6 +62,58 @@ public class Turret extends GameObject {
         sprite.draw(MainGameClass._instance.batch);
         rotateSprite.draw(MainGameClass._instance.batch);
         MainGameClass._instance.batch.end();
+	}
+	
+	public void upgradeRedLevel() {
+		myInfo.redLevel++;
+		if (myInfo.redLevel > myInfo.greenLevel && myInfo.redLevel > myInfo.blueLevel) {
+			turretType = TurretType.Red;
+		}
+		checkUpgrade();
+	}
+	
+	public void upgradeGreenLevel() {
+		myInfo.greenLevel++;
+		if (myInfo.greenLevel > myInfo.redLevel && myInfo.greenLevel > myInfo.blueLevel) {
+			turretType = TurretType.Green;
+		}
+		checkUpgrade();
+	}
+	
+	public void upgradeBlueLevel() {
+		myInfo.blueLevel++;
+		if (myInfo.blueLevel > myInfo.redLevel && myInfo.blueLevel > myInfo.greenLevel) {
+			turretType = TurretType.Blue;
+		}
+		checkUpgrade();
+	}
+	
+	void checkUpgrade() {
+		int upgradeLevel = (int)Math.floor(((myInfo.redLevel + myInfo.greenLevel + myInfo.blueLevel)/10));
+		switch (turretType) {
+		case Red:
+			initializeTurret("red" + upgradeLevel);
+			break;
+		case Blue:
+			initializeTurret("blue" + upgradeLevel);
+			break;
+		case Green: 
+			initializeTurret("green" + upgradeLevel);
+			break;
+		}
+	}
+	
+	//Setup turret with a new turret info name
+	void initializeTurret(String turretName) {
+		TurretInfo info = EntityManager._instance.turretTable.get(turretName);
+		myInfo = info;
+		sprite = MainGameClass._instance.atlas.createSprite(myInfo.spriteName);
+		sprite.setPosition(position.x, position.y);
+		
+		if (myInfo.trackTarget) {
+			rotateSprite = MainGameClass._instance.atlas.createSprite(myInfo.rotateSpriteName);
+			rotateSprite.setPosition(position.x, position.y +2);
+		}
 	}
 	
 	//Looks for a valid target in our range

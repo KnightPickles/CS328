@@ -41,9 +41,9 @@ public class EntityManager {
     }
 
     public boolean buildTurret(String turretName, Vector2 position) {
-        if(Player.gold >= turretTable.get("red0").cost) {
-            System.out.println("Spent " + turretTable.get("red0").cost + " gold on a ballista");
-            Player.gold -= turretTable.get("red0").cost;
+        if(Player.gold >= turretTable.get(turretName).cost) {
+            System.out.println("Spent " + turretTable.get(turretName).cost + " gold on a " + turretName);
+            Player.gold -= turretTable.get(turretName).cost;
             Turret turret = new Turret(turretTable.get(turretName), position);
             turrets.add(turret);
             return true;
@@ -82,6 +82,18 @@ public class EntityManager {
 
     	removeQueuedEntities(); 
     	draw();
+    }
+    
+    public void startNewLevel() {
+    	for (GameObject t : turrets) {
+    		t.killUnit();
+    	}
+    	for (GameObject p : projectiles) {
+    		p.killUnit();
+    	}
+    	for (GameObject g : ghosts) {
+    		g.killUnit();
+    	}
     }
     
     void draw() {    	
@@ -156,6 +168,7 @@ public class EntityManager {
     	info.projectileDamage = 10;
     	info.projectileSpeed = 80f;
         info.cost = 25;
+        info.redLevel = 1;
     	
     	turretTable.put(info.turretName, info);
     }

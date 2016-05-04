@@ -20,6 +20,18 @@ public class Player extends GameObject {
 	public float attackCooldownRemaining = 0f;
 	public int attackDamage = 10;
 	
+	public int redUpgradeLevel = 0;
+	public int greenUpgradeLevel = 0;
+	public int blueUpgradeLevel = 0;
+	
+	public int weaponUpgradeLevel = 0; //upgrades at 10 20 stat points
+	WeaponType weaponType = WeaponType.Sword;
+	enum WeaponType {
+		Sword,
+		Bow,
+		Staff
+	}
+	
 	Animation walkAnimation;
 	Animation idleAnimation;
 	TextureRegion[][] walkFrames;
@@ -97,9 +109,6 @@ public class Player extends GameObject {
 	        		offset = 7;
 	        	else if (direction == Direction.Left)
 	        		offset = -7;
-				//else if (direction == Direction.Down)
-				//	offset on x = 2;
-				//  offset on y = -1;
 	        }
 	        if (attackState == AttackState.Idle && direction == Direction.Down) {
 	        	offset = 6;
@@ -108,6 +117,49 @@ public class Player extends GameObject {
         }
         MainGameClass._instance.batch.end();
     }
+	
+	public void upgradeRedLevel() {
+		redUpgradeLevel++;
+		checkNewWeapon();
+	}
+	
+	public void upgradeGreenLevel() {
+		greenUpgradeLevel++;
+		checkNewWeapon();
+	}
+	
+	public void upgradeBlueLevel() {
+		blueUpgradeLevel++;
+		checkNewWeapon();
+	}
+	
+	//Check if we have reached a new breaking point for a new weapon
+	void checkNewWeapon() {
+		if (redUpgradeLevel > blueUpgradeLevel && redUpgradeLevel > greenUpgradeLevel) { //Red/sword
+			weaponType = WeaponType.Sword;
+		}
+		else if (blueUpgradeLevel > redUpgradeLevel && blueUpgradeLevel > greenUpgradeLevel) { //Blue staff
+			weaponType = WeaponType.Staff;
+		}
+		else if (greenUpgradeLevel > redUpgradeLevel && greenUpgradeLevel > blueUpgradeLevel) { //Green bow
+			weaponType = WeaponType.Bow;
+		}
+		weaponUpgradeLevel = (int) Math.floor((redUpgradeLevel + blueUpgradeLevel + greenUpgradeLevel)/10f);
+		setWeaponSprite();
+	}
+	
+	//TODO: make new animations for the weapon types and switch between them here
+	void setWeaponSprite() {
+		if (weaponType == WeaponType.Sword) {
+			//Set animation to sword[weaponUpgradeLevel]
+		}
+		else if (weaponType == WeaponType.Staff) {
+			
+		}
+		else {
+			
+		}
+	}
 	
 	void checkAttack() {
 		if (MyInputProcessor.rightMouseIsDown && MyInputProcessor.isPlayMode() && attackCooldownRemaining <= 0) {

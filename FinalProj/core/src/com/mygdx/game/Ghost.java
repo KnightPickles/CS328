@@ -26,6 +26,8 @@ public class Ghost extends GameObject {
     int goldValue = 0;
     float moveSpeed = 10f;
     
+    Sprite goldBag;
+    
     Vector2 spawn;
     Vector2 pos;
     Vector2 deltaPos;
@@ -67,11 +69,14 @@ public class Ghost extends GameObject {
             	maxHealth = 65;
                 maxGold = 15;
                 goldValue = 20;
-            	break;
+            	break;            	
         }
 
         setSize(size);
 
+        goldBag = MainGameClass._instance.atlas.createSprite("goldBag");
+        if (goldBag != null)
+        	goldBag.setPosition(spawn.x * MainGameClass.PPM - GameScreen._instance.camera.viewportWidth / 2, spawn.y * MainGameClass.PPM - GameScreen._instance.camera.viewportHeight / 2);
         goldValue *= size.ordinal() + 1;
         health *= (size.ordinal() + 1);
 
@@ -121,8 +126,18 @@ public class Ghost extends GameObject {
     @Override
     public void update() {
     	ghostMoveUpdate();
+    	
+    	if (flashing) {
+    		currFlashTime -= Gdx.graphics.getDeltaTime();
+    		if (currFlashTime <= 0) {
+    			sprite.setColor(c);
+    			flashing = false;
+    		}
+    	}
         
         super.update();
+        if (goldBag != null && hasGold > 0)
+        	goldBag.setPosition((position.x) - sprite.getWidth()/2 , (position.y) - sprite.getHeight()/2);
     }
 
     @Override
@@ -167,6 +182,21 @@ public class Ghost extends GameObject {
         //body.setTransform(position.x * Gdx.graphics.getDeltaTime(), position.y + dir.y * Gdx.graphics.getDeltaTime(), 0);
     }
     
+    com.badlogic.gdx.graphics.Color c;
+    boolean flashing;
+    float flashTime = .18f;
+    float currFlashTime = 0f;
+    void flashGhost() {
+    	if (flashing)
+    		return;
+
+    	c = sprite.getColor();
+    	com.badlogic.gdx.graphics.Color flashColor = new com.badlogic.gdx.graphics.Color(1, 1, 1, .5f);
+    	sprite.setColor(flashColor);
+    	flashing = true;
+    	currFlashTime = flashTime;
+    }
+    
     boolean validPath() { 
     	if (path == null) {
     		System.out.println("Path invalid, null");
@@ -179,6 +209,14 @@ public class Ghost extends GameObject {
     	return true;
     }
 
+    @Override
+    protected void receiveDamage(int amount) {
+    	flashGhost();
+    	health -= amount;
+    	if (health <= 0)
+    		killUnit();
+    }
+    
     @Override
     public void killUnit() {
         Player.gold += goldValue;
