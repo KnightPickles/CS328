@@ -63,15 +63,12 @@ public class Map {
     //Sprite os;
     //Sprite x2;
 
-    Map(String level) {
+    Map() {
         if(_instance != null) System.out.println("Creating multiple maps");
         _instance = this;
         this.atlas = MainGameClass._instance.atlas;
         this.camera = GameScreen._instance.camera;
         this.game = MainGameClass._instance;
-        loadLevelFromImage(level);
-        //os = atlas.createSprite("blue_indicator");
-        //x2 = atlas.createSprite("red_indicator");
     }
 	
 	public void draw(Batch batch) {
@@ -99,6 +96,17 @@ public class Map {
             spawnCoords.clear();
             worldWidth = width;
             worldHeight = height;
+            levelGold = 0;
+
+
+            tiles = new ArrayList<Sprite>();
+            traversableCoords = new ArrayList<Vector2>();
+            traversableCoords2x2 = new ArrayList<Vector2>();
+            traversableCoords3x3 = new ArrayList<Vector2>();
+            spawnCoords = new ArrayList<Vector2>(); // z for blocked or not
+            spawnCoords2x2 = new ArrayList<Vector2>(); // z for blocked or not
+            spawnCoords3x3 = new ArrayList<Vector2>(); // z for blocked or not
+            goals = new ArrayList<Vector2>();
 
             // Buffered Image coordinates start at 0,0 in the top left corner. Gdx 0,0 is in bottom left.
             for (int y = 0; y < height; y++) {
@@ -181,8 +189,12 @@ public class Map {
     public ArrayList<Vector2> findShortestPath(Vector2 currPos, ArrayList<Vector2> goals, ArrayList<Vector2> validCoords) {
         ArrayList<ArrayList<Vector2>> paths = new ArrayList<ArrayList<Vector2>>();
         ArrayList<Vector2> path = null;
-        for(Vector2 g : goals)
-            paths.add(aStar4(currPos, g, validCoords));
+        for(Vector2 g : goals) {
+            ArrayList<Vector2> p = aStar4(currPos, g, validCoords);
+            if(p != null)
+                paths.add(p);
+        }
+        if(paths.size() == 0) return null;
         int min = paths.get(0).size();
         int ID = 0;
         for(ArrayList<Vector2> vl : paths) {
@@ -206,7 +218,7 @@ public class Map {
 
     // Does pathfinding in four directions. Typically done in 8 or semi-8.
     public ArrayList<Vector2> aStar4(Vector2 pos, Vector2 target, ArrayList<Vector2> validCoords) {
-        if(pos.equals(null) || target.equals(null)) return null;
+        if(pos == null || target == null) return null;
         ArrayList<Node> open = new ArrayList<Node>();
         ArrayList<Node> closed = new ArrayList<Node>();
         open.add(new Node(null, pos, 0f, heuristic(pos, target))); // Add our pos as the starting node

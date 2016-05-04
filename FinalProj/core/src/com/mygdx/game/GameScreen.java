@@ -5,7 +5,6 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -26,7 +25,7 @@ public class GameScreen implements Screen {
     EntityManager entityManager;
     BuildManager buildManager;
     SelectionManager selectionManager;
-	WaveManager waveManager;
+	LevelManager waveManager;
 	MyInputProcessor inputProcessor;
 
     
@@ -47,11 +46,11 @@ public class GameScreen implements Screen {
         world.setContactListener(new CollisionListener());
         debugRenderer = new Box2DDebugRenderer();
         
-        map = new Map("level2.png");
+        map = new Map();
         entityManager = new EntityManager();
-        buildManager = new BuildManager();
+		waveManager = new LevelManager(3, 1, LevelManager.Difficulty.NORMAL);
+		buildManager = new BuildManager();
         selectionManager = new SelectionManager();
-		waveManager = new WaveManager(10, WaveManager.Difficulty.NORMAL);
         inputProcessor = new MyInputProcessor();
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
         //inputMultiplexer.addProcessor(gui.stage);
