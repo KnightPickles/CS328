@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.Player.Direction;
 
 public class EntityManager {
 
@@ -62,6 +63,27 @@ public class EntityManager {
     	Projectile p = new Projectile(spriteName, target, damage, speed, spawnPosition);
     	projectiles.add(p);
     }
+    
+    public void spawnArrow(int upgradeLevel, Direction direction, int damage, Vector2 spawnPosition) {
+    	Vector2 dir = new Vector2(0, 0);
+    	if (direction == Direction.Down)
+    		dir = new Vector2(0, -1);
+    	else if (direction == Direction.Up)
+    		dir = new Vector2(0, 1);
+    	else if (direction == Direction.Left)
+    		dir = new Vector2(-1, 0);
+    	else if (direction == Direction.Right)
+    		dir = new Vector2(1, 0);
+    	
+    	Arrow arrow = new Arrow("arrow", dir, damage, upgradeLevel, spawnPosition);
+    	projectiles.add(arrow);
+    }
+    
+    public void spawnMagicBall(int weaponUpgradeLevel, Vector2 attackLocation, int attackDamage, Vector2 magicSpawn) {
+    	
+    	MagicBall magicBall = new MagicBall("ball", attackLocation, attackDamage, weaponUpgradeLevel, magicSpawn);
+    	projectiles.add(magicBall);
+    }
 	
     public void update(float delta) {
     	//Update ghosts
@@ -74,7 +96,12 @@ public class EntityManager {
     	}
     	
     	for (GameObject g : projectiles) {
-    		((Projectile)g).update();
+    		if (g instanceof Projectile)
+    			((Projectile)g).update();
+    		else if (g instanceof Arrow)
+    			((Arrow)g).update();
+    		else if (g instanceof MagicBall)
+    			((MagicBall)g).update();
     	}
     	
     	if (player != null)
@@ -87,6 +114,7 @@ public class EntityManager {
     public void startNewLevel() {
     	for (GameObject t : turrets) {
     		t.killUnit();
+    		player.gold += ((Turret)t).goldValue;
     	}
     	for (GameObject p : projectiles) {
     		p.killUnit();
@@ -107,7 +135,12 @@ public class EntityManager {
     	}
     	
     	for (GameObject g : projectiles) {
-    		((Projectile)g).draw();
+    		if (g instanceof Projectile)
+    			((Projectile)g).draw();
+    		else if (g instanceof Arrow)
+    			((Arrow)g).draw();
+    		else if (g instanceof MagicBall)
+    			((MagicBall)g).draw();
     	}
     	
     	if (player != null)
@@ -142,6 +175,14 @@ public class EntityManager {
 	    		}
 	    	}
 	    	if (e instanceof Projectile) {
+	    		if (projectiles.contains(e))
+	    			projectiles.remove(e);
+	    	}
+	    	if (e instanceof Arrow) {
+	    		if (projectiles.contains(e))
+	    			projectiles.remove(e);
+	    	}
+	    	if (e instanceof MagicBall) {
 	    		if (projectiles.contains(e))
 	    			projectiles.remove(e);
 	    	}

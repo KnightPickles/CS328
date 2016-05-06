@@ -15,6 +15,7 @@ public class Turret extends GameObject {
 
 	GameObject target; //What we're targetting
 	float attackCooldown = 0;
+	public int goldValue = 0; //Gold spent on this turret
 	
 	public TurretType turretType;
 	public enum TurretType {
@@ -31,6 +32,7 @@ public class Turret extends GameObject {
 			rotateSprite = MainGameClass._instance.atlas.createSprite(myInfo.rotateSpriteName);
 			rotateSprite.setPosition(spawnPos.x, spawnPos.y +2);
 		}
+		goldValue = myInfo.cost;
 		
 		if (myInfo.redLevel >= 1)
 			turretType = TurretType.Red;
@@ -65,6 +67,7 @@ public class Turret extends GameObject {
 	}
 	
 	public void upgradeRedLevel() {
+		//Add upgrade cost to goldValue
 		myInfo.redLevel++;
 		if (myInfo.redLevel > myInfo.greenLevel && myInfo.redLevel > myInfo.blueLevel) {
 			turretType = TurretType.Red;
@@ -73,6 +76,7 @@ public class Turret extends GameObject {
 	}
 	
 	public void upgradeGreenLevel() {
+		//Add upgrade cost to goldValue
 		myInfo.greenLevel++;
 		if (myInfo.greenLevel > myInfo.redLevel && myInfo.greenLevel > myInfo.blueLevel) {
 			turretType = TurretType.Green;
@@ -81,6 +85,7 @@ public class Turret extends GameObject {
 	}
 	
 	public void upgradeBlueLevel() {
+		//Add upgrade cost to goldValue
 		myInfo.blueLevel++;
 		if (myInfo.blueLevel > myInfo.redLevel && myInfo.blueLevel > myInfo.greenLevel) {
 			turretType = TurretType.Blue;

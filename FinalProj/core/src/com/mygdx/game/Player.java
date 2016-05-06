@@ -17,8 +17,9 @@ public class Player extends GameObject {
 
 	public float moveSpeed = 20f;
 	public float attackCooldown = .3f; 
-	public float attackCooldownRemaining = 0f;
 	public int attackDamage = 10;
+	public float attackCooldownRemaining = 0f;
+	public Vector2 attackLocation = new Vector2(0,0);
 	
 	public int redUpgradeLevel = 0;
 	public int greenUpgradeLevel = 0;
@@ -77,7 +78,10 @@ public class Player extends GameObject {
 		meleeHitBox.setCenter(spawnPos);
 		meleeHitBox.setSize(10, 10);
 		
-		initiateAnimationTextureRegions();
+		//initiateAnimationTextureRegions("warrior");
+		//upgradeRedLevel();
+		//upgradeGreenLevel();
+		upgradeBlueLevel();
 	}
 	
 	@Override
@@ -99,12 +103,21 @@ public class Player extends GameObject {
         MainGameClass._instance.batch.begin();
         checkFlipCurrentFrame(); 
         if (direction == Direction.Up) { //Draw weapon first when facing up
-        	MainGameClass._instance.batch.draw(currentAttackFrame, position.x - currentAttackFrame.getRegionWidth()/2, position.y - currentAttackFrame.getRegionHeight()/2);
+        	int idleOffset = getIdleOffset();
+        	MainGameClass._instance.batch.draw(currentAttackFrame, position.x - currentAttackFrame.getRegionWidth()/2 + idleOffset, position.y - currentAttackFrame.getRegionHeight()/2);
             MainGameClass._instance.batch.draw(currentFrame, position.x - currentFrame.getRegionWidth()/2, position.y - currentFrame.getRegionHeight()/2);
         } else {
 	        MainGameClass._instance.batch.draw(currentFrame, position.x - currentFrame.getRegionWidth()/2, position.y - currentFrame.getRegionHeight()/2);
-	        int offset = 0; //Weapon offset
-	        if (attackState == AttackState.Attack) {
+	        int offset = getWeaponOffset(); //Weapon offset
+	        MainGameClass._instance.batch.draw(currentAttackFrame, position.x - currentAttackFrame.getRegionWidth()/2 + offset, position.y - currentAttackFrame.getRegionHeight()/2);
+        }
+        MainGameClass._instance.batch.end();
+    }
+	
+	public int getWeaponOffset() {
+		if (weaponType == WeaponType.Sword) {
+			int offset = 0;
+			if (attackState == AttackState.Attack) {
 	        	if (direction == Direction.Right)
 	        		offset = 7;
 	        	else if (direction == Direction.Left)
@@ -112,11 +125,58 @@ public class Player extends GameObject {
 	        }
 	        if (attackState == AttackState.Idle && direction == Direction.Down) {
 	        	offset = 6;
-	        }
-	        MainGameClass._instance.batch.draw(currentAttackFrame, position.x - currentAttackFrame.getRegionWidth()/2 + offset, position.y - currentAttackFrame.getRegionHeight()/2);
-        }
-        MainGameClass._instance.batch.end();
-    }
+	        } 
+	        return offset;
+		}
+		return 0;
+	}
+	
+	void checkFlipCurrentFrame() {
+		if (direction == Direction.Left) {
+			if (!currentFrame.isFlipX()) {
+				currentFrame.flip(true, false);
+			}
+			if (weaponType == WeaponType.Sword) {
+				if (attackState == AttackState.Attack && !currentAttackFrame.isFlipX()) {
+					currentAttackFrame.flip(true, false);
+				} else if (attackState == AttackState.Idle && currentAttackFrame.isFlipX()) {
+					currentAttackFrame.flip(true, false);
+				}
+			} else if (weaponType == WeaponType.Staff || weaponType == WeaponType.Bow) {
+				if (attackState == AttackState.Attack && !currentAttackFrame.isFlipX()) {
+					currentAttackFrame.flip(true, false);
+				} else if (attackState == AttackState.Idle && !currentAttackFrame.isFlipX()) {
+					currentAttackFrame.flip(true, false);
+				}
+			}
+		}
+		if (direction == Direction.Right) {
+			if (currentFrame.isFlipX()) {
+				currentFrame.flip(true, false);
+			}
+			if (weaponType == WeaponType.Sword) {
+				if (attackState == AttackState.Attack && currentAttackFrame.isFlipX()) {
+					currentAttackFrame.flip(true, false);
+				} else if (attackState == AttackState.Idle && !currentAttackFrame.isFlipX()) {
+					currentAttackFrame.flip(true, false);
+				} 
+			} else if (weaponType == WeaponType.Staff || weaponType == WeaponType.Bow) {
+				if (attackState == AttackState.Attack && currentAttackFrame.isFlipX()) {
+					currentAttackFrame.flip(true, false);
+				} else if (attackState == AttackState.Idle && currentAttackFrame.isFlipX()) {
+					currentAttackFrame.flip(true, false);
+				}
+			}
+		}
+	}
+	
+	int getIdleOffset() {
+		int idleOffset = 0;
+    	if (attackState == AttackState.Idle && weaponType == WeaponType.Sword)
+    		idleOffset = 6;
+    		
+    	return idleOffset;
+	}
 	
 	public void upgradeRedLevel() {
 		redUpgradeLevel++;
@@ -145,19 +205,39 @@ public class Player extends GameObject {
 			weaponType = WeaponType.Bow;
 		}
 		weaponUpgradeLevel = (int) Math.floor((redUpgradeLevel + blueUpgradeLevel + greenUpgradeLevel)/10f);
+		updateWeaponStats();
 		setWeaponSprite();
+	}
+	
+	void updateWeaponStats() {
+		if (weaponType == WeaponType.Sword) {
+			moveSpeed = 20f;
+			attackCooldown = .38f; 
+			attackDamage = 14;
+		}
+		else if (weaponType == WeaponType.Bow) {
+			moveSpeed = 25f;
+			attackCooldown = .43f; 
+			attackDamage = 12;
+		}
+		else if (weaponType == WeaponType.Staff) {
+			moveSpeed = 16f;
+			attackCooldown = .5f; 
+			attackDamage = 15;
+		}
 	}
 	
 	//TODO: make new animations for the weapon types and switch between them here
 	void setWeaponSprite() {
 		if (weaponType == WeaponType.Sword) {
 			//Set animation to sword[weaponUpgradeLevel]
+			initiateAnimationTextureRegions("warrior");
 		}
 		else if (weaponType == WeaponType.Staff) {
-			
+			initiateAnimationTextureRegions("wizard");
 		}
 		else {
-			
+			initiateAnimationTextureRegions("ranger");
 		}
 	}
 	
@@ -166,18 +246,8 @@ public class Player extends GameObject {
 			attackCooldownRemaining = attackCooldown;
 			attackStateTime = 0f;
 			attackState = AttackState.Attack;
-		}
-	}
-	
-	void checkFlipCurrentFrame() {
-		if (direction == Direction.Left) {
-			if (!currentFrame.isFlipX()) {
-				currentFrame.flip(true, false);
-			}
-		}
-		if (direction == Direction.Right) {
-			if (currentFrame.isFlipX()) {
-				currentFrame.flip(true, false);
+			if (weaponType == WeaponType.Staff) {
+				attackLocation = new Vector2(MyInputProcessor.rightMouseLocation.x, MyInputProcessor.rightMouseLocation.y);
 			}
 		}
 	}
@@ -218,12 +288,30 @@ public class Player extends GameObject {
 		attackStateTime += delta;
 		
 		if (attackCooldownRemaining <= 0 && attackState == AttackState.Attack) { //If we just finished attacking
-			updateMeleeHitBox();
-			
-			for (GameObject g : EntityManager._instance.ghosts) {
-				if (meleeHitBox.overlaps(g.sprite.getBoundingRectangle())) {
-					g.receiveDamage(attackDamage);
+			if (weaponType == WeaponType.Sword) {
+				updateMeleeHitBox();
+				
+				for (GameObject g : EntityManager._instance.ghosts) {
+					if (meleeHitBox.overlaps(g.sprite.getBoundingRectangle())) {
+						g.receiveDamage(attackDamage);
+					}
 				}
+			}
+			else if (weaponType == WeaponType.Bow) {					
+				Vector2 arrowSpawn = new Vector2(position.x - sprite.getWidth()/2f, position.y - sprite.getHeight()/2f);
+				if (direction == Direction.Left)
+					arrowSpawn.x -= sprite.getWidth();
+				else if (direction == Direction.Right)
+					arrowSpawn.x += sprite.getWidth();
+				else if (direction == Direction.Up)
+					arrowSpawn.y += sprite.getHeight();
+				else if (direction == Direction.Down)
+					arrowSpawn.y -= sprite.getHeight();
+				EntityManager._instance.spawnArrow(weaponUpgradeLevel, direction, attackDamage, arrowSpawn);
+			} 
+			else if (weaponType == WeaponType.Staff) {
+				Vector2 magicSpawn = new Vector2(position.x - sprite.getWidth()/2f, position.y - sprite.getHeight()/2f);
+				EntityManager._instance.spawnMagicBall(weaponUpgradeLevel, attackLocation, attackDamage, magicSpawn);
 			}
 		}
 	}
@@ -277,76 +365,91 @@ public class Player extends GameObject {
 			meleeHitBox.setCenter(new Vector2(position.x + 7, position.y));
 	}
 	
-	void initiateAnimationTextureRegions() {
+	void initiateAnimationTextureRegions(String type) { //wizard warrior ranger
 		//Move/player textures
 		walkFrames = new TextureRegion[4][];
 		
 		walkFrames[0] = new TextureRegion[2];
-		walkFrames[0][0] = MainGameClass._instance.atlas.findRegion("warrior_walk_u0");
-		walkFrames[0][1] = MainGameClass._instance.atlas.findRegion("warrior_walk_u1");
+		for (int i = 0; i < 2; i++) {
+			walkFrames[0][i] = MainGameClass._instance.atlas.findRegion(type + "_walk_u" + i);
+		}
 		
 		walkFrames[1] = new TextureRegion[2];
-		walkFrames[1][0] = MainGameClass._instance.atlas.findRegion("warrior_walk_d0");
-		walkFrames[1][1] = MainGameClass._instance.atlas.findRegion("warrior_walk_d1");
+		for (int i = 0; i < 2; i++) {
+			walkFrames[1][i] = MainGameClass._instance.atlas.findRegion(type + "_walk_d" + i);
+		}
 		
 		walkFrames[2] = new TextureRegion[2];
-		walkFrames[2][0] = MainGameClass._instance.atlas.findRegion("warrior_walk_r0");
-		walkFrames[2][1] = MainGameClass._instance.atlas.findRegion("warrior_walk_r1");
+		for (int i = 0; i < 2; i++) {
+			walkFrames[2][i] = MainGameClass._instance.atlas.findRegion(type + "_walk_r" + i);
+		}
 		
 		walkFrames[3] = new TextureRegion[2];
-		walkFrames[3][0] = MainGameClass._instance.atlas.findRegion("warrior_walk_r0");
-		walkFrames[3][1] = MainGameClass._instance.atlas.findRegion("warrior_walk_r1");
+		for (int i = 0; i < 2; i++) {
+			walkFrames[3][i] = MainGameClass._instance.atlas.findRegion(type + "_walk_r" + i);
+		}
 		
 		idleFrames = new TextureRegion[4][1];
 		
 		idleFrames[0] = new TextureRegion[1];
-		idleFrames[0][0] = MainGameClass._instance.atlas.findRegion("warrior_idle_u0");
+		idleFrames[0][0] = MainGameClass._instance.atlas.findRegion(type + "_idle_u0");
 		
 		idleFrames[1] = new TextureRegion[1];
-		idleFrames[1][0] = MainGameClass._instance.atlas.findRegion("warrior_idle_d0");
+		idleFrames[1][0] = MainGameClass._instance.atlas.findRegion(type + "_idle_d0");
 		
 		idleFrames[2] = new TextureRegion[1];
-		idleFrames[2][0] = MainGameClass._instance.atlas.findRegion("warrior_idle_r0");
+		idleFrames[2][0] = MainGameClass._instance.atlas.findRegion(type + "_idle_r0");
 		
 		idleFrames[3] = new TextureRegion[1];
-		idleFrames[3][0] = MainGameClass._instance.atlas.findRegion("warrior_idle_r0");
+		idleFrames[3][0] = MainGameClass._instance.atlas.findRegion(type + "_idle_r0");
 		
 		//Weapon/attack textures
 		attackFrames = new TextureRegion[4][];
 		
-		attackFrames[0] = new TextureRegion[3];
-		attackFrames[0][0] = MainGameClass._instance.atlas.findRegion("sword_u", 0);
-		attackFrames[0][1] = MainGameClass._instance.atlas.findRegion("sword_u", 1);
-		attackFrames[0][2] = MainGameClass._instance.atlas.findRegion("sword_u", 2);
+		int numAttackFrames = 3;
+		String weaponType = "sword";
+		if (type == "wizard") {
+			weaponType = "staff";
+			numAttackFrames = 2;
+		}
+		else if (type == "ranger") {
+			weaponType = "bow";
+			numAttackFrames = 2;
+		}
 		
-		attackFrames[1] = new TextureRegion[3];
-		attackFrames[1][0] = MainGameClass._instance.atlas.findRegion("sword_d", 0);
-		attackFrames[1][1] = MainGameClass._instance.atlas.findRegion("sword_d", 1);
-		attackFrames[1][2] = MainGameClass._instance.atlas.findRegion("sword_d", 2);
+		attackFrames[0] = new TextureRegion[numAttackFrames];
+		for (int i = 0; i < numAttackFrames; i++) {
+			attackFrames[0][i] = MainGameClass._instance.atlas.findRegion(weaponType + "_u", i);
+		}
 		
-		attackFrames[2] = new TextureRegion[3];
-		attackFrames[2][0] = MainGameClass._instance.atlas.findRegion("sword_l", 0);
-		attackFrames[2][1] = MainGameClass._instance.atlas.findRegion("sword_l", 1);
-		attackFrames[2][2] = MainGameClass._instance.atlas.findRegion("sword_l", 2);
+		attackFrames[1] = new TextureRegion[numAttackFrames];
+		for (int i = 0; i < numAttackFrames; i++) {
+			attackFrames[1][i] = MainGameClass._instance.atlas.findRegion(weaponType + "_d", i);
+		}
 		
-		attackFrames[3] = new TextureRegion[3];
-		attackFrames[3][0] = MainGameClass._instance.atlas.findRegion("sword_r", 0);
-		attackFrames[3][1] = MainGameClass._instance.atlas.findRegion("sword_r", 1);
-		attackFrames[3][2] = MainGameClass._instance.atlas.findRegion("sword_r", 2);
+		attackFrames[2] = new TextureRegion[numAttackFrames];
+		for (int i = 0; i < numAttackFrames; i++) {
+			attackFrames[2][i] = MainGameClass._instance.atlas.findRegion(weaponType + "_r", i);
+		}
+		
+		attackFrames[3] = new TextureRegion[numAttackFrames];
+		for (int i = 0; i < numAttackFrames; i++) {
+			attackFrames[3][i] = MainGameClass._instance.atlas.findRegion(weaponType + "_r", i);
+		}
 		
 		idleAttackFrames = new TextureRegion[4][1];
 		
 		idleAttackFrames[0] = new TextureRegion[1];
-		idleAttackFrames[0][0] = MainGameClass._instance.atlas.findRegion("sword_u_idle");
+		idleAttackFrames[0][0] = MainGameClass._instance.atlas.findRegion(weaponType + "_u_idle");
 		
 		idleAttackFrames[1] = new TextureRegion[1];
-		idleAttackFrames[1][0] = MainGameClass._instance.atlas.findRegion("sword_d_idle");
+		idleAttackFrames[1][0] = MainGameClass._instance.atlas.findRegion(weaponType + "_d_idle");
 		
 		idleAttackFrames[2] = new TextureRegion[1];
-		idleAttackFrames[2][0] = MainGameClass._instance.atlas.findRegion("sword_r_idle");
+		idleAttackFrames[2][0] = MainGameClass._instance.atlas.findRegion(weaponType + "_r_idle");
 		
 		idleAttackFrames[3] = new TextureRegion[1];
-		idleAttackFrames[3][0] = MainGameClass._instance.atlas.findRegion("sword_l_idle");
+		idleAttackFrames[3][0] = MainGameClass._instance.atlas.findRegion(weaponType + "_r_idle");
 		
 		setDir(Direction.Down);
 	}

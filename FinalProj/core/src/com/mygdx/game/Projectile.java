@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-public class Projectile extends GameObject{
+public class Projectile extends GameObject {
 	
 	GameObject target;
 	int damage;
