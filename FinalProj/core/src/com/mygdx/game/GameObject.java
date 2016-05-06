@@ -79,7 +79,7 @@ public class GameObject {
         shape.dispose(); // only disposable object
     }
     
-    void receiveDamage(int amount) {
+    protected void receiveDamage(int amount) {
     	health -= amount;
     	if (health <= 0)
     		killUnit();
