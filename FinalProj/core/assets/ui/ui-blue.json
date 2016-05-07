@@ -1,0 +1,56 @@
+{
+  com.badlogic.gdx.graphics.g2d.BitmapFont: { default-font: { file: default.fnt } },
+  com.badlogic.gdx.graphics.Color: {
+  white: { a: 1, b: 1, g: 1, r: 1 },
+  black: { a: 1, b: 0, g: 0, r: 0 },
+  blue: { a: 1, b: 177, g: 126, r: 6 }
+},
+  com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
+  dialogDim: { name: white, color: { r: 0, g: 0, b: 0, a: 0.45 } },
+},
+  com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
+  default: { down: button_01, up: button_04 },
+  toggle: { down: button_01, checked: button_01, up: button_04 }
+},
+  com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
+  default: { down: button_01, up: button_04, font: default-font, fontColor: white },
+  toggle: { down: button_01, up: button_04, checked: button_01, font: default-font, fontColor: white, downFontColor: white }
+},
+  com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
+  default: { vScroll: scroll_back_ver, hScrollKnob: slider_back_hor, background: color_widgettext, hScroll: scroll_back_hor, vScrollKnob: slider_back_ver }
+},
+  com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
+  default: {
+    font: default-font, fontColor: white, background: selectbox_01,
+    scrollStyle: default,
+    listStyle: { font: default-font, selection: color_widgettext }
+  }
+},
+  com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
+  default: { titleFont: default-font, background: window_01, titleFontColor: white },
+  dialog: { titleFont: default-font, background: window_01, titleFontColor: white, stageBackground: dialogDim }
+},
+  com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
+  default-horizontal: { background: scroll_back_hor, knob: knob_05 },
+  default-vertical: { background: scroll_back_ver, knob: knob_06 }
+},
+  com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
+  default-horizontal: { background: slider_back_hor, knob: knob_03 },
+  default-vertical: { background: slider_back_ver, knob: knob_02 }
+},
+  com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
+  default: { font: default-font, fontColor: white }
+},
+  com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
+  default: { selection: color_widgettext, background: textbox_01, font: default-font, fontColor: white, cursor: textbox_cursor_02 }
+},
+  com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
+  default: { checkboxOn: checkbox_on, checkboxOff: checkbox_off, font: default-font, fontColor: white }
+},
+  com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
+  default: { fontColorUnselected: white, selection: color_widgettext, fontColorSelected: white, font: default-font }
+},
+  com.badlogic.gdx.scenes.scene2d.ui.Tree$TreeStyle: {
+  default: { minus: icon_arrow_left, plus: icon_arrow_right, selection: color_widgettext }
+},
+}
