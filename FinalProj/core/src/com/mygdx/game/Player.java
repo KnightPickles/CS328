@@ -182,14 +182,29 @@ public class Player extends GameObject {
 		redUpgradeLevel++;
 		checkNewWeapon();
 	}
+
+	public void downgradeRedLevel() {
+		redUpgradeLevel--;
+		checkNewWeapon();
+	}
 	
 	public void upgradeGreenLevel() {
 		greenUpgradeLevel++;
 		checkNewWeapon();
 	}
+
+	public void downgradeGreenLevel() {
+		greenUpgradeLevel--;
+		checkNewWeapon();
+	}
 	
 	public void upgradeBlueLevel() {
 		blueUpgradeLevel++;
+		checkNewWeapon();
+	}
+
+	public void downgradeBlueLevel() {
+		blueUpgradeLevel--;
 		checkNewWeapon();
 	}
 	

@@ -52,13 +52,13 @@ public class GameScreen implements Screen {
         world.setContactListener(new CollisionListener());
         debugRenderer = new Box2DDebugRenderer();
 
-        gui = new GUI(stage);
         map = new Map();
         entityManager = new EntityManager();
 		waveManager = new LevelManager(3, 1, LevelManager.Difficulty.NORMAL);
 		buildManager = new BuildManager();
         selectionManager = new SelectionManager();
         inputProcessor = new MyInputProcessor();
+        gui = new GUI(stage);
 
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
 		inputMultiplexer.addProcessor(stage);
