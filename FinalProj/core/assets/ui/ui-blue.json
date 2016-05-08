@@ -10,8 +10,8 @@
 },
   com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
   default: { down: button-flt-down, up: button-ref-up },
-  plus: { down: plus, up: plus },
-  minus: { down: minus, up: minus },
+  plus: { down: plus, up: plus-up },
+  minus: { down: minus, up: minus-up },
   toggle: { down: button-flt-down, checked: button-ref-down, up: button-ref-up }
 },
   com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {

@@ -319,18 +319,11 @@ scroll-ver
   orig: 10, 20
   offset: 0, 0
   index: -1
-minus
+minus-up
   rotate: false
-  xy: 409, 22
-  size: 14, 14
-  orig: 14, 14
-  offset: 0, 0
-  index: -1
-plus
-  rotate: false
-  xy: 409, 6
-  size: 14, 14
-  orig: 14, 14
+  xy: 409, 20
+  size: 14, 16
+  orig: 14, 16
   offset: 0, 0
   index: -1
 icon-volume-off
@@ -338,6 +331,27 @@ icon-volume-off
   xy: 430, 38
   size: 11, 16
   orig: 11, 16
+  offset: 0, 0
+  index: -1
+plus-up
+  rotate: false
+  xy: 425, 20
+  size: 14, 16
+  orig: 14, 16
+  offset: 0, 0
+  index: -1
+minus
+  rotate: false
+  xy: 443, 42
+  size: 14, 14
+  orig: 14, 14
+  offset: 0, 0
+  index: -1
+plus
+  rotate: false
+  xy: 459, 42
+  size: 14, 14
+  orig: 14, 14
   offset: 0, 0
   index: -1
 arrow-down
@@ -356,7 +370,7 @@ arrow-up
   index: -1
 arrow-right
   rotate: false
-  xy: 425, 24
+  xy: 475, 44
   size: 6, 12
   orig: 6, 12
   offset: 0, 0
@@ -371,21 +385,21 @@ cursor
   index: -1
 default-rect-pad
   rotate: false
-  xy: 288, 20
+  xy: 221, 2
   size: 5, 3
   orig: 5, 3
   offset: 0, 0
   index: -1
 default-rect
   rotate: false
-  xy: 221, 1
+  xy: 288, 20
   size: 3, 3
   orig: 3, 3
   offset: 0, 0
   index: -1
 selectbox-selection
   rotate: false
-  xy: 149, 4
+  xy: 409, 15
   size: 3, 3
   orig: 3, 3
   offset: 0, 0
@@ -399,14 +413,14 @@ selection
   index: -1
 default-splitpane-hor
   rotate: false
-  xy: 425, 19
+  xy: 149, 4
   size: 1, 3
   orig: 1, 3
   offset: 0, 0
   index: -1
 default-splitpane-ver
   rotate: false
-  xy: 425, 19
+  xy: 149, 4
   size: 3, 1
   orig: 3, 1
   offset: 0, 0

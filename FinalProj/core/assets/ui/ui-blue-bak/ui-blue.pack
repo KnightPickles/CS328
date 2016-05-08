@@ -7,6 +7,8 @@ window-01
   rotate: false
   xy: 1, 25
   size: 64, 102
+  split: 6, 6, 46, 6
+  pad: 4, 4, 4, 62
   orig: 64, 102
   offset: 0, 0
   index: -1
@@ -14,6 +16,8 @@ window-03
   rotate: false
   xy: 67, 77
   size: 104, 50
+  split: 17, 17, 17, 17
+  pad: 10, 10, 10, 10
   orig: 104, 50
   offset: 0, 0
   index: -1
@@ -21,6 +25,8 @@ window-02
   rotate: false
   xy: 67, 11
   size: 64, 64
+  split: 49, 49, 34, 11
+  pad: 49, 49, 4, 38
   orig: 64, 64
   offset: 0, 0
   index: -1
@@ -35,6 +41,8 @@ selectbox
   rotate: false
   xy: 241, 93
   size: 66, 34
+  split: 7, 30, 9, 21
+  pad: 7, 30, 6, 8
   orig: 66, 34
   offset: 0, 0
   index: -1
@@ -42,6 +50,7 @@ textbox-white-edg
   rotate: false
   xy: 309, 93
   size: 66, 34
+  split: 7, 7, 7, 7
   orig: 66, 34
   offset: 0, 0
   index: -1
@@ -49,6 +58,7 @@ textbox
   rotate: false
   xy: 377, 93
   size: 66, 34
+  split: 7, 7, 7, 7
   orig: 66, 34
   offset: 0, 0
   index: -1
@@ -56,6 +66,7 @@ button-edg-up
   rotate: false
   xy: 445, 92
   size: 64, 35
+  split: 9, 9, 9, 12
   orig: 64, 35
   offset: 0, 0
   index: -1
@@ -70,6 +81,7 @@ button-edg-down
   rotate: false
   xy: 173, 59
   size: 64, 32
+  split: 9, 9, 9, 9
   orig: 64, 32
   offset: 0, 0
   index: -1
@@ -77,6 +89,7 @@ button-flt-down
   rotate: false
   xy: 239, 59
   size: 64, 32
+  split: 6, 6, 6, 6
   orig: 64, 32
   offset: 0, 0
   index: -1
@@ -84,6 +97,7 @@ button-flt-up
   rotate: false
   xy: 305, 56
   size: 64, 35
+  split: 6, 6, 6, 9
   orig: 64, 35
   offset: 0, 0
   index: -1
@@ -91,6 +105,7 @@ button-ref-up
   rotate: false
   xy: 371, 56
   size: 64, 35
+  split: 6, 6, 6, 9
   orig: 64, 35
   offset: 0, 0
   index: -1
@@ -98,6 +113,7 @@ button-ref-down
   rotate: false
   xy: 437, 58
   size: 64, 32
+  split: 6, 6, 6, 6
   orig: 64, 32
   offset: 0, 0
   index: -1
@@ -105,6 +121,7 @@ slider-ver
   rotate: false
   xy: 503, 58
   size: 8, 32
+  split: 3, 3, 8, 8
   orig: 8, 32
   offset: 0, 0
   index: -1
@@ -126,6 +143,7 @@ slider-hor
   rotate: false
   xy: 57, 1
   size: 32, 8
+  split: 8, 8, 3, 3
   orig: 32, 8
   offset: 0, 0
   index: -1
@@ -196,6 +214,7 @@ scroll-hor-knob
   rotate: false
   xy: 167, 1
   size: 12, 22
+  split: 6, 6, 5, 5
   orig: 12, 22
   offset: 0, 0
   index: -1
@@ -238,6 +257,7 @@ scroll-ver-knob
   rotate: false
   xy: 242, 11
   size: 22, 12
+  split: 5, 5, 6, 6
   orig: 22, 12
   offset: 0, 0
   index: -1
@@ -245,6 +265,7 @@ scroll-hor
   rotate: false
   xy: 266, 13
   size: 20, 10
+  split: 4, 4, 3, 3
   orig: 20, 10
   offset: 0, 0
   index: -1
@@ -294,14 +315,22 @@ scroll-ver
   rotate: false
   xy: 397, 12
   size: 10, 20
+  split: 3, 3, 4, 4
   orig: 10, 20
   offset: 0, 0
   index: -1
-minus-up
+minus
   rotate: false
-  xy: 409, 20
-  size: 14, 16
-  orig: 14, 16
+  xy: 409, 22
+  size: 14, 14
+  orig: 14, 14
+  offset: 0, 0
+  index: -1
+plus
+  rotate: false
+  xy: 409, 6
+  size: 14, 14
+  orig: 14, 14
   offset: 0, 0
   index: -1
 icon-volume-off
@@ -309,27 +338,6 @@ icon-volume-off
   xy: 430, 38
   size: 11, 16
   orig: 11, 16
-  offset: 0, 0
-  index: -1
-plus-up
-  rotate: false
-  xy: 425, 20
-  size: 14, 16
-  orig: 14, 16
-  offset: 0, 0
-  index: -1
-minus
-  rotate: false
-  xy: 443, 42
-  size: 14, 14
-  orig: 14, 14
-  offset: 0, 0
-  index: -1
-plus
-  rotate: false
-  xy: 459, 42
-  size: 14, 14
-  orig: 14, 14
   offset: 0, 0
   index: -1
 arrow-down
@@ -348,7 +356,7 @@ arrow-up
   index: -1
 arrow-right
   rotate: false
-  xy: 475, 44
+  xy: 425, 24
   size: 6, 12
   orig: 6, 12
   offset: 0, 0
@@ -357,26 +365,27 @@ cursor
   rotate: false
   xy: 181, 22
   size: 3, 1
+  split: 1, 1, 1, 1
   orig: 3, 1
   offset: 0, 0
   index: -1
 default-rect-pad
   rotate: false
-  xy: 221, 2
+  xy: 288, 20
   size: 5, 3
   orig: 5, 3
   offset: 0, 0
   index: -1
 default-rect
   rotate: false
-  xy: 288, 20
+  xy: 221, 1
   size: 3, 3
   orig: 3, 3
   offset: 0, 0
   index: -1
 selectbox-selection
   rotate: false
-  xy: 409, 15
+  xy: 149, 4
   size: 3, 3
   orig: 3, 3
   offset: 0, 0
@@ -390,14 +399,14 @@ selection
   index: -1
 default-splitpane-hor
   rotate: false
-  xy: 149, 4
+  xy: 425, 19
   size: 1, 3
   orig: 1, 3
   offset: 0, 0
   index: -1
 default-splitpane-ver
   rotate: false
-  xy: 149, 4
+  xy: 425, 19
   size: 3, 1
   orig: 3, 1
   offset: 0, 0
