@@ -106,7 +106,9 @@ public class MyInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		// TODO Auto-generated method stub
+		if (rightMouseIsDown)
+			setRightMouseLocation(screenX, screenY);
+		
 		return false;
 	}
 

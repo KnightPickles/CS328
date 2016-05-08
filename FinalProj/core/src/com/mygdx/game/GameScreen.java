@@ -73,6 +73,10 @@ public class GameScreen implements Screen {
 		debugRenderer.render(world, camera.combined);
 	}
 
+	public void setDefeat() {
+		System.out.println("defeat");
+	}
+	
 	@Override
 	public void resize(int width, int height) {
         viewport.update(width, height);
