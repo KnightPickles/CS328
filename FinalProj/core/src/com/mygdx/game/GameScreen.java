@@ -31,12 +31,10 @@ public class GameScreen implements Screen {
     SelectionManager selectionManager;
 	LevelManager waveManager;
 	MyInputProcessor inputProcessor;
+    GUI gui;
 
-	Skin skin;
-	Window win;
-	Stage stage;
-	TextureAtlas gui;
-    
+    Stage stage = new Stage();
+
 	public GameScreen(MainGameClass game) {
 		this.game = game;
 	}
@@ -53,7 +51,8 @@ public class GameScreen implements Screen {
         world = new World(new Vector2(0, 0), true);
         world.setContactListener(new CollisionListener());
         debugRenderer = new Box2DDebugRenderer();
-        
+
+        gui = new GUI(stage);
         map = new Map();
         entityManager = new EntityManager();
 		waveManager = new LevelManager(3, 1, LevelManager.Difficulty.NORMAL);
@@ -61,57 +60,30 @@ public class GameScreen implements Screen {
         selectionManager = new SelectionManager();
         inputProcessor = new MyInputProcessor();
 
-		gui = new TextureAtlas(Gdx.files.internal("ui/ui-blue.pack"));
-		skin = new Skin(Gdx.files.internal("ui/ui-blue.json"), new TextureAtlas(Gdx.files.internal("ui/ui-blue.pack")));
-		stage = new Stage();
-
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
 		inputMultiplexer.addProcessor(stage);
 		inputMultiplexer.addProcessor(inputProcessor);
 		Gdx.input.setInputProcessor(inputMultiplexer);
-
-		guiTest();
-	}
+    }
 
 	@Override
 	public void render(float delta) {
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-		stage.act(Gdx.graphics.getDeltaTime());
-		camera.update();
+        stage.act(Gdx.graphics.getDeltaTime());
+        camera.update();
 		waveManager.update();
 		world.step(delta, 6, 2);
-		game.batch.setProjectionMatrix(camera.combined);
+        game.batch.setProjectionMatrix(camera.combined);
         game.shapeRenderer.setProjectionMatrix(camera.combined);
+        gui.update();
+
         map.draw(game.batch);
 		buildManager.update(delta);
 		entityManager.update(delta);
-		debugRenderer.render(world, camera.combined);
-
-		stage.draw();
-	}
-
-	void guiTest() {
-		Table table = new Table(skin);
-
-		table.add(new TextButton("Thing", skin)).width(50).height(50).pad(3);
-		table.add(new Button(skin, "plus")).width(25).height(25).pad(3);
-		table.add(new Label("number", skin)).width(50).height(50).pad(3);
-		table.add(new Button(skin, "minus")).width(25).height(25).pad(3);
-
-
-		win = new Window("", skin, "no-dialog");
-		win.setWidth(200);
-		win.setHeight(100);
-		win.setMovable(true);
-		win.setPosition(Gdx.graphics.getWidth() / 2 - 100, 0);
-		win.add(table);
-		//win.row().fill().expand();
-
-
-
-		stage.addActor(win);
-	}
+        stage.draw();
+        debugRenderer.render(world, camera.combined);
+    }
 
 	@Override
 	public void resize(int width, int height) {
