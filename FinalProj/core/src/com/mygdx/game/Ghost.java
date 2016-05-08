@@ -25,6 +25,8 @@ public class Ghost extends GameObject {
     int maxGold = 0;
     int goldValue = 0;
     float moveSpeed = 10f;
+    int chestIndex;
+    Vector2 chestPosition;
     
     Sprite goldBag;
     
@@ -74,7 +76,7 @@ public class Ghost extends GameObject {
 
         setSize(size);
 
-        goldBag = MainGameClass._instance.atlas.createSprite("goldBag");
+        goldBag = MainGameClass._instance.atlas.createSprite("gold");
         if (goldBag != null)
         	goldBag.setPosition(spawn.x * MainGameClass.PPM - GameScreen._instance.camera.viewportWidth / 2, spawn.y * MainGameClass.PPM - GameScreen._instance.camera.viewportHeight / 2);
         goldValue *= size.ordinal() + 1;
@@ -149,6 +151,12 @@ public class Ghost extends GameObject {
         }
         MainGameClass._instance.batch.end();*/
         super.draw();
+        
+        if (goldBag != null && hasGold > 0) {
+	        MainGameClass._instance.batch.begin();
+	        goldBag.draw(MainGameClass._instance.batch);
+	        MainGameClass._instance.batch.end();
+        }
     }
     
     void ghostMoveUpdate() {
@@ -171,6 +179,9 @@ public class Ghost extends GameObject {
                 return;
             }
             if(pathPos == path.size() - 2) {
+            	Vector2 v = path.get(path.size()-1);
+            	chestPosition = v;
+            	chestIndex = Map._instance.takeGoldFromChest(v, maxGold);
                 Collections.reverse(path);
                 hasGold = maxGold;
                 pathPos = 0;
@@ -220,6 +231,9 @@ public class Ghost extends GameObject {
     @Override
     public void killUnit() {
         Player.gold += goldValue;
+        if (hasGold > 0) {
+        	EntityManager._instance.createGoldPile(hasGold, chestIndex, chestPosition, position);
+        }
         super.killUnit();
     }
 }

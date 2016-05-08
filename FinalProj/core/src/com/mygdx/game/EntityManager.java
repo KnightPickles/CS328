@@ -14,6 +14,8 @@ public class EntityManager {
 	public List<GameObject> ghosts = new ArrayList<GameObject>();
 	public List<GameObject> turrets = new ArrayList<GameObject>();
 	public List<GameObject> projectiles = new ArrayList<GameObject>();
+	public List<GameObject> chests = new ArrayList<GameObject>();
+	public List<GameObject> gold = new ArrayList<GameObject>();
 	public Player player;
 	
 	HashMap<String, TurretInfo> turretTable = new HashMap<String, TurretInfo>();
@@ -85,6 +87,16 @@ public class EntityManager {
     	projectiles.add(magicBall);
     }
 	
+    public void createChest(Vector2 position, int value) {
+    	Chest c = new Chest(position, value);
+    	chests.add(c);
+    }
+    
+    public void createGoldPile(int goldVal, int chestIndex, Vector2 chestPosition, Vector2 pos) {
+    	GoldPile gp = new GoldPile(goldVal, chestIndex, chestPosition, pos);
+    	gold.add(gp);
+    }
+    
     public void update(float delta) {
     	//Update ghosts
     	for (GameObject g : ghosts) {
@@ -103,6 +115,12 @@ public class EntityManager {
     		else if (g instanceof MagicBall)
     			((MagicBall)g).update();
     	}
+    	for (GameObject g : chests) {
+    		g.update();
+    	}
+    	for (GameObject g : gold) {
+    		g.update();
+    	}
     	
     	if (player != null)
     		player.update();
@@ -120,6 +138,12 @@ public class EntityManager {
     		p.killUnit();
     	}
     	for (GameObject g : ghosts) {
+    		g.killUnit();
+    	}
+    	for (GameObject g : chests) {
+    		g.killUnit();
+    	}
+    	for (GameObject g : gold) {
     		g.killUnit();
     	}
     }
@@ -141,6 +165,12 @@ public class EntityManager {
     			((Arrow)g).draw();
     		else if (g instanceof MagicBall)
     			((MagicBall)g).draw();
+    	}
+    	for (GameObject g : chests) {
+    		g.draw();
+    	}
+    	for (GameObject g : gold) {
+    		g.draw();
     	}
     	
     	if (player != null)
@@ -185,6 +215,14 @@ public class EntityManager {
 	    	if (e instanceof MagicBall) {
 	    		if (projectiles.contains(e))
 	    			projectiles.remove(e);
+	    	}
+	    	if (e instanceof GoldPile) {
+	    		if (gold.contains(e))
+	    			gold.remove(e);
+	    	}
+	    	if (e instanceof Chest) {
+	    		if (chests.contains(e))
+	    			chests.remove(e);
 	    	}
     	}
     	objectsToDelete.clear();

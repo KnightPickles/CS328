@@ -47,7 +47,9 @@ public class Map {
     MainGameClass game;
 
     public int levelGold = 0;
-    public int treasureValue = 10;
+    public int totalLevelGold;
+    public int treasureValue = 100;
+    public float minGoldRemaining = .6f;
 
     public int worldWidth;
     public int worldHeight;
@@ -59,7 +61,7 @@ public class Map {
     public ArrayList<Vector2> spawnCoords2x2 = new ArrayList<Vector2>(); // z for blocked or not
     public ArrayList<Vector2> spawnCoords3x3 = new ArrayList<Vector2>(); // z for blocked or not
     public ArrayList<Vector2> goals = new ArrayList<Vector2>();
-
+    
     //Sprite os;
     //Sprite x2;
 
@@ -80,11 +82,22 @@ public class Map {
 
     public void takeGold(int gold) {
         levelGold -= gold;
-        System.out.println(gold + " gold was taken! There's " + levelGold + " left.");
-        if(levelGold <= 0)
-            System.out.println("All the gold was taken back!");
+        System.out.println("Have " + levelGold + " left out of " + totalLevelGold + " total");
+        if ((float)levelGold/(float)totalLevelGold < minGoldRemaining) {
+        	GameScreen._instance.setDefeat();
+        }
     }
 
+    public int takeGoldFromChest(Vector2 v, int gold) {
+    	if (goals.contains(v)) {
+    		int i = goals.indexOf(v);
+    		//System.out.println("took gold from chest + " + i);
+    		((Chest)EntityManager._instance.chests.get(i)).takeGold(gold);
+    		return i;
+    	}
+    	return -1;
+    }
+    
     void loadLevelFromImage(String filename) {
         try {
             BufferedImage level;
@@ -166,8 +179,18 @@ public class Map {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        
+        for (Vector2 v : goals) {
+        	Vector2 spawn = new Vector2(v.x * MainGameClass.PPM - camera.viewportWidth / 2, v.y * MainGameClass.PPM - camera.viewportHeight / 2);
+        	EntityManager._instance.createChest(spawn, treasureValue);
+        }
+        totalLevelGold = levelGold;
         System.out.println("The level has " + levelGold + " gold total.");
+    }
+    
+    public Vector2 getNonZackCoords(Vector2 v) {
+    	Vector2 goodVector = new Vector2(v.x * MainGameClass.PPM - camera.viewportWidth / 2, v.y * MainGameClass.PPM - camera.viewportHeight / 2);
+    	return goodVector;
     }
 
     public ArrayList<Vector2> pathToGoal(Vector2 currPos) {
