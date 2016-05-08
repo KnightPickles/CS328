@@ -73,6 +73,7 @@ public class LevelManager {
                 break;
             case LEVEL_FINISHED:
                 System.out.println("Level Completed");
+                EntityManager._instance.startNewLevel();
                 wave = 0;
                 level++;
                 if(level >= levels) {

@@ -3,6 +3,8 @@ package com.mygdx.game;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 public class MyInputProcessor implements InputProcessor {
 
@@ -14,6 +16,7 @@ public class MyInputProcessor implements InputProcessor {
 	public static boolean dIsDown;
 	
 	public static boolean rightMouseIsDown;
+	public static Vector2 rightMouseLocation;
 	
 	public static InputMode inputMode = InputMode.PlayMode;
 	public enum InputMode {
@@ -85,6 +88,7 @@ public class MyInputProcessor implements InputProcessor {
 			
 		if (button == 1 && inputMode == InputMode.PlayMode) {
 			rightMouseIsDown = true;
+			setRightMouseLocation(screenX, screenY);
 		}
 		
 		return false;
@@ -94,6 +98,7 @@ public class MyInputProcessor implements InputProcessor {
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 		if (button == 1) {
 			rightMouseIsDown = false;
+			setRightMouseLocation(screenX, screenY);
 		}
 		
 		return false;
@@ -107,7 +112,9 @@ public class MyInputProcessor implements InputProcessor {
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		// TODO Auto-generated method stub
+		if (rightMouseIsDown)
+			setRightMouseLocation(screenX, screenY);
+
 		return false;
 	}
 
@@ -115,6 +122,13 @@ public class MyInputProcessor implements InputProcessor {
 	public boolean scrolled(int amount) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	void setRightMouseLocation(int screenX, int screenY) {
+		rightMouseLocation = new Vector2(screenX, screenY);
+		Vector3 pos = new Vector3(rightMouseLocation.x, rightMouseLocation.y, 0);
+		GameScreen._instance.camera.unproject(pos);
+		rightMouseLocation = new Vector2(pos.x, pos.y);
 	}
 
 	
