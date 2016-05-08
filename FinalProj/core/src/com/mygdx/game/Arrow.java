@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -18,6 +19,7 @@ public class Arrow extends GameObject {
 	Vector2 spawnPosition;
 	Rectangle hitBox;
 	List<GameObject> ghostsHit = new ArrayList<GameObject>();
+	Sound bowHit;
 	
 	public Arrow(String spriteName, Vector2 direction, int damage, int upgradeLevel, Vector2 spawnPosition) {
 		sprite = MainGameClass._instance.atlas.createSprite(spriteName);
@@ -42,6 +44,8 @@ public class Arrow extends GameObject {
 		hitBox.setCenter(spawnPosition);
 		hitBox.setSize(10, 10);
 		
+		bowHit = Gdx.audio.newSound(Gdx.files.internal("bowHit.mp3"));
+		
 		setBody(false, true);
 	}
 	
@@ -57,6 +61,8 @@ public class Arrow extends GameObject {
 		
 		for (GameObject g : EntityManager._instance.ghosts) {
 			if (!ghostsHit.contains(g) &&hitBox.overlaps(g.sprite.getBoundingRectangle())) {
+				long i = bowHit.play();
+				bowHit.setVolume(i, .3f);
 				g.receiveDamage(damage);
 				ghostsHit.add(g);
 			}

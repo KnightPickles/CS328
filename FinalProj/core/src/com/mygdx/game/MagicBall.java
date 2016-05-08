@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -20,8 +21,10 @@ public class MagicBall extends GameObject {
 	Rectangle hitBox;
 	float timeToTarget;
 	float currTravelTime;
+	Sound hit;
 	
 	static int currMines;
+	
 	
 	State state;
 	enum State {
@@ -49,6 +52,8 @@ public class MagicBall extends GameObject {
 		float moveLength = targetLocation.dst(spawnPosition); //How far were going
 		timeToTarget = moveLength/(speed);
 		currTravelTime = 0;
+		
+		hit = Gdx.audio.newSound(Gdx.files.internal("magicBall.mp3"));
 	}
 	
 	@Override
@@ -80,6 +85,8 @@ public class MagicBall extends GameObject {
 		
 		for (GameObject g : EntityManager._instance.ghosts) {
 			if (hitBox.overlaps(g.sprite.getBoundingRectangle())) {
+				long i = hit.play();
+				hit.setVolume(i, .3f);
 				g.receiveDamage(damage);
 				detonated = true;
 			}
@@ -119,6 +126,8 @@ public class MagicBall extends GameObject {
 						g.receiveDamage(damage);
 					}
 				}
+				long i = hit.play();
+				hit.setVolume(i, .3f);
 				killUnit();
 				currMines--;
 			}				
