@@ -80,8 +80,8 @@ public class Player extends GameObject {
 		
 		//initiateAnimationTextureRegions("warrior");
 		//upgradeRedLevel();
-		//upgradeGreenLevel();
-		upgradeBlueLevel();
+		upgradeGreenLevel();
+		//upgradeBlueLevel();
 	}
 	
 	@Override
@@ -227,10 +227,8 @@ public class Player extends GameObject {
 		}
 	}
 	
-	//TODO: make new animations for the weapon types and switch between them here
 	void setWeaponSprite() {
 		if (weaponType == WeaponType.Sword) {
-			//Set animation to sword[weaponUpgradeLevel]
 			initiateAnimationTextureRegions("warrior");
 		}
 		else if (weaponType == WeaponType.Staff) {
