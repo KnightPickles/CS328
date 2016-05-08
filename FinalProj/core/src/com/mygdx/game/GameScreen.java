@@ -7,13 +7,12 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -36,7 +35,7 @@ public class GameScreen implements Screen {
 	Skin skin;
 	Window win;
 	Stage stage;
-
+	TextureAtlas gui;
     
 	public GameScreen(MainGameClass game) {
 		this.game = game;
@@ -62,8 +61,8 @@ public class GameScreen implements Screen {
         selectionManager = new SelectionManager();
         inputProcessor = new MyInputProcessor();
 
-		skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
-		//skin = new Skin();
+		gui = new TextureAtlas(Gdx.files.internal("ui/ui-blue.pack"));
+		skin = new Skin(Gdx.files.internal("ui/ui-blue.json"), new TextureAtlas(Gdx.files.internal("ui/ui-blue.pack")));
 		stage = new Stage();
 
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
@@ -93,17 +92,22 @@ public class GameScreen implements Screen {
 	}
 
 	void guiTest() {
-		win = new Window("asdf", skin);
+		Table table = new Table(skin);
+
+		table.add(new TextButton("Thing", skin)).width(50).height(50).pad(3);
+		table.add(new Button(skin, "plus")).width(25).height(25).pad(3);
+		table.add(new Label("number", skin)).width(50).height(50).pad(3);
+		table.add(new Button(skin, "minus")).width(25).height(25).pad(3);
+
+
+		win = new Window("", skin, "no-dialog");
 		win.setWidth(200);
 		win.setHeight(100);
 		win.setMovable(true);
 		win.setPosition(Gdx.graphics.getWidth() / 2 - 100, 0);
-		win.add(new TextButton("Button", skin));
-		win.add(new TextButton("Button", skin));
-		win.row().fill().expandX();
-		win.add(new TextButton("Button", skin));
+		win.add(table);
+		//win.row().fill().expand();
 
-		win.add(new TextButton("Button", skin));
 
 
 		stage.addActor(win);
