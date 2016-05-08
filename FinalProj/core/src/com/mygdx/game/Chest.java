@@ -13,7 +13,7 @@ public class Chest extends GameObject {
 		sprite = MainGameClass._instance.atlas.createSprite("chest");
 		sprite.setPosition(pos.x, pos.y);
 		this.pos = pos;
-		setBody(true, false, 0, 0);
+		setBody(true, true, 0, 0);
 		
 		goldLeft = totalGold = gold;
 	}

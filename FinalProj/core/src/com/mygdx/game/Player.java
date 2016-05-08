@@ -1,7 +1,10 @@
 package com.mygdx.game;
 
+import java.util.Random;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -32,6 +35,8 @@ public class Player extends GameObject {
 		Bow,
 		Staff
 	}
+	Sound[] swordHit = new Sound[3];
+	Sound bowHit, magicHit;
 	
 	Animation walkAnimation;
 	Animation idleAnimation;
@@ -48,6 +53,7 @@ public class Player extends GameObject {
 	float attackStateTime = 0f;
 	
 	Rectangle meleeHitBox;
+	Random r;
 	
 	enum State {
 		Idle,
@@ -78,10 +84,18 @@ public class Player extends GameObject {
 		meleeHitBox.setCenter(spawnPos);
 		meleeHitBox.setSize(10, 10);
 		
+		for (int i = 0; i < 3; i++) {
+			swordHit[i] = Gdx.audio.newSound(Gdx.files.internal("jab" + i + ".mp3"));
+		}
+		bowHit = Gdx.audio.newSound(Gdx.files.internal("bow.mp3"));
+		magicHit = Gdx.audio.newSound(Gdx.files.internal("magicBall.mp3"));
+		
+		r = new Random();
+		
 		//initiateAnimationTextureRegions("warrior");
 		//upgradeRedLevel();
-		upgradeGreenLevel();
-		//upgradeBlueLevel();
+		//upgradeGreenLevel();
+		upgradeBlueLevel();
 	}
 	
 	@Override
@@ -258,6 +272,20 @@ public class Player extends GameObject {
 		state = newState;
 	}
 	
+	void playAttackSound() {
+		if (weaponType == WeaponType.Sword) {
+			int rand = r.nextInt(3);
+			long i = swordHit[rand].play();
+			swordHit[rand].setVolume(i, .3f);
+		} else if (weaponType == WeaponType.Bow) {
+			long i = bowHit.play();
+			bowHit.setVolume(i, .3f);
+		} else if (weaponType == WeaponType.Staff) {
+			long i = magicHit.play();
+			magicHit.setVolume(i, .6f);
+		}
+	}
+	
 	void setDir(Direction dir) {
 		if (dir == direction)
 			return;
@@ -289,11 +317,15 @@ public class Player extends GameObject {
 			if (weaponType == WeaponType.Sword) {
 				updateMeleeHitBox();
 				
+				boolean hit = false;
 				for (GameObject g : EntityManager._instance.ghosts) {
 					if (meleeHitBox.overlaps(g.sprite.getBoundingRectangle())) {
 						g.receiveDamage(attackDamage);
+						hit = true;
 					}
 				}
+				if (hit) 
+					playAttackSound();
 			}
 			else if (weaponType == WeaponType.Bow) {					
 				Vector2 arrowSpawn = new Vector2(position.x - sprite.getWidth()/2f, position.y - sprite.getHeight()/2f);
@@ -306,8 +338,10 @@ public class Player extends GameObject {
 				else if (direction == Direction.Down)
 					arrowSpawn.y -= sprite.getHeight();
 				EntityManager._instance.spawnArrow(weaponUpgradeLevel, direction, attackDamage, arrowSpawn);
+				playAttackSound();
 			} 
 			else if (weaponType == WeaponType.Staff) {
+				playAttackSound();
 				Vector2 magicSpawn = new Vector2(position.x - sprite.getWidth()/2f, position.y - sprite.getHeight()/2f);
 				EntityManager._instance.spawnMagicBall(weaponUpgradeLevel, attackLocation, attackDamage, magicSpawn);
 			}

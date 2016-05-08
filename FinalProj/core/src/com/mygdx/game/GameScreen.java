@@ -3,8 +3,10 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -27,10 +29,27 @@ public class GameScreen implements Screen {
     SelectionManager selectionManager;
 	LevelManager waveManager;
 	MyInputProcessor inputProcessor;
-
+	Sound backgroundMusic;
+	State state;
+	Sprite defeatScreen;
+	
+	enum State {
+		Pause,
+		Defeat,
+		Play
+	}
     
 	public GameScreen(MainGameClass game) {
 		this.game = game;
+		
+        backgroundMusic = Gdx.audio.newSound(Gdx.files.internal("bgmusic.mp3"));
+        backgroundMusic.setLooping(0, true);;
+        backgroundMusic.play();
+        backgroundMusic.setVolume(0, .2f);
+        defeatScreen = MainGameClass._instance.atlas.createSprite("victory");
+        defeatScreen.setScale(1.5f);
+        defeatScreen.setPosition(0 - defeatScreen.getWidth()/2f, 0);
+        state = State.Play;
 	}
 	
 	@Override
@@ -39,8 +58,8 @@ public class GameScreen implements Screen {
 		game.batch = new SpriteBatch();
 		
         camera = new OrthographicCamera(Gdx.graphics.getWidth() / game.SCALE, Gdx.graphics.getHeight() / game.SCALE);
-        viewport = new FitViewport(Gdx.graphics.getWidth() / game.SCALE, Gdx.graphics.getHeight() / game.SCALE, camera);
-		
+        viewport = new FitViewport(Gdx.graphics.getWidth() / game.SCALE, Gdx.graphics.getHeight() / game.SCALE, camera);	
+        
         // Box2D
         world = new World(new Vector2(0, 0), true);
         world.setContactListener(new CollisionListener());
@@ -62,19 +81,34 @@ public class GameScreen implements Screen {
 	public void render(float delta) {
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-		camera.update();
-		waveManager.update();
-		world.step(delta, 6, 2);
-		game.batch.setProjectionMatrix(camera.combined);
-        game.shapeRenderer.setProjectionMatrix(camera.combined);
-        map.draw(game.batch);
-		buildManager.update(delta);
-		entityManager.update(delta);
+        if (state == State.Play) {
+			camera.update();
+			waveManager.update();
+			world.step(delta, 6, 2);
+			game.batch.setProjectionMatrix(camera.combined);
+	        game.shapeRenderer.setProjectionMatrix(camera.combined);
+	        map.draw(game.batch);
+			buildManager.update(delta);
+			entityManager.update(delta);
+        }
+        if (state == State.Pause || state == State.Defeat) {
+			//camera.update();
+			//waveManager.update();
+			//world.step(delta, 6, 2);
+			game.batch.setProjectionMatrix(camera.combined);
+	        game.shapeRenderer.setProjectionMatrix(camera.combined);
+	        map.draw(game.batch);
+			entityManager.update(delta);
+			game.batch.begin();
+			defeatScreen.draw(game.batch);
+			game.batch.end();
+        }        
 		debugRenderer.render(world, camera.combined);
 	}
 
 	public void setDefeat() {
-		System.out.println("defeat");
+		backgroundMusic.stop();
+		state = State.Defeat;
 	}
 	
 	@Override
