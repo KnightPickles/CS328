@@ -24,8 +24,9 @@ public class SelectionManager {
 	
 	public void leftTouched(int xPos, int yPos) {
 		GameObject obj = getObjectUnderCursor();
-		
+
 		if (obj != null && obj != selected) {
+			System.out.println(((Turret)obj).myInfo.redLevel);
 			selectObject(obj);
 		}
 	}

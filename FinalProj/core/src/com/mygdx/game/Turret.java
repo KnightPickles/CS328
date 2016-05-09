@@ -16,7 +16,9 @@ public class Turret extends GameObject {
 	GameObject target; //What we're targetting
 	float attackCooldown = 0;
 	public int goldValue = 0; //Gold spent on this turret
-	
+	public double costAccumulator = 1.1;
+	public int upgradeCost = 10;
+
 	public TurretType turretType;
 	public enum TurretType {
 		Red,

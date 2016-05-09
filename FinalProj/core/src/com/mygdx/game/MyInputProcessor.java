@@ -55,6 +55,10 @@ public class MyInputProcessor implements InputProcessor {
 			}
 		}
 			
+		if (keycode == Keys.T) {
+			GameScreen._instance.setDefeat();
+		}
+		
 		return false;
 	}
 

@@ -34,8 +34,9 @@ public class GoldPile extends GameObject {
 	
 	@Override
 	public void update() {
-		currTravelTime += Gdx.graphics.getDeltaTime();
 		float progress = currTravelTime/timeToTarget;
+		currTravelTime += Gdx.graphics.getDeltaTime() * (1+progress);
+		
 		float x = MathUtils.lerp(spawnPosition.x, targetLocation.x, progress);
 		float y = MathUtils.lerp(spawnPosition.y, targetLocation.y, progress);
 		body.setTransform(x, y, 0);
