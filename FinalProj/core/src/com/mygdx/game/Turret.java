@@ -26,6 +26,10 @@ public class Turret extends GameObject {
 	Sound[] redSounds = new Sound[3];
 	Sound[] greenSounds = new Sound[3];
 	Sound[] blueSounds = new Sound[3];
+
+	int redUpgradeLevel = 0;
+	int greenUpgradeLevel = 0;
+	int blueUpgradeLevel = 1;
 	
 	ShapeRenderer sr = new ShapeRenderer();
 	
@@ -47,10 +51,13 @@ public class Turret extends GameObject {
 		costAccumulator = t.costAccumulator;
 		upgradeCost = t.upgradeCost;
 		turretType = t.turretType;
+		redUpgradeLevel = t.redUpgradeLevel;
+		greenUpgradeLevel = t.greenUpgradeLevel;
+		blueUpgradeLevel = t.blueUpgradeLevel;
 	}
 
 	public Turret(TurretInfo info, Vector2 spawnPos) {
-		myInfo = info;
+		myInfo = new TurretInfo(info);
 		sprite = MainGameClass._instance.atlas.createSprite(myInfo.spriteName);
 		sprite.setPosition(spawnPos.x, spawnPos.y);
 		if (myInfo.trackTarget) {
@@ -59,11 +66,11 @@ public class Turret extends GameObject {
 		}
 		goldValue = myInfo.cost;
 		
-		if (myInfo.redLevel >= 1)
+		if (redUpgradeLevel >= 1)
 			turretType = TurretType.Red;
-		else if (myInfo.greenLevel >= 1)
+		else if (greenUpgradeLevel >= 1)
 			turretType = TurretType.Green;
-		else if (myInfo.blueLevel >= 1)
+		else if (blueUpgradeLevel >= 1)
 			turretType = TurretType.Blue;
 		
 		setBody(true, false, 0, 0);
@@ -133,16 +140,16 @@ public class Turret extends GameObject {
 	
 	void playAttackSound() {
 		if (turretType == TurretType.Red) {
-			int level = (int)Math.floor(myInfo.redLevel/10);
+			int level = (int)Math.floor(redUpgradeLevel/10);
 			long i = redSounds[level].play();
 			redSounds[level].setVolume(i, .3f  * GameScreen.volumeModifier);
 		} else if (turretType == TurretType.Green) {
-			int level = (int)Math.floor(myInfo.greenLevel/10);
+			int level = (int)Math.floor(greenUpgradeLevel/10);
 			if (target != null) {				
 				greenSounds[level].resume();
 			}
 		} else if (turretType == TurretType.Blue) {
-			int level = (int)Math.floor(myInfo.blueLevel/10);
+			int level = (int)Math.floor(blueUpgradeLevel/10);
 			long i = blueSounds[level].play();
 			blueSounds[level].setVolume(i, .3f  * GameScreen.volumeModifier);
 		}
@@ -150,8 +157,8 @@ public class Turret extends GameObject {
 	
 	public void upgradeRedLevel() {
 		//Add upgrade cost to goldValue
-		myInfo.redLevel++;
-		if (myInfo.redLevel > myInfo.greenLevel && myInfo.redLevel > myInfo.blueLevel) {
+		redUpgradeLevel++;
+		if (redUpgradeLevel > greenUpgradeLevel && redUpgradeLevel > blueUpgradeLevel) {
 			turretType = TurretType.Red;
 		}
 		checkUpgrade();
@@ -159,8 +166,8 @@ public class Turret extends GameObject {
 	
 	public void upgradeGreenLevel() {
 		//Add upgrade cost to goldValue
-		myInfo.greenLevel++;
-		if (myInfo.greenLevel > myInfo.redLevel && myInfo.greenLevel > myInfo.blueLevel) {
+		greenUpgradeLevel++;
+		if (greenUpgradeLevel > redUpgradeLevel && greenUpgradeLevel > blueUpgradeLevel) {
 			turretType = TurretType.Green;
 		}
 		checkUpgrade();
@@ -168,15 +175,15 @@ public class Turret extends GameObject {
 	
 	public void upgradeBlueLevel() {
 		//Add upgrade cost to goldValue
-		myInfo.blueLevel++;
-		if (myInfo.blueLevel > myInfo.redLevel && myInfo.blueLevel > myInfo.greenLevel) {
+		blueUpgradeLevel++;
+		if (blueUpgradeLevel > redUpgradeLevel && blueUpgradeLevel > greenUpgradeLevel) {
 			turretType = TurretType.Blue;
 		}
 		checkUpgrade();
 	}
 	
 	void checkUpgrade() {
-		int upgradeLevel = (int)Math.floor(((myInfo.redLevel + myInfo.greenLevel + myInfo.blueLevel)/10));
+		int upgradeLevel = (int)Math.floor(((redUpgradeLevel + greenUpgradeLevel + blueUpgradeLevel)/10));
 		switch (turretType) {
 		case Red:
 			initializeTurret("red" + upgradeLevel);

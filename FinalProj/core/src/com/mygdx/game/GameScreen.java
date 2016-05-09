@@ -32,7 +32,6 @@ public class GameScreen implements Screen {
 	MyInputProcessor inputProcessor;
 	Sound backgroundMusic;
 	State state;
-	Sprite defeatScreen;
     GUI gui;
 
     Stage stage = new Stage();
@@ -54,9 +53,6 @@ public class GameScreen implements Screen {
         long i = backgroundMusic.play();
         backgroundMusic.setLooping(i, true);;
         backgroundMusic.setVolume(i, .1f * GameScreen.volumeModifier);
-        defeatScreen = MainGameClass._instance.atlas.createSprite("victory");
-        defeatScreen.setScale(1.5f);
-        defeatScreen.setPosition(0 - defeatScreen.getWidth()/2f, 0);
         state = State.Play;
 	}
 	
@@ -105,17 +101,15 @@ public class GameScreen implements Screen {
 			buildManager.update(delta);
 			entityManager.update(delta);
         }
-        if (state == State.Pause || state == State.Defeat) {
+        if (state == State.Pause || state == State.Defeat || state == State.Victory) {
 			//camera.update();
 			//waveManager.update();
 			//world.step(delta, 6, 2);
 			game.batch.setProjectionMatrix(camera.combined);
 	        game.shapeRenderer.setProjectionMatrix(camera.combined);
 	        map.draw(game.batch);
-			entityManager.update(delta);
-			game.batch.begin();
-			defeatScreen.draw(game.batch);
-			game.batch.end();
+			entityManager.draw();
+			gui.endCondition();
         }
         stage.draw();
         gui.draw();

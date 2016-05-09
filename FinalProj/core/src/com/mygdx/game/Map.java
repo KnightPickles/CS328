@@ -188,6 +188,7 @@ public class Map {
         }
         totalLevelGold = levelGold;
         System.out.println("The level has " + levelGold + " gold total.");
+        levelGold = 0;
     }
     
     public Vector2 getNonZackCoords(Vector2 v) {

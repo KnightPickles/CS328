@@ -78,6 +78,7 @@ public class LevelManager {
                 level++;
                 if(level >= levels) {
                     waveState = WaveState.STOP;
+                    GameScreen._instance.state = GameScreen.State.Victory;
                 } else {
                     Map._instance.loadLevelFromImage("level" + level + ".png");
                     waveState = WaveState.WAVE_START;
@@ -89,7 +90,7 @@ public class LevelManager {
     }
 
     void startWave() {
-        for (int j = 0; j < (wave + 1) * difficulty.ordinal() * 3; j++) {
+        for (int j = 0; j < (wave + 1) * difficulty.ordinal() * 3 * (level + 1); j++) {
             final int d = j;
             Timer.schedule(new Timer.Task() {
                 @Override
