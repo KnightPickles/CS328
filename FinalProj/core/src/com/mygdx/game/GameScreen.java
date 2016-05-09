@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -32,12 +33,16 @@ public class GameScreen implements Screen {
 	Sound backgroundMusic;
 	State state;
 	Sprite defeatScreen;
+    GUI gui;
+
+    Stage stage = new Stage();
 	
 	public static float volumeModifier = 1; //From 0 to 1 multiplied to each volume element
 	
 	enum State {
 		Pause,
 		Defeat,
+        Victory,
 		Play
 	}
     
@@ -70,12 +75,15 @@ public class GameScreen implements Screen {
         
         map = new Map();
         entityManager = new EntityManager();
-		waveManager = new LevelManager(3, 1, LevelManager.Difficulty.NORMAL);
+		waveManager = new LevelManager(3, 5, LevelManager.Difficulty.NORMAL);
 		buildManager = new BuildManager();
         selectionManager = new SelectionManager();
         inputProcessor = new MyInputProcessor();
+        gui = new GUI(stage);
+
+
         InputMultiplexer inputMultiplexer = new InputMultiplexer();
-        //inputMultiplexer.addProcessor(gui.stage);
+        inputMultiplexer.addProcessor(gui.stage);
         inputMultiplexer.addProcessor(inputProcessor);
         Gdx.input.setInputProcessor(inputMultiplexer);
 	}
@@ -84,6 +92,9 @@ public class GameScreen implements Screen {
 	public void render(float delta) {
         Gdx.gl.glClearColor(0,0,0,1);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+        stage.act(Gdx.graphics.getDeltaTime());
+        gui.update();
+        
         if (state == State.Play) {
 			camera.update();
 			waveManager.update();
@@ -105,7 +116,9 @@ public class GameScreen implements Screen {
 			game.batch.begin();
 			defeatScreen.draw(game.batch);
 			game.batch.end();
-        }        
+        }
+        stage.draw();
+        gui.draw();
 		debugRenderer.render(world, camera.combined);
 	}
 
