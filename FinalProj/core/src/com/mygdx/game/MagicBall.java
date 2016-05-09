@@ -86,7 +86,7 @@ public class MagicBall extends GameObject {
 		for (GameObject g : EntityManager._instance.ghosts) {
 			if (hitBox.overlaps(g.sprite.getBoundingRectangle())) {
 				long i = hit.play();
-				hit.setVolume(i, .3f);
+				hit.setVolume(i, .3f * GameScreen.volumeModifier);
 				g.receiveDamage(damage);
 				detonated = true;
 			}
@@ -97,6 +97,7 @@ public class MagicBall extends GameObject {
 		if (progress >= 1f && currMines < 5) {
 			state = State.Mine;
 			currMines++;
+			damage *= 1.5f;
 		} else if (progress >= 1) {
 			killUnit();
 		}
@@ -127,7 +128,7 @@ public class MagicBall extends GameObject {
 					}
 				}
 				long i = hit.play();
-				hit.setVolume(i, .3f);
+				hit.setVolume(i, .3f * GameScreen.volumeModifier);
 				killUnit();
 				currMines--;
 			}				
