@@ -16,16 +16,31 @@ public class Turret extends GameObject {
 	GameObject target; //What we're targetting
 	float attackCooldown = 0;
 	public int goldValue = 0; //Gold spent on this turret
-	
+	public double costAccumulator = 1.1;
+	public int upgradeCost = 10;
+
 	public TurretType turretType;
 	public enum TurretType {
 		Red,
 		Green,
 		Blue
 	}
+
+	public Turret(Turret t) {
+		super((GameObject)t);
+		myInfo = new TurretInfo(t.myInfo);
+		rotateSprite = new Sprite(t.sprite);
+		targetFinder = new Circle(t.targetFinder);
+		target = new GameObject(target);
+		attackCooldown = t.attackCooldown;
+		goldValue = t.goldValue;
+		costAccumulator = t.costAccumulator;
+		upgradeCost = t.upgradeCost;
+		turretType = t.turretType;
+	}
 	
 	public Turret(TurretInfo info, Vector2 spawnPos) {
-		myInfo = info;
+		myInfo = new TurretInfo(info);
 		sprite = MainGameClass._instance.atlas.createSprite(myInfo.spriteName);
 		sprite.setPosition(spawnPos.x, spawnPos.y);
 		if (myInfo.trackTarget) {

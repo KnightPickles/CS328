@@ -15,7 +15,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Player extends GameObject {
 
-	public static int gold = 0;
+	public static int gold = 1000;
 	public int goldTemp = gold;
 
 	public float moveSpeed = 20f;
@@ -107,7 +107,7 @@ public class Player extends GameObject {
 		position = body.getPosition();
 
 		if(goldTemp != gold && goldTemp < gold) {
-			System.out.println("You gained " + (gold - goldTemp) + " gold! You now have " + gold);
+			GUI.prompt("You gained " + (gold - goldTemp) + " gold! You now have " + gold);
 			goldTemp = gold;
 		}
 	}
@@ -196,9 +196,19 @@ public class Player extends GameObject {
 		redUpgradeLevel++;
 		checkNewWeapon();
 	}
+
+	public void downgradeRedLevel() {
+		redUpgradeLevel--;
+		checkNewWeapon();
+	}
 	
 	public void upgradeGreenLevel() {
 		greenUpgradeLevel++;
+		checkNewWeapon();
+	}
+
+	public void downgradeGreenLevel() {
+		greenUpgradeLevel--;
 		checkNewWeapon();
 	}
 	
@@ -206,16 +216,24 @@ public class Player extends GameObject {
 		blueUpgradeLevel++;
 		checkNewWeapon();
 	}
+
+	public void downgradeBlueLevel() {
+		blueUpgradeLevel--;
+		checkNewWeapon();
+	}
 	
 	//Check if we have reached a new breaking point for a new weapon
 	void checkNewWeapon() {
 		if (redUpgradeLevel > blueUpgradeLevel && redUpgradeLevel > greenUpgradeLevel) { //Red/sword
+			if(weaponType != WeaponType.Sword) GUI.prompt("Class changed to warrior!");
 			weaponType = WeaponType.Sword;
 		}
 		else if (blueUpgradeLevel > redUpgradeLevel && blueUpgradeLevel > greenUpgradeLevel) { //Blue staff
+			if(weaponType != WeaponType.Staff) GUI.prompt("Class changed to wizard!");
 			weaponType = WeaponType.Staff;
 		}
 		else if (greenUpgradeLevel > redUpgradeLevel && greenUpgradeLevel > blueUpgradeLevel) { //Green bow
+			if(weaponType != WeaponType.Bow) GUI.prompt("Class changed to ranger!");
 			weaponType = WeaponType.Bow;
 		}
 		weaponUpgradeLevel = (int) Math.floor((redUpgradeLevel + blueUpgradeLevel + greenUpgradeLevel)/10f);
