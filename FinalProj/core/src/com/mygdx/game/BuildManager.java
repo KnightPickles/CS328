@@ -102,7 +102,7 @@ public class BuildManager {
 			if(!occupiedTiles[(int)xScreen][(int)yScreen]) {
 				float xPos = (int)xScreen * MainGameClass.PPM - GameScreen._instance.camera.viewportWidth / 2;
 				float yPos = (int)yScreen * MainGameClass.PPM - GameScreen._instance.camera.viewportHeight / 2;
-				if(EntityManager._instance.buildTurret("red0", new Vector2((int)xPos, (int)yPos)))
+				if(EntityManager._instance.buildTurret("blue0", new Vector2((int)xPos, (int)yPos)))
 					occupiedTiles[(int) xScreen][(int) yScreen] = true;
 			} else System.out.println("Cannot build here. This space is occupied.");
 		}

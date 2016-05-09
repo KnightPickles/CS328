@@ -33,6 +33,8 @@ public class GameScreen implements Screen {
 	State state;
 	Sprite defeatScreen;
 	
+	public static float volumeModifier = 1; //From 0 to 1 multiplied to each volume element
+	
 	enum State {
 		Pause,
 		Defeat,
@@ -43,9 +45,10 @@ public class GameScreen implements Screen {
 		this.game = game;
 		
         backgroundMusic = Gdx.audio.newSound(Gdx.files.internal("bgmusic.mp3"));
-        backgroundMusic.setLooping(0, true);;
-        backgroundMusic.play();
-        backgroundMusic.setVolume(0, .2f);
+        
+        long i = backgroundMusic.play();
+        backgroundMusic.setLooping(i, true);;
+        backgroundMusic.setVolume(i, .1f * GameScreen.volumeModifier);
         defeatScreen = MainGameClass._instance.atlas.createSprite("victory");
         defeatScreen.setScale(1.5f);
         defeatScreen.setPosition(0 - defeatScreen.getWidth()/2f, 0);

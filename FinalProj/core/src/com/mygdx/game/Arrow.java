@@ -62,7 +62,7 @@ public class Arrow extends GameObject {
 		for (GameObject g : EntityManager._instance.ghosts) {
 			if (!ghostsHit.contains(g) &&hitBox.overlaps(g.sprite.getBoundingRectangle())) {
 				long i = bowHit.play();
-				bowHit.setVolume(i, .3f);
+				bowHit.setVolume(i, .3f * GameScreen.volumeModifier);
 				g.receiveDamage(damage);
 				ghostsHit.add(g);
 			}

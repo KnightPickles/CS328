@@ -248,7 +248,33 @@ public class EntityManager {
     	info.projectileSpeed = 80f;
         info.cost = 25;
         info.redLevel = 1;
-    	
-    	turretTable.put(info.turretName, info);
+        turretTable.put(info.turretName, info);
+        
+        //Green 0
+        info = new TurretInfo();
+    	info.turretName = "green0";
+    	info.spriteName = "tower_lazer";
+    	info.attackCooldown = .2f;
+    	info.projectileSpriteName = "ballista_projectile";
+    	info.range = 60;
+    	info.trackingSpeed = 60f;
+    	info.projectileType = TurretInfo.ProjectileType.Laser;
+    	info.projectileDamage = 2;
+        info.cost = 25;
+        info.greenLevel = 1;
+        turretTable.put(info.turretName, info);
+        
+        //Blue 0
+        info = new TurretInfo();
+    	info.turretName = "blue0";
+    	info.spriteName = "tower_aoe";
+    	info.projectileSpriteName = "fumes_green";
+    	info.attackCooldown = 1.5f;
+    	info.range = 40;
+    	info.projectileType = TurretInfo.ProjectileType.AOE;
+    	info.projectileDamage = 8;
+        info.cost = 25;
+        info.blueLevel = 1;
+        turretTable.put(info.turretName, info);
     }
 }

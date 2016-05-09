@@ -38,7 +38,7 @@ public class Projectile extends GameObject {
 		body.setTransform(new Vector2(x, y), 0);
 		sprite.setRotation(degrees - 90);
 		
-		if (position.dst(tar) < .25f) {
+		if (timeToTarget < .05f) {
 			target.receiveDamage(damage);
 			killUnit();
 		}
