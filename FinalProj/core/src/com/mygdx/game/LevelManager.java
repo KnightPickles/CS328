@@ -39,13 +39,13 @@ public class LevelManager {
             case WAVE_START:
                 waveStartTimer = false;
                 if(EntityManager._instance.ghosts.isEmpty()) {
-                    System.out.println("Begining wave " + (wave + 1));
+                    GUI.prompt("Begining wave " + (wave + 1));
                     startWave();
                 } else waveState = WaveState.WAVE_RUNNING;
                 break;
             case WAVE_RUNNING:
                 if(EntityManager._instance.ghosts.isEmpty()) {
-                    System.out.println("Completed wave " + wave);
+                    GUI.prompt("Completed wave " + wave);
                     waveState = WaveState.WAVE_FINISHED;
                 }
                 break;
@@ -54,7 +54,7 @@ public class LevelManager {
                 else { // start a new wave
                     if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
                         waveState = WaveState.WAVE_START;
-                        System.out.println("Wave manually started");
+                        GUI.prompt("Wave manually started");
                     }
                     if(!waveStartTimer) {
                         waveStartTimer = true;
@@ -62,7 +62,7 @@ public class LevelManager {
                             @Override
                             public void run() {
                                 if(waveStartTimer) {
-                                    System.out.println("Wave automatically started");
+                                    GUI.prompt("Wave automatically started");
                                     waveStartTimer = false;
                                     waveState = WaveState.WAVE_START;
                                 }
@@ -72,7 +72,7 @@ public class LevelManager {
                 }
                 break;
             case LEVEL_FINISHED:
-                System.out.println("Level Completed");
+                GUI.prompt("Level Completed");
                 EntityManager._instance.startNewLevel();
                 wave = 0;
                 level++;

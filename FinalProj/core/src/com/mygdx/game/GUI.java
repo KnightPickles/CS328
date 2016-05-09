@@ -317,7 +317,7 @@ public class GUI {
         }
 
         promptWin = new Window("", skin, "no-dialog");
-        promptWin.setWidth(300);
+        promptWin.setWidth(400);
         promptWin.setHeight(110);
         promptWin.setMovable(true);
         promptWin.setPosition(levelWin.getWidth(), 0);
@@ -358,7 +358,7 @@ public class GUI {
         exit.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                menuWin.setVisible(false);
+                menuWin.setVisible(!menuWin.isVisible());
             }
         });
 
@@ -402,6 +402,10 @@ public class GUI {
     void update() {
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && GameScreen._instance.state != GameScreen.State.Defeat && GameScreen._instance.state != GameScreen.State.Victory)
             menuWin.setVisible(!menuWin.isVisible());
+
+        if(menuWin.isVisible()) {
+            GameScreen._instance.state = GameScreen.State.Pause;
+        } else GameScreen._instance.state = GameScreen.State.Play;
 
         if(SelectionManager._instance.selected != null) { // no class
             selectedTurret = (Turret) SelectionManager._instance.selected;

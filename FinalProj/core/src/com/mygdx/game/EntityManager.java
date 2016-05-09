@@ -46,7 +46,7 @@ public class EntityManager {
     public boolean buildTurret(String turretName, Vector2 position) {
         if(Player.gold >= turretTable.get(turretName).cost) {
             GUI.prompt("Spent " + turretTable.get(turretName).cost + " gold on a " + turretName);
-            //Player.gold -= turretTable.get(turretName).cost;
+            Player.gold -= turretTable.get(turretName).cost;
 			Turret turret = new Turret(turretTable.get(turretName), position);
 			turrets.add(turret);
             return true;

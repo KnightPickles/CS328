@@ -15,7 +15,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Player extends GameObject {
 
-	public static int gold = 1000;
+	public static int gold = 0;
 	public int goldTemp = gold;
 
 	public float moveSpeed = 20f;
@@ -92,7 +92,7 @@ public class Player extends GameObject {
 		
 		r = new Random();
 		
-		gold = 50;
+		gold = 500;
 		
 		//upgradeRedLevel();
 		//upgradeGreenLevel();
