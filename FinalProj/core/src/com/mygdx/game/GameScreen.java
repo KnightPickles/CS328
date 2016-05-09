@@ -47,7 +47,7 @@ public class GameScreen implements Screen {
     
 	public GameScreen(MainGameClass game) {
 		this.game = game;
-		
+
         backgroundMusic = Gdx.audio.newSound(Gdx.files.internal("bgmusic.mp3"));
         backgroundMusic.setLooping(0, true);;
         backgroundMusic.play();
@@ -64,8 +64,8 @@ public class GameScreen implements Screen {
 		game.batch = new SpriteBatch();
 		
         camera = new OrthographicCamera(Gdx.graphics.getWidth() / game.SCALE, Gdx.graphics.getHeight() / game.SCALE);
-        viewport = new FitViewport(Gdx.graphics.getWidth() / game.SCALE, Gdx.graphics.getHeight() / game.SCALE, camera);	
-        
+        viewport = new FitViewport(Gdx.graphics.getWidth() / game.SCALE, Gdx.graphics.getHeight() / game.SCALE, camera);
+
         // Box2D
         world = new World(new Vector2(0, 0), true);
         world.setContactListener(new CollisionListener());

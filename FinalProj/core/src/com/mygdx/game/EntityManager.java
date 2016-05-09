@@ -44,18 +44,16 @@ public class EntityManager {
     }
 
     public boolean buildTurret(String turretName, Vector2 position) {
-        //if(Player.gold >= turretTable.get(turretName).cost) {
-            System.out.println("Spent " + turretTable.get(turretName).cost + " gold on a " + turretName);
+        if(Player.gold >= turretTable.get(turretName).cost) {
+            GUI.prompt("Spent " + turretTable.get(turretName).cost + " gold on a " + turretName);
             //Player.gold -= turretTable.get(turretName).cost;
-            //Turret turret = new Turret(new TurretInfo(turretTable.get(turretName)), position);
 			Turret turret = new Turret(turretTable.get(turretName), position);
-
 			turrets.add(turret);
             return true;
-        //} else {
-        //    System.out.println(Player.gold + " is not enough to buy a ballista. It costs " + turretTable.get("red0").cost + ".");
-        //    return false;
-        //}
+        } else {
+            GUI.prompt(Player.gold + " is not enough to buy a ballista. It costs " + turretTable.get("red0").cost + ".");
+            return false;
+        }
     }
     
     public void spawnTurret(String turretName, Vector2 position) {

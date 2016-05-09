@@ -35,6 +35,16 @@ public class GameObject {
         body = null;
     }
 
+    GameObject(GameObject o) {
+        if(o == null) return;
+        sprite = new Sprite(o.sprite);
+        active = o.active;
+        position = o.position;
+        maxHealth = o.maxHealth;
+        health = o.health;
+        setBody(o.body.getType() == BodyDef.BodyType.StaticBody ? true : false, o.fixture.isSensor(),0,0);
+    }
+
     public void draw() {
         MainGameClass._instance.batch.begin();
         sprite.draw(MainGameClass._instance.batch);

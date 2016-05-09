@@ -275,24 +275,20 @@ public class GUI {
             }
         });
 
-
         tRed = new Label("", skin);
         tBlue = new Label("", skin);
         tGreen = new Label("", skin);
 
         Table towerUpd = new Table(skin);
-        towerUpd.add(new Label("Red", skin)).pad(3).left();
-        towerUpd.add(new Button(skin, "minus")).width(25).height(25).pad(3);
+        towerUpd.add(new Label("Red ", skin)).pad(3).left();
         towerUpd.add(tRed).width(25).height(25).pad(3);
         towerUpd.add(tRPlus).width(25).height(25).pad(3);
         towerUpd.row();
-        towerUpd.add(new Label("Grn", skin)).pad(3).left();
-        towerUpd.add(new Button(skin, "minus")).width(25).height(25).pad(3);
+        towerUpd.add(new Label("Grn ", skin)).pad(3).left();
         towerUpd.add(tGreen).width(25).height(25).pad(3);
         towerUpd.add(tGPlus).width(25).height(25).pad(3);
         towerUpd.row();
-        towerUpd.add(new Label("Blu", skin)).pad(3).left();
-        towerUpd.add(new Button(skin, "minus")).width(25).height(25).pad(3);
+        towerUpd.add(new Label("Blu ", skin)).pad(3).left();
         towerUpd.add(tBlue).width(25).height(25).pad(3);
         towerUpd.add(tBPlus).width(25).height(25).pad(3);
 
