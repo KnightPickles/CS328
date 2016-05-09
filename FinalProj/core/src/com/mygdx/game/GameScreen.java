@@ -109,11 +109,14 @@ public class GameScreen implements Screen {
 	        game.shapeRenderer.setProjectionMatrix(camera.combined);
 	        map.draw(game.batch);
 			entityManager.draw();
-			gui.endCondition();
+
+			if(state == State.Defeat || state == State.Victory) {
+				gui.endCondition();
+			}
         }
         stage.draw();
         gui.draw();
-		debugRenderer.render(world, camera.combined);
+		//debugRenderer.render(world, camera.combined);
 	}
 
 	public void setDefeat() {
