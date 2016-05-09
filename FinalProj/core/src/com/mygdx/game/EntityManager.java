@@ -255,7 +255,8 @@ public class EntityManager {
     	info.turretName = "green0";
     	info.spriteName = "tower_lazer";
     	info.attackCooldown = .2f;
-    	info.projectileSpriteName = "ballista_projectile";
+		info.rotateSpriteName = "ballista_head";
+		info.projectileSpriteName = "ballista_projectile";
     	info.range = 60;
     	info.trackingSpeed = 60f;
     	info.projectileType = TurretInfo.ProjectileType.Laser;

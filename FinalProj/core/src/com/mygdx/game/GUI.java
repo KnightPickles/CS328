@@ -50,6 +50,8 @@ public class GUI {
         skin = new Skin(Gdx.files.internal("ui/ui-blue.json"), new TextureAtlas(Gdx.files.internal("ui/ui-blue.pack")));
         this.stage = stage;
 
+        debug.setAlpha(0.5f);
+
         guiInit();
     }
 
@@ -377,19 +379,21 @@ public class GUI {
         stage.addActor(menuWin);
     }
 
-    void victory() {
-        endConditionLabel.setText("VICTORY");
+    void endCondition() {
         endConditionWin.setVisible(true);
         menuWin.setVisible(true);
-    }
 
-    void defeat() {
-        endConditionLabel.setText("DEFEAT");
-        endConditionWin.setVisible(true);
-        menuWin.setVisible(true);
+        if(GameScreen._instance.state == GameScreen.State.Defeat)
+            endConditionLabel.setText("DEFEAT");
+        else if(GameScreen._instance.state == GameScreen.State.Victory)
+            endConditionLabel.setText("VICTORY");
+
     }
 
     void draw() {
+        if(EntityManager._instance.turrets.size() == 0) return;
+        if(EntityManager._instance.turrets.size() == 1) debug.setPosition(EntityManager._instance.turrets.get(0).sprite.getX(),EntityManager._instance.turrets.get(0).sprite.getY());
+
         MainGameClass._instance.batch.begin();
         debug.draw(MainGameClass._instance.batch);
         MainGameClass._instance.batch.end();
@@ -411,9 +415,9 @@ public class GUI {
                 case Blue: turretType.setText("Type: Blue"); break;
             }
 
-            tRed.setText(Integer.toString(selectedTurret.myInfo.redLevel));
-            tGreen.setText(Integer.toString(selectedTurret.myInfo.greenLevel));
-            tBlue.setText(Integer.toString(selectedTurret.myInfo.blueLevel));
+            tRed.setText(Integer.toString(selectedTurret.redUpgradeLevel));
+            tGreen.setText(Integer.toString(selectedTurret.greenUpgradeLevel));
+            tBlue.setText(Integer.toString(selectedTurret.blueUpgradeLevel));
         } else {
             turretType.setText("None Selected");
             tRed.setText("N/A");

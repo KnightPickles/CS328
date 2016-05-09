@@ -26,7 +26,7 @@ public class SelectionManager {
 		GameObject obj = getObjectUnderCursor();
 
 		if (obj != null && obj != selected) {
-			System.out.println(((Turret)obj).myInfo.redLevel);
+			System.out.println(((Turret)obj).redUpgradeLevel);
 			selectObject(obj);
 		}
 	}
