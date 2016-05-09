@@ -1,7 +1,12 @@
 package com.mygdx.game;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -16,31 +21,22 @@ public class Turret extends GameObject {
 	GameObject target; //What we're targetting
 	float attackCooldown = 0;
 	public int goldValue = 0; //Gold spent on this turret
-	public double costAccumulator = 1.1;
-	public int upgradeCost = 10;
-
+	
+	Sound[] redSounds = new Sound[3];
+	Sound[] greenSounds = new Sound[3];
+	Sound[] blueSounds = new Sound[3];
+	
+	ShapeRenderer sr = new ShapeRenderer();
+	
 	public TurretType turretType;
 	public enum TurretType {
 		Red,
 		Green,
 		Blue
 	}
-
-	public Turret(Turret t) {
-		super((GameObject)t);
-		myInfo = new TurretInfo(t.myInfo);
-		rotateSprite = new Sprite(t.sprite);
-		targetFinder = new Circle(t.targetFinder);
-		target = new GameObject(target);
-		attackCooldown = t.attackCooldown;
-		goldValue = t.goldValue;
-		costAccumulator = t.costAccumulator;
-		upgradeCost = t.upgradeCost;
-		turretType = t.turretType;
-	}
 	
 	public Turret(TurretInfo info, Vector2 spawnPos) {
-		myInfo = new TurretInfo(info);
+		myInfo = info;
 		sprite = MainGameClass._instance.atlas.createSprite(myInfo.spriteName);
 		sprite.setPosition(spawnPos.x, spawnPos.y);
 		if (myInfo.trackTarget) {
@@ -59,6 +55,7 @@ public class Turret extends GameObject {
 		setBody(true, false, 0, 0);
 		targetFinder = new Circle();
 		targetFinder.set(position, myInfo.range);
+		loadSounds();
 	}
 	
 	@Override
@@ -70,6 +67,11 @@ public class Turret extends GameObject {
 		
 		attackCooldown -= Gdx.graphics.getDeltaTime();
 
+    	for (int i = 0; i < aoe.size(); i++) {
+    		AOERenderer r = aoe.get(i);
+    		r.update();
+    	}
+		
 		super.update();
 	}
 	
@@ -77,8 +79,59 @@ public class Turret extends GameObject {
 	public void draw() {
         MainGameClass._instance.batch.begin();
         sprite.draw(MainGameClass._instance.batch);
-        rotateSprite.draw(MainGameClass._instance.batch);
+        if (myInfo.trackTarget)
+        	rotateSprite.draw(MainGameClass._instance.batch);
         MainGameClass._instance.batch.end();
+        if (turretType == TurretType.Green && target != null) {
+        	sr.begin(ShapeType.Filled);
+        	sr.setProjectionMatrix(GameScreen._instance.camera.combined);
+        	sr.setColor(0, 1, 0, .7f);
+        	sr.rectLine(position, target.position, 1);
+        	sr.end();
+        }
+        else if (turretType == TurretType.Blue) {
+        	for (int i = 0; i < aoe.size(); i++) {
+        		AOERenderer r = aoe.get(i);
+        		if (r.lifeDuration <= 0) {
+        			aoe.remove(i);
+        			i--;
+        		} else {
+        			r.draw(MainGameClass._instance.batch);
+        		}
+        	}
+        }
+	}
+	
+	void loadSounds() {
+		for (int i = 0; i < 3; i ++) {
+			redSounds[i] = Gdx.audio.newSound(Gdx.files.internal("red" + i + ".ogg"));
+		}
+		for (int i = 0; i < 3; i ++) {
+			greenSounds[i] = Gdx.audio.newSound(Gdx.files.internal("green" + i + ".ogg"));
+			greenSounds[i].loop(.4f * GameScreen.volumeModifier);
+			greenSounds[i].pause();
+		}
+		for (int i = 0; i < 3; i ++) {
+			blueSounds[i] = Gdx.audio.newSound(Gdx.files.internal("blue" + i + ".ogg"));
+		}
+		
+	}
+	
+	void playAttackSound() {
+		if (turretType == TurretType.Red) {
+			int level = (int)Math.floor(myInfo.redLevel/10);
+			long i = redSounds[level].play();
+			redSounds[level].setVolume(i, .3f  * GameScreen.volumeModifier);
+		} else if (turretType == TurretType.Green) {
+			int level = (int)Math.floor(myInfo.greenLevel/10);
+			if (target != null) {				
+				greenSounds[level].resume();
+			}
+		} else if (turretType == TurretType.Blue) {
+			int level = (int)Math.floor(myInfo.blueLevel/10);
+			long i = blueSounds[level].play();
+			blueSounds[level].setVolume(i, .3f  * GameScreen.volumeModifier);
+		}
 	}
 	
 	public void upgradeRedLevel() {
@@ -139,6 +192,7 @@ public class Turret extends GameObject {
 	//Looks for a valid target in our range
 	//Right now it will just find the first target in range, but we can add different AI modes, (units with gold > units with low health > units in front > units in back) etc
 	void findTarget() {
+		
 		if (target != null && 
 				(!target.active 
 						|| !EntityManager._instance.ghosts.contains(target) 
@@ -154,6 +208,12 @@ public class Turret extends GameObject {
 				return;
 			}
 		}
+		
+		if (target == null) {
+			for (int i = 0; i < 3; i ++) {
+				greenSounds[i].pause();
+			}
+		}
 	}
 	
 	void shootTarget() {
@@ -163,6 +223,9 @@ public class Turret extends GameObject {
 		if (!canShootTarget())
 			return;
 		
+		if (attackCooldown > 0)
+			return;
+		
 		if (myInfo.projectileType == TurretInfo.ProjectileType.Ballistic) {
 			shootBallistic();
 		} else if (myInfo.projectileType == TurretInfo.ProjectileType.Laser) {
@@ -170,23 +233,33 @@ public class Turret extends GameObject {
 		} else if (myInfo.projectileType == TurretInfo.ProjectileType.Buff) {
 			
 		} else if (myInfo.projectileType == TurretInfo.ProjectileType.AOE) {
-			
+			shootAOE();
 		}
 	}
 	
 	void shootBallistic() {
-		//Create projectile
-		//Tell projectile its target, damage, speed, etc (it will deal damage when it hits)
-		if (attackCooldown <= 0) {
-			EntityManager._instance.spawnProjectile(myInfo.projectileSpriteName, target, myInfo.projectileDamage,  myInfo.projectileSpeed, position);
-			attackCooldown = myInfo.attackCooldown; //Reset attack CD
-		}
+		playAttackSound();
+		EntityManager._instance.spawnProjectile(myInfo.projectileSpriteName, target, myInfo.projectileDamage,  myInfo.projectileSpeed, position);
+		attackCooldown = myInfo.attackCooldown; //Reset attack CD
 	}
 	
 	void shootLaser() {
-		//Create laser sprite from here to target
-		//deal damage to target
-		attackCooldown = myInfo.attackCooldown; //Reset attack CD
+		playAttackSound();
+		target.receiveDamage(myInfo.projectileDamage);
+		attackCooldown = myInfo.attackCooldown; //Reset attack CD			
+	}
+	
+	ArrayList<AOERenderer> aoe = new ArrayList<AOERenderer>();
+	void shootAOE() {
+		AOERenderer r = new AOERenderer(myInfo.projectileSpriteName, .8f);
+		for (GameObject g : EntityManager._instance.ghosts) {
+			if (targetFinder.contains(g.position)) {
+				g.receiveDamage(myInfo.projectileDamage);
+				r.addTarget(g);
+			}
+		}
+		aoe.add(r);
+		attackCooldown = myInfo.attackCooldown;
 	}
 	
 	boolean canShootTarget() {

@@ -92,7 +92,8 @@ public class Player extends GameObject {
 		
 		r = new Random();
 		
-		//initiateAnimationTextureRegions("warrior");
+		gold = 50;
+		
 		//upgradeRedLevel();
 		//upgradeGreenLevel();
 		upgradeBlueLevel();
@@ -245,17 +246,17 @@ public class Player extends GameObject {
 		if (weaponType == WeaponType.Sword) {
 			moveSpeed = 20f;
 			attackCooldown = .38f; 
-			attackDamage = 14;
+			attackDamage = 18;
 		}
 		else if (weaponType == WeaponType.Bow) {
 			moveSpeed = 25f;
 			attackCooldown = .43f; 
-			attackDamage = 12;
+			attackDamage = 15;
 		}
 		else if (weaponType == WeaponType.Staff) {
 			moveSpeed = 16f;
 			attackCooldown = .5f; 
-			attackDamage = 15;
+			attackDamage = 20;
 		}
 	}
 	
@@ -294,13 +295,13 @@ public class Player extends GameObject {
 		if (weaponType == WeaponType.Sword) {
 			int rand = r.nextInt(3);
 			long i = swordHit[rand].play();
-			swordHit[rand].setVolume(i, .3f);
+			swordHit[rand].setVolume(i, .3f * GameScreen.volumeModifier);
 		} else if (weaponType == WeaponType.Bow) {
 			long i = bowHit.play();
-			bowHit.setVolume(i, .3f);
+			bowHit.setVolume(i, .3f * GameScreen.volumeModifier);
 		} else if (weaponType == WeaponType.Staff) {
 			long i = magicHit.play();
-			magicHit.setVolume(i, .6f);
+			magicHit.setVolume(i, .6f * GameScreen.volumeModifier);
 		}
 	}
 	
