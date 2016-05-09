@@ -82,7 +82,9 @@ public class Map {
 
     public void takeGold(int gold) {
         levelGold -= gold;
-        System.out.println("Have " + levelGold + " left out of " + totalLevelGold + " total");
+        int g = (int)(totalLevelGold * minGoldRemaining);
+        if(g < 0) g = 0;
+        GUI.prompt("Have " + ((int)(Map._instance.totalLevelGold * (1 - Map._instance.minGoldRemaining) + 1) - (Map._instance.totalLevelGold - Map._instance.levelGold)) + " left out of " + g  + " total");
         if ((float)levelGold/(float)totalLevelGold < minGoldRemaining) {
         	GameScreen._instance.setDefeat();
         }

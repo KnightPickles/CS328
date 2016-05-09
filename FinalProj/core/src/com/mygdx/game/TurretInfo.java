@@ -31,5 +31,25 @@ public class TurretInfo {
 	public String projectileSpriteName; //Name of sprite used for any projectile type
 	public int projectileDamage;
 	public float projectileSpeed;
+
+	TurretInfo() {}
+
+	TurretInfo(TurretInfo info) {
+		this.turretName = info.turretName;
+		this.spriteName = info.spriteName;
+		this.range = info.range;
+		this.attackCooldown = info.attackCooldown;
+		this.cost = info.cost;
+		this.redLevel = info.redLevel;
+		this.greenLevel = info.greenLevel;
+		this.blueLevel = info.blueLevel;
+		this.rotateSpriteName = info.rotateSpriteName;
+		this.trackTarget = info.trackTarget;
+		this.trackingSpeed = info.trackingSpeed;
+		this.projectileType = info.projectileType;
+		this.projectileSpriteName = info.projectileSpriteName;
+		this.projectileDamage = info.projectileDamage;
+		this.projectileSpeed = info.projectileSpeed;
+	}
 	
 }

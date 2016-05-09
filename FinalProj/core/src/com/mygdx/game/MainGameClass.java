@@ -18,29 +18,16 @@ public class MainGameClass extends Game {
 	SpriteBatch batch;
 	ShapeRenderer shapeRenderer;
 	TextureAtlas atlas;
-	BitmapFont font;
-	GlyphLayout layout;
-	Sprite wtf;
 
 	@Override
 	public void create () {
 		_instance = this;
-		
-		// Graphics
+
 		batch = new SpriteBatch();
 		shapeRenderer = new ShapeRenderer();
 		atlas = new TextureAtlas("towerdefense.pack");
-		
-		// Font
-		layout = new GlyphLayout();
-		//FreeTypeFontGenerator generator = new FreeTypeFontGenerator(new FileHandle("font.ttf"));
-		//FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-		//parameter.size = 4;
-		//font = generator.generateFont(parameter);
-		//generator.dispose();
-		
-		// Init to menu screen
-		this.setScreen(new GameScreen(this));
+
+		this.setScreen(new SplashScreen());
 	}
 
 	@Override
@@ -53,6 +40,5 @@ public class MainGameClass extends Game {
 		batch.dispose();
 		shapeRenderer.dispose();
 		atlas.dispose();
-		//font.dispose();
 	}
 }
