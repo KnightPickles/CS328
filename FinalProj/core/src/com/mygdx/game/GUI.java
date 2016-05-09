@@ -346,7 +346,7 @@ public class GUI {
         endConditionWin.add(endTable);
         endConditionWin.setVisible(false);
         stage.addActor(endConditionWin);
-        
+
 
         TextButton exit = new TextButton("Title Screen", skin);
         exit.addListener(new ClickListener() {
