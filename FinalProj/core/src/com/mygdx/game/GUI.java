@@ -1,8 +1,10 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.*;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -22,13 +24,13 @@ public class GUI {
     Skin skin;
     Stage stage;
 
-    Window playerWin, levelWin, towerWin, promptWin;
+    Window playerWin, levelWin, towerWin, promptWin, menuWin, endConditionWin;
     int level = 1;
     int wave = 1;
     int waves = 10;
     int gold = 23;
     int levelGold = 100;
-    Label levelLabel, waveLabel, wavesLabel, goldLabel, levelGoldLabel, difficultyLabel, playerClass, playerStr, playerDex, playerWis, turretType, tRed, tGreen, tBlue;
+    Label levelLabel, waveLabel, wavesLabel, goldLabel, levelGoldLabel, difficultyLabel, playerClass, playerStr, playerDex, playerWis, turretType, tRed, tGreen, tBlue, endConditionLabel;
     static Label[] prompts = new Label[4];
     static long[] promptStamp = new long[4];
     Button rPlus, rMinus, gPlus, gMinus, bPlus, bMinus, tRPlus, tRMinus, tGPlus, tGMinus, tBPlus, tBMinus;
@@ -42,6 +44,7 @@ public class GUI {
     int upgradeCost = 15;
 
     Turret selectedTurret = null;
+    Sprite debug = MainGameClass._instance.atlas.createSprite("red_indicator");
 
     GUI(Stage stage) {
         skin = new Skin(Gdx.files.internal("ui/ui-blue.json"), new TextureAtlas(Gdx.files.internal("ui/ui-blue.pack")));
@@ -323,13 +326,87 @@ public class GUI {
         promptWin.add(promptTable);
         promptWin.left();
         stage.addActor(promptWin);
+
+        endConditionLabel = new Label("GAME END", skin);
+        endConditionLabel.setFontScale(3);
+
+        Label l = new Label("", skin);
+        l.setFontScale(10);
+
+        Table endTable = new Table(skin);
+        endTable.add(endConditionLabel);
+        endTable.row();
+        endTable.add(l);
+
+
+        endConditionWin = new Window("", skin, "no-dialog");
+        endConditionWin.setWidth(300);
+        endConditionWin.setHeight(300);
+        endConditionWin.setPosition(Gdx.graphics.getWidth() / 2 - endConditionWin.getWidth() / 2, Gdx.graphics.getHeight() / 2 - endConditionWin.getHeight() / 2 + 30);
+        endConditionWin.add(endTable);
+        endConditionWin.setVisible(false);
+        stage.addActor(endConditionWin);
+        
+
+        TextButton exit = new TextButton("Title Screen", skin);
+        exit.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                MainGameClass._instance.setScreen(new SplashScreen());
+            }
+        });
+
+        TextButton ret = new TextButton("Continue", skin);
+        exit.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                menuWin.setVisible(false);
+            }
+        });
+
+        Table menuTable = new Table(skin);
+        menuTable.add(new Label("Menu",skin)).center().pad(8);
+        menuTable.row();
+        menuTable.add(exit).height(25).width(100).pad(3);
+        menuTable.row();
+        menuTable.add(ret).height(25).width(100).pad(3);
+
+        menuWin = new Window("", skin, "no-dialog");
+        menuWin.setWidth(130);
+        menuWin.setHeight(120);
+        menuWin.setMovable(false);
+        menuWin.setPosition(Gdx.graphics.getWidth() / 2 - menuWin.getWidth() / 2, Gdx.graphics.getHeight() / 2 - menuWin.getHeight() / 2);
+        menuWin.add(menuTable);
+        menuWin.setVisible(false);
+        stage.addActor(menuWin);
+    }
+
+    void victory() {
+        endConditionLabel.setText("VICTORY");
+        endConditionWin.setVisible(true);
+        menuWin.setVisible(true);
+    }
+
+    void defeat() {
+        endConditionLabel.setText("DEFEAT");
+        endConditionWin.setVisible(true);
+        menuWin.setVisible(true);
+    }
+
+    void draw() {
+        MainGameClass._instance.batch.begin();
+        debug.draw(MainGameClass._instance.batch);
+        MainGameClass._instance.batch.end();
     }
 
     void update() {
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && GameScreen._instance.state != GameScreen.State.Defeat && GameScreen._instance.state != GameScreen.State.Victory)
+            menuWin.setVisible(!menuWin.isVisible());
+
         if(SelectionManager._instance.selected != null) { // no class
             selectedTurret = (Turret) SelectionManager._instance.selected;
-            //System.out.println("notnull");
-        } else selectedTurret = null;
+            debug.setPosition(selectedTurret.sprite.getX(), selectedTurret.sprite.getY());
+        }
 
         if(selectedTurret != null) {
             switch(selectedTurret.turretType) {

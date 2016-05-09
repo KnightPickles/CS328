@@ -41,6 +41,7 @@ public class GameScreen implements Screen {
 	enum State {
 		Pause,
 		Defeat,
+        Victory,
 		Play
 	}
     
@@ -113,9 +114,11 @@ public class GameScreen implements Screen {
 			game.batch.begin();
 			defeatScreen.draw(game.batch);
 			game.batch.end();
+            gui.defeat();
         }        
 		debugRenderer.render(world, camera.combined);
         stage.draw();
+        gui.draw();
     }
 
 	public void setDefeat() {

@@ -47,8 +47,10 @@ public class EntityManager {
         //if(Player.gold >= turretTable.get(turretName).cost) {
             System.out.println("Spent " + turretTable.get(turretName).cost + " gold on a " + turretName);
             //Player.gold -= turretTable.get(turretName).cost;
-            Turret turret = new Turret(turretTable.get(turretName), position);
-            turrets.add(turret);
+            Turret turret = new Turret(new TurretInfo(turretTable.get(turretName)), position);
+			//Turret turret = new Turret(turretTable.get(turretName), position);
+
+			turrets.add(turret);
             return true;
         //} else {
         //    System.out.println(Player.gold + " is not enough to buy a ballista. It costs " + turretTable.get("red0").cost + ".");
