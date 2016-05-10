@@ -34,7 +34,7 @@ public class GUI {
     int gold = 23;
     int levelGold = 100;
     boolean nextLev = false;
-    Label levelLabel, waveLabel, wavesLabel, goldLabel, levelGoldLabel, difficultyLabel, playerClass, playerStr, playerDex, playerWis, turretType, tRed, tGreen, tBlue, endConditionLabel;
+    Label lootLabel, levelLabel, waveLabel, wavesLabel, goldLabel, levelGoldLabel, difficultyLabel, playerClass, playerStr, playerDex, playerWis, turretType, tRed, tGreen, tBlue, endConditionLabel;
     static Label[] prompts = new Label[4];
     static long[] promptStamp = new long[4];
     Button rPlus, rMinus, gPlus, gMinus, bPlus, bMinus, tRPlus, tRMinus, tGPlus, tGMinus, tBPlus, tBMinus;
@@ -80,6 +80,7 @@ public class GUI {
         wavesLabel = new Label("Waves: " + Integer.toString(waves), skin);
         levelGoldLabel = new Label("Gold Left: " + Integer.toString(levelGold), skin);
         goldLabel = new Label("Your Gold: " + Integer.toString(gold), skin);
+        lootLabel = new Label("Gold looted: " + Integer.toString(Player.gold), skin);
 
         Table levelInfo = new Table(skin);
         levelInfo.add(difficultyLabel).left().pad(3);
@@ -338,20 +339,28 @@ public class GUI {
         endConditionLabel = new Label("GAME END", skin);
         endConditionLabel.setFontScale(3);
 
-        Label l = new Label("", skin);
-        l.setFontScale(10);
+        TextButton exa = new TextButton("Title Screen", skin);
+        exa.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                GameScreen._instance.cleanup();
+                MainGameClass._instance.setScreen(new SplashScreen());
+            }
+        });
 
         Table endTable = new Table(skin);
-        endTable.add(endConditionLabel);
+        endTable.add(endConditionLabel).center().pad(20);
         endTable.row();
-        endTable.add(l);
-
+        endTable.add(exa).height(35).width(150).pad(20);
+        endTable.row();
+        endTable.add(lootLabel).center().height(35).pad(3);
 
         endConditionWin = new Window("", skin, "no-dialog");
         endConditionWin.setWidth(300);
         endConditionWin.setHeight(300);
         endConditionWin.setPosition(Gdx.graphics.getWidth() / 2 - endConditionWin.getWidth() / 2, Gdx.graphics.getHeight() / 2 - endConditionWin.getHeight() / 2 + 30);
         endConditionWin.add(endTable);
+        endConditionWin.setMovable(false);
         endConditionWin.setVisible(false);
         stage.addActor(endConditionWin);
 
@@ -393,8 +402,8 @@ public class GUI {
         nextLevel.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                nextLevWin.setVisible(false);
                 nextLev = true;
+                nextLevWin.setVisible(false);
             }
         });
 
@@ -428,11 +437,11 @@ public class GUI {
     }
 
     void levelComplete() {
-        System.out.println(LevelManager._instance.wave);
-        if(LevelManager._instance.wave >= LevelManager._instance.numWaves) {
+        if(LevelManager._instance.level >= LevelManager._instance.levels) {
             nextLev = true;
+            nextLevWin.setVisible(false);
         } else {
-            nextLev = false;
+            //nextLev = false;
             nextLevWin.setVisible(true);
         }
     }
@@ -443,7 +452,6 @@ public class GUI {
 
     void endCondition() {
         endConditionWin.setVisible(true);
-        menuWin.setVisible(true);
 
         if(GameScreen._instance.state == GameScreen.State.Defeat)
             endConditionLabel.setText("DEFEAT");
@@ -462,11 +470,12 @@ public class GUI {
     }
 
     void update() {
+        lootLabel.setText("Gold looted: " + Integer.toString(Player.gold));
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && GameScreen._instance.state != GameScreen.State.Defeat && GameScreen._instance.state != GameScreen.State.Victory)
             menuWin.setVisible(!menuWin.isVisible());
 
-        if(menuWin.isVisible()) {
+        if(menuWin.isVisible() || endConditionWin.isVisible()) {
             GameScreen._instance.state = GameScreen.State.Pause;
         } else GameScreen._instance.state = GameScreen.State.Play;
 

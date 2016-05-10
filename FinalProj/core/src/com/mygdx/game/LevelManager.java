@@ -78,15 +78,15 @@ public class LevelManager {
                 GUI._instance.levelComplete();
                 if(GUI._instance.nextLevel()) {
                     GUI._instance.nextLev = false;
+                    GUI._instance.nextLevWin.setVisible(false);
                     EntityManager._instance.startNewLevel();
                     wave = 0;
                     if(level >= levels) {
                         waveState = WaveState.STOP;
                         GameScreen._instance.state = GameScreen.State.Victory;
                     } else {
-                        Map._instance.loadLevelFromImage("level" + level + ".png");
+                        Map._instance.loadLevelFromImage("level" + Map._instance.curLev + ".png");
                         waveState = WaveState.WAVE_START;
-                        Player.playerLoot += (int)(Map._instance.totalLevelGold * (1 - Map._instance.minGoldRemaining) + 1) - (Map._instance.totalLevelGold - Map._instance.levelGold);
                         level++;
                     }
                 }
