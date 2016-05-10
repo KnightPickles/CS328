@@ -26,6 +26,9 @@ public class LevelManager {
     public boolean waveStartTimer = false;
     Random random = new Random();
 
+    boolean pauseSpawning = false;
+    long pauseDuration = 0;
+
     LevelManager(int numLevels, int numWaves, Difficulty difficulty) {
         _instance = this;
         this.levels = numLevels;
@@ -72,16 +75,20 @@ public class LevelManager {
                 }
                 break;
             case LEVEL_FINISHED:
-                GUI.prompt("Level Completed");
-                EntityManager._instance.startNewLevel();
-                wave = 0;
-                level++;
-                if(level >= levels) {
-                    waveState = WaveState.STOP;
-                    GameScreen._instance.state = GameScreen.State.Victory;
-                } else {
-                    Map._instance.loadLevelFromImage("level" + level + ".png");
-                    waveState = WaveState.WAVE_START;
+                GUI._instance.levelComplete();
+                if(GUI._instance.nextLevel()) {
+                    GUI._instance.nextLev = false;
+                    EntityManager._instance.startNewLevel();
+                    wave = 0;
+                    if(level >= levels) {
+                        waveState = WaveState.STOP;
+                        GameScreen._instance.state = GameScreen.State.Victory;
+                    } else {
+                        Map._instance.loadLevelFromImage("level" + level + ".png");
+                        waveState = WaveState.WAVE_START;
+                        Player.playerLoot += (int)(Map._instance.totalLevelGold * (1 - Map._instance.minGoldRemaining) + 1) - (Map._instance.totalLevelGold - Map._instance.levelGold);
+                        level++;
+                    }
                 }
                 break;
             case STOP: // trigger a display of heuristics and whatnot
@@ -89,17 +96,35 @@ public class LevelManager {
         }
     }
 
+    void endCondition() {
+        pauseSpawning = true;
+    }
+
+    void playCondition() {
+        if(pauseSpawning) wave++;
+        pauseSpawning = false;
+        pauseDuration = 0;
+    }
+
     void startWave() {
         for (int j = 0; j < (wave + 1) * difficulty.ordinal() * 3 * (level + 1); j++) {
-            final int d = j;
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
+                    while(pauseSpawning) {
+                        try {
+                            Thread.sleep(10);
+                        } catch (Exception e) {
+
+                        }
+                    }
                     spawnRandomizedEnemy();
                 }
             }, j * 0.5f);
         }
-        wave++;
+
+        if(!pauseSpawning)
+            wave++;
     }
 
     void spawnRandomizedEnemy() {

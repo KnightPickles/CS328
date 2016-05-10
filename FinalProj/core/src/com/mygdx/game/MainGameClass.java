@@ -19,6 +19,8 @@ public class MainGameClass extends Game {
 	ShapeRenderer shapeRenderer;
 	TextureAtlas atlas;
 
+	GameScreen gameScreen;
+
 	@Override
 	public void create () {
 		_instance = this;

@@ -15,8 +15,9 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Player extends GameObject {
 
-	public static int gold = 0;
+	public static int gold = 50;
 	public int goldTemp = gold;
+    public static int playerLoot = 0;
 
 	public float moveSpeed = 20f;
 	public float attackCooldown = .3f; 
@@ -93,10 +94,11 @@ public class Player extends GameObject {
 		r = new Random();
 		
 		gold = 500;
+        playerLoot = 0;
 		
-		//upgradeRedLevel();
+		upgradeRedLevel();
 		//upgradeGreenLevel();
-		upgradeBlueLevel();
+		//upgradeBlueLevel();
 	}
 	
 	@Override
@@ -244,19 +246,19 @@ public class Player extends GameObject {
 	
 	void updateWeaponStats() {
 		if (weaponType == WeaponType.Sword) {
-			moveSpeed = 20f;
-			attackCooldown = .38f; 
-			attackDamage = 18;
+			moveSpeed = 20f + greenUpgradeLevel;
+			attackCooldown = .38f + (blueUpgradeLevel * 0.02f);
+			attackDamage = 18 + redUpgradeLevel;
 		}
 		else if (weaponType == WeaponType.Bow) {
-			moveSpeed = 25f;
-			attackCooldown = .43f; 
-			attackDamage = 15;
+			moveSpeed = 25f + greenUpgradeLevel;
+			attackCooldown = .43f + (blueUpgradeLevel * 0.02f);
+			attackDamage = 15 + redUpgradeLevel;
 		}
 		else if (weaponType == WeaponType.Staff) {
-			moveSpeed = 16f;
-			attackCooldown = .5f; 
-			attackDamage = 20;
+			moveSpeed = 16f + greenUpgradeLevel;
+			attackCooldown = .5f + (blueUpgradeLevel * 0.02f);
+            attackDamage = 20 + redUpgradeLevel;
 		}
 	}
 	

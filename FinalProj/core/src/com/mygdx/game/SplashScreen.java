@@ -38,7 +38,10 @@ public class SplashScreen implements Screen {
         start.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                MainGameClass._instance.setScreen(new GameScreen(MainGameClass._instance));
+                if(GameScreen._instance != null)
+                    GameScreen._instance.reset();
+                else GameScreen._instance = new GameScreen();
+                MainGameClass._instance.setScreen(GameScreen._instance);
             }
         });
 

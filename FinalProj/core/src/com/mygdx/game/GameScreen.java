@@ -16,9 +16,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class GameScreen implements Screen {
-
-	private MainGameClass game;
-	public static GameScreen _instance;
+    public static GameScreen _instance;
 	
     OrthographicCamera camera;
     Viewport viewport;
@@ -45,9 +43,7 @@ public class GameScreen implements Screen {
 		Play
 	}
     
-	public GameScreen(MainGameClass game) {
-		this.game = game;
-		
+	public GameScreen() {
         backgroundMusic = Gdx.audio.newSound(Gdx.files.internal("bgmusic.mp3"));
         
         long i = backgroundMusic.play();
@@ -59,10 +55,10 @@ public class GameScreen implements Screen {
 	@Override
 	public void show() {
 		_instance = this;
-		game.batch = new SpriteBatch();
+		MainGameClass._instance.batch = new SpriteBatch();
 		
-        camera = new OrthographicCamera(Gdx.graphics.getWidth() / game.SCALE, Gdx.graphics.getHeight() / game.SCALE);
-        viewport = new FitViewport(Gdx.graphics.getWidth() / game.SCALE, Gdx.graphics.getHeight() / game.SCALE, camera);	
+        camera = new OrthographicCamera(Gdx.graphics.getWidth() / MainGameClass._instance.SCALE, Gdx.graphics.getHeight() / MainGameClass._instance.SCALE);
+        viewport = new FitViewport(Gdx.graphics.getWidth() / MainGameClass._instance.SCALE, Gdx.graphics.getHeight() / MainGameClass._instance.SCALE, camera);	
         
         // Box2D
         world = new World(new Vector2(0, 0), true);
@@ -71,7 +67,7 @@ public class GameScreen implements Screen {
         
         map = new Map();
         entityManager = new EntityManager();
-		waveManager = new LevelManager(3, 5, LevelManager.Difficulty.NORMAL);
+		waveManager = new LevelManager(2, 1, LevelManager.Difficulty.NORMAL);
 		buildManager = new BuildManager();
         selectionManager = new SelectionManager();
         inputProcessor = new MyInputProcessor();
@@ -92,12 +88,13 @@ public class GameScreen implements Screen {
         gui.update();
         
         if (state == State.Play) {
+            waveManager.playCondition();
 			camera.update();
 			waveManager.update();
 			world.step(delta, 6, 2);
-			game.batch.setProjectionMatrix(camera.combined);
-	        game.shapeRenderer.setProjectionMatrix(camera.combined);
-	        map.draw(game.batch);
+			MainGameClass._instance.batch.setProjectionMatrix(camera.combined);
+	        MainGameClass._instance.shapeRenderer.setProjectionMatrix(camera.combined);
+	        map.draw(MainGameClass._instance.batch);
 			buildManager.update(delta);
 			entityManager.update(delta);
         }
@@ -105,13 +102,15 @@ public class GameScreen implements Screen {
 			//camera.update();
 			//waveManager.update();
 			//world.step(delta, 6, 2);
-			game.batch.setProjectionMatrix(camera.combined);
-	        game.shapeRenderer.setProjectionMatrix(camera.combined);
-	        map.draw(game.batch);
+			MainGameClass._instance.batch.setProjectionMatrix(camera.combined);
+	        MainGameClass._instance.shapeRenderer.setProjectionMatrix(camera.combined);
+	        map.draw(MainGameClass._instance.batch);
 			entityManager.draw();
 
 			if(state == State.Defeat || state == State.Victory) {
 				gui.endCondition();
+                entityManager.endCondition();
+                waveManager.endCondition();
 			}
         }
         stage.draw();
@@ -123,6 +122,23 @@ public class GameScreen implements Screen {
 		backgroundMusic.stop();
 		state = State.Defeat;
 	}
+
+    public void reset() {
+        long i = backgroundMusic.play();
+        backgroundMusic.setLooping(i, true);;
+        backgroundMusic.setVolume(i, .1f * GameScreen.volumeModifier);
+        state = State.Play;
+
+        buildManager = new BuildManager();
+        selectionManager = new SelectionManager();
+        inputProcessor = new MyInputProcessor();
+        gui = new GUI(stage);
+    }
+
+    public void cleanup() {
+        backgroundMusic.stop();
+        stage.clear();
+    }
 	
 	@Override
 	public void resize(int width, int height) {

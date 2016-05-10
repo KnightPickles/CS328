@@ -33,6 +33,12 @@ public class EntityManager {
         //spawnTurret("red0", new Vector2(40, 40));
         //spawnGhost(Ghost.Size.X11, Ghost.Color.RED);
     }
+
+	void endCondition() {
+		for(GameObject t : turrets) {
+			((Turret)t).endCondition();
+		}
+	}
     
     public void spawnPlayer(Vector2 position) {
     	player = new Player(position);

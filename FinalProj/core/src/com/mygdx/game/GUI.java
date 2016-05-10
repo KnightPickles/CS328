@@ -16,20 +16,24 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.awt.*;
+import java.util.logging.Level;
 
 /**
  * Created by KnightPickles on 5/7/16.
  */
 public class GUI {
+
+    static GUI _instance;
     Skin skin;
     Stage stage;
 
-    Window playerWin, levelWin, towerWin, promptWin, menuWin, endConditionWin;
+    Window playerWin, levelWin, towerWin, promptWin, menuWin, endConditionWin, nextLevWin;
     int level = 1;
     int wave = 1;
     int waves = 10;
     int gold = 23;
     int levelGold = 100;
+    boolean nextLev = false;
     Label levelLabel, waveLabel, wavesLabel, goldLabel, levelGoldLabel, difficultyLabel, playerClass, playerStr, playerDex, playerWis, turretType, tRed, tGreen, tBlue, endConditionLabel;
     static Label[] prompts = new Label[4];
     static long[] promptStamp = new long[4];
@@ -47,11 +51,17 @@ public class GUI {
     Sprite debug = MainGameClass._instance.atlas.createSprite("red_indicator");
 
     GUI(Stage stage) {
+        _instance = this;
+
         skin = new Skin(Gdx.files.internal("ui/ui-blue.json"), new TextureAtlas(Gdx.files.internal("ui/ui-blue.pack")));
         this.stage = stage;
 
         debug.setAlpha(0.5f);
 
+        prompts = new Label[4];
+        promptStamp = new long[4];
+
+        nextLev = false;
         guiInit();
     }
 
@@ -350,12 +360,13 @@ public class GUI {
         exit.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                GameScreen._instance.cleanup();
                 MainGameClass._instance.setScreen(new SplashScreen());
             }
         });
 
         TextButton ret = new TextButton("Continue", skin);
-        exit.addListener(new ClickListener() {
+        ret.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 menuWin.setVisible(!menuWin.isVisible());
@@ -377,6 +388,57 @@ public class GUI {
         menuWin.add(menuTable);
         menuWin.setVisible(false);
         stage.addActor(menuWin);
+
+        TextButton nextLevel = new TextButton("Next Level", skin);
+        nextLevel.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                nextLevWin.setVisible(false);
+                nextLev = true;
+            }
+        });
+
+        TextButton ex = new TextButton("Title Screen", skin);
+        ex.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                GameScreen._instance.cleanup();
+                MainGameClass._instance.setScreen(new SplashScreen());
+            }
+        });
+
+        Table levTable = new Table(skin);
+        Label x = new Label("Level Complete!", skin);
+        x.setFontScale(2);
+        levTable.add(x).center().pad(8);
+        levTable.row();
+        levTable.add(nextLevel).height(30).width(120).pad(3);
+        levTable.row();
+        levTable.add(ex).height(30).width(120).pad(3);
+
+        nextLevWin = new Window("", skin, "no-dialog");
+        nextLevWin.setWidth(300);
+        nextLevWin.setHeight(200);
+        nextLevWin.setMovable(false);
+        nextLevWin.setPosition(Gdx.graphics.getWidth() / 2 - nextLevWin.getWidth() / 2, Gdx.graphics.getHeight() / 2 - nextLevWin.getHeight() / 2);
+        nextLevWin.add(levTable);
+        nextLevWin.setVisible(false);
+        stage.addActor(nextLevWin);
+
+    }
+
+    void levelComplete() {
+        System.out.println(LevelManager._instance.wave);
+        if(LevelManager._instance.wave >= LevelManager._instance.numWaves) {
+            nextLev = true;
+        } else {
+            nextLev = false;
+            nextLevWin.setVisible(true);
+        }
+    }
+
+    boolean nextLevel() {
+        return nextLev;
     }
 
     void endCondition() {
@@ -400,6 +462,7 @@ public class GUI {
     }
 
     void update() {
+
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && GameScreen._instance.state != GameScreen.State.Defeat && GameScreen._instance.state != GameScreen.State.Victory)
             menuWin.setVisible(!menuWin.isVisible());
 

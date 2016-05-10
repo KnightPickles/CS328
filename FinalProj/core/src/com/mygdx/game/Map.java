@@ -45,11 +45,13 @@ public class Map {
     TextureAtlas atlas;
     Camera camera;
     MainGameClass game;
+    Random r;
 
     public int levelGold = 0;
     public int totalLevelGold;
     public int treasureValue = 100;
     public float minGoldRemaining = .6f;
+    public int curLev = 0;
 
     public int worldWidth;
     public int worldHeight;
@@ -112,7 +114,7 @@ public class Map {
             worldWidth = width;
             worldHeight = height;
             levelGold = 0;
-
+            curLev++;
 
             tiles = new ArrayList<Sprite>();
             traversableCoords = new ArrayList<Vector2>();
@@ -122,6 +124,7 @@ public class Map {
             spawnCoords2x2 = new ArrayList<Vector2>(); // z for blocked or not
             spawnCoords3x3 = new ArrayList<Vector2>(); // z for blocked or not
             goals = new ArrayList<Vector2>();
+            r = new Random(System.currentTimeMillis());
 
             // Buffered Image coordinates start at 0,0 in the top left corner. Gdx 0,0 is in bottom left.
             for (int y = 0; y < height; y++) {
@@ -129,7 +132,19 @@ public class Map {
                     Color c = new Color(level.getRGB(x, height - y - 1)); // height-y translates to 0,0 in bot left
                     Sprite s = null;
                     if (c.equals(Color.BLACK)) {
-                        s = atlas.createSprite("dirt");
+                        if(curLev >= 1 || curLev == 4) {
+                            s = atlas.createSprite("dirt");
+                        }
+                        if(curLev == 2) {
+                            if(r.nextInt(100) <= 98) s = atlas.createSprite("dirt");
+                            else s = atlas.createSprite("mud");
+                        }
+                        if(curLev == 3) {
+                            s = atlas.createSprite("sand");
+                        }
+                        if(curLev == 5) {
+                            s = atlas.createSprite("sand");
+                        }
 
                         //1x1 traversable tile/spawn
                         traversableCoords.add(new Vector2(x, y));
@@ -160,7 +175,7 @@ public class Map {
                                 spawnCoords3x3.add(new Vector2(x,y));
                         }
                     } else if (c.equals(Color.YELLOW)) {
-                        s = atlas.createSprite("sand");
+                        s = atlas.createSprite("dirt");
                         Vector2 goal = new Vector2(x, y);
                         goals.add(goal);
                         //goals.add()
@@ -170,7 +185,18 @@ public class Map {
                         traversableCoords3x3.add(goal);
 
                     } else {
-                        s = atlas.createSprite("grass");
+                        if(curLev >= 0 || curLev == 2) {
+                            if(r.nextInt(100) <= 90) s = atlas.createSprite("grass");
+                            else s = atlas.createSprite("tallgrass");
+                        }
+                        if(curLev == 3) {
+                            if(r.nextInt(100) > 10) s = atlas.createSprite("grass");
+                            else if(r.nextInt(100) <= 10 && r.nextInt(100) >= 5) s = atlas.createSprite("tallgrass");
+                        }
+                        if(curLev >= 4) {
+                            if(r.nextInt(100) <= 98) s = atlas.createSprite("sand");
+                            else s = atlas.createSprite("aquawater");
+                        }
                     }
                     if(!s.equals(null)) {
                         s.setPosition(x * MainGameClass.PPM - camera.viewportWidth / 2, y * MainGameClass.PPM - camera.viewportHeight / 2);
@@ -187,8 +213,6 @@ public class Map {
         	EntityManager._instance.createChest(spawn, treasureValue);
         }
         totalLevelGold = levelGold;
-        System.out.println("The level has " + levelGold + " gold total.");
-        levelGold = 0;
     }
     
     public Vector2 getNonZackCoords(Vector2 v) {

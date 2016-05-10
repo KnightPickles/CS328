@@ -231,6 +231,7 @@ public class Ghost extends GameObject {
     @Override
     public void killUnit() {
         Player.gold += goldValue;
+        GUI.prompt("You have gained " + goldValue + " gold.");
         if (hasGold > 0) {
         	EntityManager._instance.createGoldPile(hasGold, chestIndex, chestPosition, position);
         }

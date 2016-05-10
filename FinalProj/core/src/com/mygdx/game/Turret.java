@@ -32,7 +32,7 @@ public class Turret extends GameObject {
 	int blueUpgradeLevel = 1;
 	
 	ShapeRenderer sr = new ShapeRenderer();
-	
+
 	public TurretType turretType;
 	public enum TurretType {
 		Red,
@@ -77,6 +77,12 @@ public class Turret extends GameObject {
 		targetFinder = new Circle();
 		targetFinder.set(position, myInfo.range);
 		loadSounds();
+	}
+
+	void endCondition() {
+		if(turretType == TurretType.Green) {
+			greenSounds[0].pause();
+		}
 	}
 	
 	@Override
@@ -183,7 +189,7 @@ public class Turret extends GameObject {
 	}
 	
 	void checkUpgrade() {
-		int upgradeLevel = (int)Math.floor(((redUpgradeLevel + greenUpgradeLevel + blueUpgradeLevel)/10));
+		int upgradeLevel = 0; //(int)Math.floor(((redUpgradeLevel + greenUpgradeLevel + blueUpgradeLevel)/10));
 		switch (turretType) {
 		case Red:
 			initializeTurret("red" + upgradeLevel);
@@ -206,7 +212,7 @@ public class Turret extends GameObject {
 		
 		if (myInfo.trackTarget) {
 			rotateSprite = MainGameClass._instance.atlas.createSprite(myInfo.rotateSpriteName);
-			rotateSprite.setPosition(position.x, position.y +2);
+			rotateSprite.setPosition(position.x - sprite.getWidth() / 2, position.y +2 - sprite.getWidth() / 2);
 		}
 	}
 	
