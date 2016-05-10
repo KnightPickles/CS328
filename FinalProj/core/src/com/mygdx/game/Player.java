@@ -94,6 +94,7 @@ public class Player extends GameObject {
 		r = new Random();
 		
 		gold = 500;
+        goldTemp = gold;
         playerLoot = 0;
 		
 		upgradeRedLevel();

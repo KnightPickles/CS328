@@ -104,6 +104,7 @@ public class Map {
     
     void loadLevelFromImage(String filename) {
         try {
+            curLev++;
             BufferedImage level;
             level = ImageIO.read(new File(filename));
             int width = level.getWidth();
@@ -114,7 +115,6 @@ public class Map {
             worldWidth = width;
             worldHeight = height;
             levelGold = 0;
-            curLev++;
 
             tiles = new ArrayList<Sprite>();
             traversableCoords = new ArrayList<Vector2>();

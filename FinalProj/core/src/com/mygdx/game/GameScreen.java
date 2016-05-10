@@ -67,7 +67,7 @@ public class GameScreen implements Screen {
         
         map = new Map();
         entityManager = new EntityManager();
-		waveManager = new LevelManager(2, 1, LevelManager.Difficulty.NORMAL);
+		waveManager = new LevelManager(4, 3, LevelManager.Difficulty.NORMAL);
 		buildManager = new BuildManager();
         selectionManager = new SelectionManager();
         inputProcessor = new MyInputProcessor();
