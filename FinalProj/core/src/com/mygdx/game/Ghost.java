@@ -29,6 +29,7 @@ public class Ghost extends GameObject {
     Vector2 chestPosition;
     
     Sprite goldBag;
+    Sprite eyes;
     
     Vector2 spawn;
     Vector2 pos;
@@ -73,6 +74,8 @@ public class Ghost extends GameObject {
                 goldValue = 20;
             	break;            	
         }
+        
+        eyes = MainGameClass._instance.atlas.createSprite("eyes1s");
 
         setSize(size);
 
@@ -84,6 +87,7 @@ public class Ghost extends GameObject {
 
         // translating map coords to game coords
         sprite.setPosition(spawn.x * MainGameClass.PPM - GameScreen._instance.camera.viewportWidth / 2, spawn.y * MainGameClass.PPM - GameScreen._instance.camera.viewportHeight / 2);
+        eyes.setPosition(spawn.x + sprite.getWidth()/2f, spawn.y + sprite.getHeight());
         setBody(false, true, 0, 0);
 
         pos = deltaPos = spawn;
@@ -140,6 +144,7 @@ public class Ghost extends GameObject {
         super.update();
         if (goldBag != null && hasGold > 0)
         	goldBag.setPosition((position.x) - sprite.getWidth()/2 , (position.y) - sprite.getHeight()/2);
+        eyes.setPosition(position.x - sprite.getWidth()/2f, position.y);
     }
 
     @Override
@@ -152,11 +157,13 @@ public class Ghost extends GameObject {
         MainGameClass._instance.batch.end();*/
         super.draw();
         
+        MainGameClass._instance.batch.begin();
         if (goldBag != null && hasGold > 0) {
-	        MainGameClass._instance.batch.begin();
 	        goldBag.draw(MainGameClass._instance.batch);
-	        MainGameClass._instance.batch.end();
+	        
         }
+        eyes.draw(MainGameClass._instance.batch);
+        MainGameClass._instance.batch.end();
     }
     
     void ghostMoveUpdate() {
